@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // set startview of application
+        displayView(R.id.nav_camera);
     }
 
     @Override
@@ -83,12 +86,16 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        displayView(item.getItemId());
+        return true;
+    }
+
+    public void displayView(int viewId) {
 
         Fragment fragment = null;
         String title = getString(R.string.app_name);
-        int itemId = item.getItemId();
-        switch (itemId) {
 
+        switch (viewId) {
             case R.id.nav_camera:
                 fragment = (Fragment) TestFragment.newInstance();
                 title = "Teststring";
@@ -122,9 +129,8 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-
-        return true;
     }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
