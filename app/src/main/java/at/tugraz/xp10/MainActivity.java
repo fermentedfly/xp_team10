@@ -2,16 +2,9 @@ package at.tugraz.xp10;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,12 +15,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import at.tugraz.xp10.fragments.AllListOverviewFragment;
+import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.TestFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener {
-    {
+        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener
+{
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
