@@ -1,4 +1,4 @@
-package at.tugraz.xp10;
+package at.tugraz.xp10.adapter;
 
 import android.content.Context;
 import android.view.View;

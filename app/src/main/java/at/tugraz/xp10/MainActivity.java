@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import at.tugraz.xp10.fragments.AllListOverviewFragment;
 import at.tugraz.xp10.fragments.TestFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -92,11 +93,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_camera:
                 fragment = (Fragment) TestFragment.newInstance();
                 title = "Teststring";
-
                 break;
             case R.id.nav_gallery:
-                //fragment = new SettingsFragment();
-                //title = getString(R.string.settings);
+                fragment = (Fragment) AllListOverviewFragment.newInstance();
+                title = "AllListOverview";
                 break;
         }
 
