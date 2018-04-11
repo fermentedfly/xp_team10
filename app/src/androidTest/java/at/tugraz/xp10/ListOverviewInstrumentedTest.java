@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -32,7 +34,12 @@ public class ListOverviewInstrumentedTest {
     }
 
     @Test
-    public void test_if_present() throws Exception {
+    public void test_if_grid_view_present() throws Exception {
         assertNotNull(onView(withText(R.id.grid_overview)));
+    }
+
+    @Test
+    public void clickAddListButton() throws Exception {
+        onView(withId(R.id.button_add_list)).perform(click());
     }
 }
