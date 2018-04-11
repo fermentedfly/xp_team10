@@ -1,16 +1,13 @@
 package at.tugraz.xp10.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.adapter.AllListOverviewAdapter;
@@ -31,6 +28,14 @@ public class AllListOverviewFragment extends Fragment {
                 //add implementation here
             }
         });
+
+        FloatingActionButton fab = view.findViewById(R.id.button_add_list);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
         return view;
     }
 
