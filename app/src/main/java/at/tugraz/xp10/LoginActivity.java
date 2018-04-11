@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 
@@ -19,15 +21,19 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import at.tugraz.xp10.fragments.ForgotPasswordDialogFragment;
+
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements ForgotPasswordDialogFragment.OnFragmentInteractionListener {
 
     private FirebaseAuth mAuth;
     private static final String TAG = "LoginActivity";
@@ -161,24 +167,21 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(true);
 
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                gotoMainPage();
-
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                                //updateUI(null);
-                            }
+                        public void onSuccess(AuthResult authResult) {
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
                             showProgress(false);
-
+                            gotoMainPage();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(LoginActivity.this, "Authentication failed.\n" + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                            showProgress(false);
                         }
                     });
 
@@ -197,9 +200,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToForgotPassword() {
-        //TODO: workaround to get to main page
-        Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-        LoginActivity.this.startActivity(myIntent);
+        String email = mEmailView.getText().toString();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        ForgotPasswordDialogFragment newFragment = ForgotPasswordDialogFragment.newInstance(email);
+
+        newFragment.show(fragmentManager, "dialog");
+
+        /*if (mIsLargeLayout) {
+            // The device is using a large layout, so show the fragment as a dialog
+        } else {
+            // The device is smaller, so show the fragment fullscreen
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            // For a little polish, specify a transition animation
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            // To make it fullscreen, use the 'content' root view as the container
+            // for the fragment, which is always the root view for the activity
+            transaction.add(android.R.id.content, newFragment)
+                    .addToBackStack(null).commit();
+        }*/
+
 
     }
     private void goToRegister() {
@@ -243,5 +263,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        // nothing yet
+    }
 }
 
