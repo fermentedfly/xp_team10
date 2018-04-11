@@ -24,13 +24,9 @@
         android:layout_width="match_parent"
         android:layout_height="128dp"
         android:background="@color/ic_launcher_background"
+        android:contentDescription="@string/startimage"
         app:srcCompat="@drawable/ic_menu_manage" />
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="37dp">
-
-    </GridLayout>
 
     <ScrollView
         android:id="@+id/login_form"
@@ -47,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <AutoCompleteTextView
+                <EditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -89,14 +85,16 @@
             android:layout_width="119dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/register" />
+            android:text="@string/register"
+            tools:ignore="ButtonStyle" />
 
         <Button
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/login" />
+            android:text="@string/login"
+            tools:ignore="ButtonStyle" />
     </LinearLayout>
 
     <Button
