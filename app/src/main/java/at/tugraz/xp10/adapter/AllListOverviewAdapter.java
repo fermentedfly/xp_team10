@@ -1,20 +1,25 @@
 package at.tugraz.xp10.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class AllListOverviewAdapter extends BaseAdapter {
     private Context mContext;
+    private String[] mList;
 
-    public AllListOverviewAdapter(Context c) {
+    public AllListOverviewAdapter(Context c, String[] dummy) {
         mContext = c;
+        mList = dummy;
     }
 
     public int getCount() {
-        return 12;
+        return mList.length;
     }
 
     public Object getItem(int position) {
@@ -31,13 +36,14 @@ public class AllListOverviewAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             textView = new TextView(mContext);
-            textView.setLayoutParams(new ViewGroup.LayoutParams(85, 85));
+            textView.setBackgroundColor(0xff);
+            textView.setLayoutParams(new ViewGroup.LayoutParams(120, 120));
             textView.setPadding(8, 8, 8, 8);
         } else {
             textView = (TextView) convertView;
         }
 
-        textView.setText("Hello!");
+        textView.setText(mList[position]);
         return textView;
     }
 }

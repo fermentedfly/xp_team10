@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // set startview of application
-        displayView(R.id.nav_camera);
+        displayView(R.id.nav_gallery);
     }
 
     @Override
