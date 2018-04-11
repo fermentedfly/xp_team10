@@ -104,56 +104,6 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    public void onAddItem(View view)
-    {
-        Log.i("info", "onAddItem");
-                GridLayout layout = getView().findViewById(R.id.listGridLayout);
-                CheckBox cb = new CheckBox(layout.getContext());
-                GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
-                param.width = 0;
-                cb.setLayoutParams(param);
-                layout.addView(cb);
-
-                EditText tv = new EditText(layout.getContext());
-                tv.setText("Ketchup");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("Essen");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("5€");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("2");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-    }
 
     @Override
     public void onClick(View v)
