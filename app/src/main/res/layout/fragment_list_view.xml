@@ -1,0 +1,79 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="at.tugraz.xp10.ListViewFragment">
+
+
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addItemButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:onClick="onAddItem"
+        android:src="@android:drawable/ic_input_add" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <GridLayout
+            android:id="@+id/listGridLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="5"
+            android:orientation="horizontal"
+            tools:context=".GridXMLActivity">
+
+            <CheckBox
+                android:id="@+id/txtCheckBox"
+                android:layout_width="0dp"
+                android:layout_columnWeight=".5"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/txtProductName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1.5"
+                android:inputType="text"
+                android:text="Name" />
+
+            <EditText
+                android:id="@+id/txtCategoryName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:inputType="text"
+                android:text="Category" />
+
+            <EditText
+                android:id="@+id/txtPrice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:inputType="numberDecimal"
+                android:text="Price" />
+
+            <EditText
+                android:id="@+id/txtQuantity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:inputType="numberDecimal"
+                android:text="Qty" />
+
+        </GridLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

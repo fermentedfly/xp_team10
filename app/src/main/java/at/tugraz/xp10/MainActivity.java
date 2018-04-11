@@ -7,6 +7,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,8 +25,9 @@ import at.tugraz.xp10.fragments.AllListOverviewFragment;
 import at.tugraz.xp10.fragments.TestFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TestFragment.OnFragmentInteractionListener {
-
+        implements NavigationView.OnNavigationItemSelectedListener,
+        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener {
+    {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,4 +132,6 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
         // you can leave this empty
     }
+
+
 }
