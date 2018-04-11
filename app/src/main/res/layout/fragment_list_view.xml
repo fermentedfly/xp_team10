@@ -13,7 +13,7 @@
         android:id="@+id/addItemButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/listGridLayout"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="24dp"
         android:clickable="true"
@@ -30,38 +30,47 @@
             android:id="@+id/listGridLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="4"
+            android:columnCount="5"
             android:orientation="horizontal"
             tools:context=".GridXMLActivity">
 
             <CheckBox
-                android:id="@+id/listCheckbox"
-                android:layout_width="wrap_content"
+                android:id="@+id/txtCheckBox"
+                android:layout_width="0dp"
+                android:layout_columnWeight=".5"
                 android:layout_height="wrap_content" />
 
             <EditText
-                android:id="@+id/listProductName"
-                android:layout_width="wrap_content"
+                android:id="@+id/txtProductName"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:ems="7"
-                android:inputType="textPersonName"
+                android:layout_columnWeight="1.5"
+                android:inputType="text"
                 android:text="Name" />
 
             <EditText
-                android:id="@+id/listCategoryName"
-                android:layout_width="wrap_content"
+                android:id="@+id/txtCategoryName"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:ems="5"
-                android:inputType="textPersonName"
+                android:layout_columnWeight="1"
+                android:inputType="text"
                 android:text="Category" />
 
             <EditText
-                android:id="@+id/listPrice"
-                android:layout_width="wrap_content"
+                android:id="@+id/txtPrice"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:ems="3"
-                android:inputType="textPersonName"
+                android:layout_columnWeight="1"
+                android:inputType="numberDecimal"
                 android:text="Price" />
+
+            <EditText
+                android:id="@+id/txtQuantity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:inputType="numberDecimal"
+                android:text="Qty" />
 
         </GridLayout>
 
