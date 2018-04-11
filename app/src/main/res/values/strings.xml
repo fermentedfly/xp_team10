@@ -24,9 +24,13 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="startimage">StartImage</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="submit">Submit</string>
     <string name="cancel">Cancel</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="error_password_not_equal">Passwords are not equal</string>
+    <string name="admin_xp10_com">admin@xp10.com</string>
 
 </resources>

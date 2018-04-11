@@ -1,5 +1,6 @@
 package at.tugraz.xp10;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import at.tugraz.xp10.fragments.AllListOverviewFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
@@ -96,6 +99,10 @@ public class MainActivity extends AppCompatActivity
                 fragment = (Fragment) AllListOverviewFragment.newInstance();
                 title = "AllListOverview";
                 break;
+            case R.id.nav_logout:
+                FirebaseAuth.getInstance().signOut();
+                gotoLoginActivity();
+                break;
         }
 
         // clear all left fragments from the backstack
@@ -128,5 +135,11 @@ public class MainActivity extends AppCompatActivity
         // you can leave this empty
     }
 
+
+    private void gotoLoginActivity() {
+        Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+        finish();
+        MainActivity.this.startActivity(myIntent);
+    }
 
 }

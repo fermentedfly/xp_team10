@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 
@@ -29,11 +30,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import at.tugraz.xp10.fragments.ForgotPasswordDialogFragment;
+import at.tugraz.xp10.fragments.RegisterFragment;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements ForgotPasswordDialogFragment.OnFragmentInteractionListener {
+public class LoginActivity extends AppCompatActivity implements ForgotPasswordDialogFragment.OnFragmentInteractionListener,
+        RegisterFragment.OnFragmentInteractionListener {
 
     private FirebaseAuth mAuth;
     private static final String TAG = "LoginActivity";
@@ -90,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
         if(mAuth != null)
             currentUser = mAuth.getCurrentUser();
 
-        if(currentUser != null)
+        if(currentUser != null && (currentUser.isEmailVerified() || currentUser.getEmail().equals(getString(R.string.admin_xp10_com))))
             gotoMainPage();
 
 
@@ -173,7 +176,13 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             showProgress(false);
-                            gotoMainPage();
+
+                            // TODO better email verification test
+                            if (user.isEmailVerified() || user.getEmail().equals(getString(R.string.admin_xp10_com)))
+                                gotoMainPage();
+                            else {
+                                Toast.makeText(LoginActivity.this, "Authentication failed.\n" + "Email address is not verified",Toast.LENGTH_LONG).show();
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -207,30 +216,23 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
 
         newFragment.show(fragmentManager, "dialog");
 
-        /*if (mIsLargeLayout) {
-            // The device is using a large layout, so show the fragment as a dialog
-        } else {
-            // The device is smaller, so show the fragment fullscreen
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            // For a little polish, specify a transition animation
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            // To make it fullscreen, use the 'content' root view as the container
-            // for the fragment, which is always the root view for the activity
-            transaction.add(android.R.id.content, newFragment)
-                    .addToBackStack(null).commit();
-        }*/
-
-
     }
     private void goToRegister() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        RegisterFragment newFragment = RegisterFragment.newInstance();
+
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            transaction.add(android.R.id.content, newFragment)
+                    .addToBackStack(null).commit();
 
     }
 
     private void gotoMainPage() {
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+        finish();
         LoginActivity.this.startActivity(myIntent);
     }
-
 
 
 
