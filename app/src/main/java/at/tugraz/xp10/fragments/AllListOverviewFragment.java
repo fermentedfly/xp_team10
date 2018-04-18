@@ -3,6 +3,9 @@ package at.tugraz.xp10.fragments;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +32,25 @@ public class AllListOverviewFragment extends Fragment {
             }
         });
 
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("My Lists");
+
         FloatingActionButton fab = view.findViewById(R.id.button_add_list);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                Bundle bundle = new Bundle();
+                //TODO: has to be replaced by title from database
+                bundle.putString("Title", "My List");
+
+
+                Fragment fragment = new ListViewFragment();
+                fragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.content_frame,fragment,"myFragmentTag").addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
 

@@ -1,16 +1,27 @@
 package at.tugraz.xp10;
 
-import android.support.test.espresso.contrib.DrawerActions;
-import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import android.os.Bundle;
+import android.support.test.espresso.assertion.ViewAssertions;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.GridLayout;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import at.tugraz.xp10.Utils.TestFragmentActivity;
+import at.tugraz.xp10.fragments.ListViewFragment;
+
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
@@ -22,6 +33,23 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.*;
 
+
+class Matchers {
+    public static Matcher<View> withRowCount (final int size) {
+        return new TypeSafeMatcher<View> () {
+            @Override
+            public void describeTo(org.hamcrest.Description description) {
+
+            }
+
+            @Override public boolean matchesSafely (final View view) {
+                return ((GridLayout) view).getRowCount() == size;
+            }
+        };
+    }
+}
+
+
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -30,14 +58,22 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ListViewInstrumentedTest {
 
+    private static final String s_Title = "TestTitle";
+
+    private ListViewFragment m_Fragment;
+
     @Rule
-    public ActivityTestRule<MainActivity> mainActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<TestFragmentActivity> mainActivityTestRule =
+            new ActivityTestRule<>(TestFragmentActivity.class);
 
     @Before
     public void init(){
+        Bundle bundle = new Bundle();
+        bundle.putString("Title", s_Title);
 
-        onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
-        onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_desiredlist));
+        m_Fragment = new ListViewFragment();
+        m_Fragment.setArguments(bundle);
+        mainActivityTestRule.getActivity().setFragment(m_Fragment);
     }
 
     @Test
@@ -103,7 +139,7 @@ public class ListViewInstrumentedTest {
     */
 
     @Test
-    public void listViewFragmentLayout() throws Exception {
+    public void listViewFragmentLayout() {
         onView(withId(R.id.txtCheckBox)).check(matches(isDisplayed()));
         onView(withId(R.id.txtProductName)).check(matches(isDisplayed()));
         onView(withId(R.id.txtCategoryName)).check(matches(isDisplayed()));
@@ -112,7 +148,28 @@ public class ListViewInstrumentedTest {
     }
 
     @Test
-    public void listGridIfPresent() throws Exception {
+    public void listGridIfPresent() {
         assertNotNull(onView(withText(R.id.listGridLayout)));
+    }
+
+    @Test
+    public void addItemButtonListener() throws Exception {
+        onView(withId(R.id.addItemButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.addItemButton)).perform(click());
+
+        onView(withId(R.id.listGridLayout)).check(ViewAssertions.matches (Matchers.withRowCount(2)));
+    }
+
+    @Test
+    public void is_title_set() {
+        onView(withId(R.id.listGridLayout)).check(matches(isDisplayed()));
+
+        ActionBar actionBar = ((AppCompatActivity)mainActivityTestRule.getActivity()).getSupportActionBar();
+
+        assertNotNull(actionBar);
+
+        CharSequence title = actionBar.getTitle();
+
+        assertEquals(s_Title, title);
     }
 }
