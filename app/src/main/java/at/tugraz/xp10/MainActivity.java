@@ -1,9 +1,11 @@
 package at.tugraz.xp10;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,8 +15,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import at.tugraz.xp10.fragments.AllListOverviewFragment;
+import at.tugraz.xp10.fragments.ListViewFragment;
+import at.tugraz.xp10.fragments.TestFragment;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener
+{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,15 +32,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // set startview of application
+        displayView(R.id.nav_gallery);
     }
 
     @Override
@@ -77,19 +81,64 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        displayView(item.getItemId());
+        return true;
+    }
+    public void displayView(int viewId) {
 
-        if  (id == R.id.nav_lists) {
+        Fragment fragment = null;
+        String title = getString(R.string.app_name);
 
-        } else if (id == R.id.nav_desiredlist) {
+        switch (viewId) {
+            case R.id.nav_lists:
+                fragment = (Fragment) TestFragment.newInstance();
+                title = "Teststring";
+                break;
+            case R.id.nav_desiredlist:
+                fragment = (Fragment) AllListOverviewFragment.newInstance();
+                title = "AllListOverview";
+                break;
+            case R.id.nav_logout:
+                FirebaseAuth.getInstance().signOut();
+                gotoLoginActivity();
+                break;
+        }
 
-        } else if (id == R.id.nav_logout) {
+        // clear all left fragments from the backstack
+        FragmentManager fm = getSupportFragmentManager();
+        int count = fm.getBackStackEntryCount();
+        for (int i = 0; i < count; ++i) {
+            fm.popBackStack();
+        }
 
+        if (fragment != null) {
+            FragmentTransaction ft = fm.beginTransaction();
+
+
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
+
+        // set the toolbar title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
+
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        // you can leave this empty
+    }
+
+
+    private void gotoLoginActivity() {
+        Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+        finish();
+        MainActivity.this.startActivity(myIntent);
+    }
+
 }
