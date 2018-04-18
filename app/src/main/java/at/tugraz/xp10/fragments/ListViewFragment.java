@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,10 +32,12 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String s_Title = "Title";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String m_Title = "";
 
     private OnFragmentInteractionListener mListener;
 
@@ -50,11 +54,12 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
      * @return A new instance of fragment ListViewFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListViewFragment newInstance(String param1, String param2) {
+    public static ListViewFragment newInstance(String param1, String param2, String title) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        args.putString(s_Title, title);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,6 +70,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+            m_Title = getArguments().getString(s_Title);
         }
     }
 
@@ -76,6 +82,8 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
 
         FloatingActionButton b = v.findViewById(R.id.addItemButton);
         b.setOnClickListener(this);
+
+        SetTitle();
 
         return v;
     }
@@ -227,5 +235,18 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void SetTitle()
+    {
+        if(m_Title != null && !m_Title.isEmpty())
+        {
+            ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+
+            if(actionBar != null)
+            {
+                actionBar.setTitle(m_Title);
+            }
+        }
     }
 }
