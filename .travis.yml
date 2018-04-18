@@ -3,13 +3,11 @@ android:
   components:
     - tools
     - platform-tools
-    - build-tools-27.0.3
-    - android-21
-    - android-27
+    - build-tools-18.1.1
+    - android-18
     - add-on
     - extra
-    - sys-img-armeabi-v7a-android-27
-    - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-18
 licenses:
     - 'android-sdk-license-.+'
 jdk:
@@ -23,12 +21,16 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_install:
-    - echo y | android update sdk --no-ui --all --filter sys-img-armeabi-v7a-android-27,sys-img-x86_64-android-27,build-tools-27.0.3
-    - yes | sdkmanager "platforms;android-27"
+    - echo y | android update sdk --no-ui --all --filter sys-img-armeabi-v7a-android-18,sys-img-x86_64-android-18,build-tools-18.1.1
+    - yes | sdkmanager "platforms;android-18"
 
+script:
+    - ./gradlew build connectedCheck --stacktrace    
+    
 before_script:
   - android list targets
   - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+ 
