@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -25,7 +26,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener
 {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // set startview of application
-        displayView(R.id.nav_gallery);
+        displayView(R.id.nav_lists);
     }
 
     @Override
@@ -91,12 +91,12 @@ public class MainActivity extends AppCompatActivity
 
         switch (viewId) {
             case R.id.nav_lists:
-                fragment = (Fragment) TestFragment.newInstance();
-                title = "Teststring";
+                fragment = (Fragment) AllListOverviewFragment.newInstance();
+                title = "Overview";
                 break;
             case R.id.nav_desiredlist:
-                fragment = (Fragment) AllListOverviewFragment.newInstance();
-                title = "AllListOverview";
+                fragment = (Fragment) ListViewFragment.newInstance("foo", "bar");
+                title = "List View";
                 break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();

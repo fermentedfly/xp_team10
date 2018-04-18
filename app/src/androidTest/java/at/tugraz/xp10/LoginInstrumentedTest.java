@@ -3,9 +3,12 @@ package at.tugraz.xp10;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.contrib.DrawerActions;
+import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +30,17 @@ public class LoginInstrumentedTest {
 
     @Rule
     public ActivityTestRule<LoginActivity> menuActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
+
+    @Before
+    public void init(){
+        // sign out before tests
+        if(menuActivityTestRule.getActivity().isUserLoggedIn())
+        {
+            // need to sign out
+            onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+            onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));
+        }
+    }
 
     @Test
     public void displayLayout() throws Exception {

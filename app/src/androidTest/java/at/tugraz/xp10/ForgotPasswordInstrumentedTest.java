@@ -1,5 +1,7 @@
 package at.tugraz.xp10;
 
+import android.support.test.espresso.contrib.DrawerActions;
+import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.FragmentManager;
@@ -28,10 +30,14 @@ public class ForgotPasswordInstrumentedTest {
 
     @Before
     public void init(){
-        FragmentManager fragmentManager = menuActivityTestRule.getActivity().getSupportFragmentManager();
-        ForgotPasswordDialogFragment newFragment = ForgotPasswordDialogFragment.newInstance("");
-
-        newFragment.show(fragmentManager, "dialog");
+        // sign out before tests
+        if(menuActivityTestRule.getActivity().isUserLoggedIn())
+        {
+            // need to sign out
+            onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+            onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));
+        }
+        onView(withId(R.id.forgot_password_button)).perform(click());
     }
     @Test
     public void displayLayout() throws Exception {
