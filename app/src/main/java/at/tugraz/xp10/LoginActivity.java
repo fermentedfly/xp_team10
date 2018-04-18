@@ -5,14 +5,15 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-
-
-import android.os.Build;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -21,10 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,6 +44,7 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private CountingIdlingResource mIdlingResource = new CountingIdlingResource(TAG);
 
 
     @Override
@@ -87,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
 
     @Override
     public void onStart() {
+        mIdlingResource.increment();
         super.onStart();
 
         FirebaseUser currentUser = null;
@@ -229,11 +230,15 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     }
 
     private void gotoMainPage() {
+        mIdlingResource.decrement();
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         finish();
         LoginActivity.this.startActivity(myIntent);
     }
 
+    public boolean isUserLoggedIn() {
+        return mAuth.getCurrentUser() != null;
+    }
 
 
     /**
@@ -268,6 +273,11 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     @Override
     public void onFragmentInteraction(Uri uri) {
         // nothing yet
+    }
+
+    @VisibleForTesting
+    public IdlingResource getIdlingResource() {
+        return mIdlingResource;
     }
 }
 

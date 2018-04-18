@@ -1,5 +1,7 @@
 package at.tugraz.xp10;
 
+import android.support.test.espresso.contrib.DrawerActions;
+import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.FragmentManager;
@@ -31,14 +33,16 @@ public class RegisterInstrumentedTest {
 
     @Before
     public void init(){
-        FragmentManager fragmentManager = menuActivityTestRule.getActivity().getSupportFragmentManager();
-        RegisterFragment newFragment = RegisterFragment.newInstance();
-
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        transaction.add(android.R.id.content, newFragment)
-                .addToBackStack(null).commit();
+        // sign out before tests
+        if(menuActivityTestRule.getActivity().isUserLoggedIn())
+        {
+            // need to sign out
+            onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
+            onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));
+        }
+        onView(withId(R.id.register_button)).perform(click());
     }
+
     @Test
     public void displayLayout() throws Exception {
         onView(withId(R.id.register_firstname)).check(matches(isDisplayed()));
