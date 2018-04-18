@@ -1,18 +1,25 @@
-# adopted from https://github.com/codepath/android_guides/wiki/Setting-up-Travis-CI
 language: android
-
-sudo: false
-
 android:
   components:
-    tools
-    platform-tools
-    build-tools-26.0.2
-    android-27
-    extra-google-m2repository
-    sys-img-armeabi-v7a-android-26
-    sys-img-armeabi-v7a-android-17
+    - tools
+    - platform-tools
+    - build-tools-27.0.2
+    - android-27
+    - add-on
+    - extra
+licenses:
+    - 'android-sdk-license-.+'
+jdk:
+    - oraclejdk8
+script:
+    - ./gradlew :repository:testMockDebugUnitTest :repository:testProdDebugUnitTest :repository:testProdReleaseUnitTest
+before_cache:
+    - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 
 before_install:
     - yes | sdkmanager "platforms;android-27"
-    
