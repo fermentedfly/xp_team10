@@ -1,5 +1,6 @@
 package at.tugraz.xp10;
 
+import android.support.test.espresso.ViewAssertion;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -76,6 +77,8 @@ public class ListViewInstrumentedTest {
         mainActivityTestRule.getActivity().setFragment(m_Fragment);
     }
 
+    /*********************************** addItemButton ***********************************/
+
     @Test
     public void addItemButtonIsEnabled() {
         onView(withId(R.id.addItemButton)).check(matches(isEnabled()));
@@ -138,6 +141,8 @@ public class ListViewInstrumentedTest {
     }
     */
 
+    /*********************************** listGridLayout ***********************************/
+
     @Test
     public void listViewFragmentLayout() {
         onView(withId(R.id.txtCheckBox)).check(matches(isDisplayed()));
@@ -171,5 +176,31 @@ public class ListViewInstrumentedTest {
         CharSequence title = actionBar.getTitle();
 
         assertEquals(s_Title, title);
+    }
+
+    /*********************************** goShoppingButton ***********************************/
+    @Test
+    public void goShoppingButtonIsEnabled() {
+        onView(withId(R.id.goShoppingButton)).check(matches(isEnabled()));
+    }
+
+    @Test
+    public void goShoppingButtonIsDisplayed() {
+        onView(withId(R.id.goShoppingButton)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void goShoppingButtonIsCompletelyDisplayed() {
+        onView(withId(R.id.goShoppingButton)).check(matches(isCompletelyDisplayed()));
+    }
+
+    @Test
+    public void goShoppingButtonIsNotSelectable() {
+        onView(withId(R.id.goShoppingButton)).check(matches(not(isSelected())));
+    }
+
+    @Test
+    public void goShoppingButtonIsClickable() {
+        onView(withId(R.id.goShoppingButton)).check(matches(isClickable()));
     }
 }

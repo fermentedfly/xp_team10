@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -80,8 +81,10 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_list_view, container, false);
 
-        FloatingActionButton b = v.findViewById(R.id.addItemButton);
-        b.setOnClickListener(this);
+        FloatingActionButton addItemBtn = v.findViewById(R.id.addItemButton);
+        addItemBtn.setOnClickListener(this);
+        Button goShoppingBtn = v.findViewById(R.id.goShoppingButton);
+        goShoppingBtn.setOnClickListener(this);
 
         SetTitle();
 
@@ -168,7 +171,6 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     {
         switch (v.getId()) {
             case R.id.addItemButton:
-                Log.d("fuck", "im inside");
                 GridLayout layout = getView().findViewById(R.id.listGridLayout);
                 CheckBox cb = new CheckBox(layout.getContext());
                 GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
@@ -217,6 +219,9 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
                 layout.addView(tv);
                 break;
 
+            case R.id.goShoppingButton:
+                // go to next fragment
+                break;
             default:
                 break;
         }
