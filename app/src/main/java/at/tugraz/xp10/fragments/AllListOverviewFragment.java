@@ -47,9 +47,9 @@ public class AllListOverviewFragment extends Fragment {
                 bundle.putString("Title", "My List");
 
 
-                Fragment fragment = new ListViewFragment();
+                Fragment fragment = new ListSettingFragment();
                 fragment.setArguments(bundle);
-                fragmentTransaction.replace(R.id.content_frame,fragment,"myFragmentTag").addToBackStack(null);
+                fragmentTransaction.replace(R.id.content_frame,fragment,"ListSetting").addToBackStack(null);
                 fragmentTransaction.commit();
             }
         });

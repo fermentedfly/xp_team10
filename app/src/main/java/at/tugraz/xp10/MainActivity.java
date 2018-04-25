@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import at.tugraz.xp10.fragments.AllListOverviewFragment;
+import at.tugraz.xp10.fragments.ListSettingFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.TestFragment;
 import at.tugraz.xp10.model.ShoppingList;
@@ -42,7 +43,7 @@ import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener
+        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener, ListSettingFragment.OnFragmentInteractionListener
 {
 
     private FirebaseAuth mAuth;
