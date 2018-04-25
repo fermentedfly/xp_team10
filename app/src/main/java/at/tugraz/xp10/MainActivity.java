@@ -21,13 +21,22 @@ import android.widget.ListView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import at.tugraz.xp10.fragments.AllListOverviewFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.TestFragment;
 import at.tugraz.xp10.model.ShoppingList;
+import at.tugraz.xp10.model.User;
 
 import static java.lang.Thread.sleep;
 
@@ -123,6 +132,10 @@ public class MainActivity extends AppCompatActivity
                 FirebaseAuth.getInstance().signOut();
                 gotoLoginActivity();
                 break;
+            case R.id.nav_testDatabase:  // TODO delete this, is only for testing purpose
+                testFirebase();
+                firebaseGetLists();
+                return;
         }
 
         // clear all left fragments from the backstack
@@ -161,17 +174,22 @@ public class MainActivity extends AppCompatActivity
         MainActivity.this.startActivity(myIntent);
     }
 
+
+
+
+    // TODO remove, just firebase test functions to see how it works...
+
     private void testFirebase() {
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-        Log.d("SIT", "gotoLoginActivity: " + mAuth.getCurrentUser().getUid());
+        String uid = mAuth.getCurrentUser().getUid();
 
-        ShoppingList shoppingList = new ShoppingList("titel", "beschreibung", mAuth.getCurrentUser().getUid());
+        ShoppingList shoppingList = new ShoppingList("titel", "beschreibung", uid);
 
-        String list = database.child("shoppinglists").push().getKey();
+        String listKey = database.child("shoppinglists").push().getKey();
 
-        database.child("shoppinglists").child(list).setValue(shoppingList).addOnCompleteListener(new OnCompleteListener<Void>() {
+        database.child("shoppinglists").child(listKey).setValue(shoppingList).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Log.d("SOMETHING", "onComplete: " + task.isSuccessful());
@@ -182,10 +200,36 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        // add the key of the list to the users shoppinglist map ---- a MAP is used because you quickly can check if the KEY is in the MAP without iterating through it.
+        Map<String, Object> newList = new HashMap<>();
+        newList.put(listKey, true);
+        database.child("users").child(mAuth.getCurrentUser().getUid()).child("shoppinglists").updateChildren(newList);
 
-        //update children item owner and so on.....
+    }
 
-        return;
+
+    private void firebaseGetLists() {
+
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        // get all lists for user X
+
+        String uid = mAuth.getCurrentUser().getUid();
+
+
+            Query userQuery = database.child("users").child(uid);
+            userQuery.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    Log.d("Something", "onDataChange: " + user.toString());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
     }
 

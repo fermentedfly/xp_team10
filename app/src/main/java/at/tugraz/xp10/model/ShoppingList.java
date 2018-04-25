@@ -1,6 +1,7 @@
 package at.tugraz.xp10.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.ServerValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ public class ShoppingList {
     private String description;
     private Map<String, String> members;
     private HashMap<String, Boolean> items;
+    private final Object createdAt = ServerValue.TIMESTAMP;
 
     public ShoppingList() {
     }
@@ -25,7 +27,6 @@ public class ShoppingList {
         this.description = description;
         this.members = new HashMap<>();
         this.items = new HashMap<>();
-
         this.members.put(ownerId, Constants.OWNER);
     }
 
@@ -60,5 +61,9 @@ public class ShoppingList {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Object getCreatedAt() {
+        return createdAt;
     }
 }
