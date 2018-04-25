@@ -17,6 +17,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridLayout;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import at.tugraz.xp10.Item;
 import at.tugraz.xp10.R;
 
 
@@ -29,6 +36,9 @@ import at.tugraz.xp10.R;
  * create an instance of this fragment.
  */
 public class ListViewFragment extends Fragment implements View.OnClickListener {
+    private List<Item> items;
+    private DatabaseReference mDatabase;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -87,6 +97,9 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         goShoppingBtn.setOnClickListener(this);
 
         SetTitle();
+
+        items = new ArrayList<>();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         return v;
     }
@@ -220,6 +233,8 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.goShoppingButton:
+                saveListData();
+                saveListDataDB();
                 // go to next fragment
                 break;
             default:
@@ -253,5 +268,16 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
                 actionBar.setTitle(m_Title);
             }
         }
+    }
+
+    public void saveListData()
+    {
+        Item asd = new Item( "Ketchup2", "Essen", new Long(5), new Long(1));
+        items.add(asd);
+    }
+
+    public void saveListDataDB()
+    {
+        mDatabase.child("items").child("1").setValue(items.get(0));
     }
 }
