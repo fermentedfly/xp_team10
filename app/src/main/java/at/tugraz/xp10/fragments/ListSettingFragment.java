@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -141,6 +142,11 @@ public class ListSettingFragment extends Fragment  {
 
     private void saveDataToDatabase() {
 
+        if(TextUtils.isEmpty(mTitle.getText().toString())) {
+            mTitle.setError(getString(R.string.error_field_required));
+            return;
+        }
+
         ShoppingList shoppingList = new ShoppingList();
         shoppingList.setTitle(mTitle.getText().toString());
         if(!mDescription.getText().toString().isEmpty())
@@ -192,6 +198,8 @@ public class ListSettingFragment extends Fragment  {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+
 
     @Override
     public void onAttach(Context context) {

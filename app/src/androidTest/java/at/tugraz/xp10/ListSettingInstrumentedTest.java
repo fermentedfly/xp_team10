@@ -52,7 +52,7 @@ public class ListSettingInstrumentedTest {
     }
     @Test
     public void checkTitleNotEmpty() {
-        //
+        onView(withId(R.id.list_setting_save)).perform(click());
     }
     @Test
     public void addUserFieldExists() {
