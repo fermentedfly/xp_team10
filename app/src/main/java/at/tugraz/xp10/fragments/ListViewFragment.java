@@ -28,7 +28,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import at.tugraz.xp10.Item;
 import at.tugraz.xp10.R;
@@ -44,6 +46,7 @@ import at.tugraz.xp10.R;
  */
 public class ListViewFragment extends Fragment implements View.OnClickListener {
     private List<Item> items;
+    private HashMap a = new HashMap();
     private DatabaseReference db;
     //private FirebaseHelper dbHelper;
     private ArrayAdapter<Item> itemsAdapter;
@@ -108,9 +111,33 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         SetTitle();
 
         items = new ArrayList<>();
-        db = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseDatabase.getInstance().getReference("/items");
         //itemsAdapter = new ArrayAdapter<Item>(this, R.id.listGridLayout, retrieve());
-        retrieve();
+
+        /*
+
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mDatabaseReference = mFirebaseDatabase.getReference();
+
+        Map<String, String> map = new HashMap<>();
+        map.put("Name","Jas");
+        map.put("Age","25");
+        map.put("Country","USA");
+        mDatabaseReference.setValue(map);
+
+        Log.e("Data snapshot", "waaaaaaaaas");
+
+        mDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("Data snapshot","Fetched Name2");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Data snapshot error",""+databaseError);
+            }
+        });*/
 
         return v;
     }
@@ -253,6 +280,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
                 saveListData();
                 saveListDataDB();
                 // go to next fragment
+                retrieve();
                 break;
             default:
                 break;
@@ -302,7 +330,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         {
             for (Item item : items)
             {
-                db.child("items").push().setValue(item);
+                db.push().setValue(item);
             }
 
         }
@@ -337,8 +365,13 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         {
             Item item = ds.getValue(Item.class);
             items.add(item);
-            
+
             addItem(item);
         }
     }
+
+
+
+
+
 }

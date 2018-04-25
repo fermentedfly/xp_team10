@@ -10,6 +10,8 @@ public class Item {
     public Long price;
     public Long quantity;
 
+    public Item () {}
+
     public Item (String name_, String category_, Long price_, Long quantity_)
     {
         isPurchased = false;
