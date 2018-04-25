@@ -1,31 +1,49 @@
 package at.tugraz.xp10.model;
 
-import java.util.List;
+import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import at.tugraz.xp10.util.Constants;
+
+@IgnoreExtraProperties
 public class ShoppingList {
-    private String id;
+
     private String title;
     private String description;
-    private List<String> userIds;
-    private List<ShoppingListItem> items;
+    private Map<String, String> members;
+    private HashMap<String, Boolean> items;
 
     public ShoppingList() {
     }
 
-    public ShoppingList(String id, String title, String description, List<String> userIds, List<ShoppingListItem> items) {
-        this.id = id;
+    public ShoppingList(String title, String description, String ownerId) {
         this.title = title;
         this.description = description;
-        this.userIds = userIds;
+        this.members = new HashMap<>();
+        this.items = new HashMap<>();
+
+        this.members.put(ownerId, Constants.OWNER);
+    }
+
+
+    public Map<String, String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Map<String, String> members) {
+        this.members = members;
+    }
+
+    public HashMap<String, Boolean> getItems() {
+        return items;
+    }
+
+    public void setItems(HashMap<String, Boolean> items) {
         this.items = items;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -42,21 +60,5 @@ public class ShoppingList {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<String> getUserIds() {
-        return userIds;
-    }
-
-    public void setUserIds(List<String> userIds) {
-        this.userIds = userIds;
-    }
-
-    public List<ShoppingListItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ShoppingListItem> items) {
-        this.items = items;
     }
 }

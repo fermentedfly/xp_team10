@@ -3,6 +3,7 @@ package at.tugraz.xp10;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,20 +13,32 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import at.tugraz.xp10.fragments.AllListOverviewFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.TestFragment;
+import at.tugraz.xp10.model.ShoppingList;
+
+import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener
 {
+
+    private FirebaseAuth mAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +57,13 @@ public class MainActivity extends AppCompatActivity
 
         // set startview of application
         displayView(R.id.nav_lists);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -84,6 +104,7 @@ public class MainActivity extends AppCompatActivity
         displayView(item.getItemId());
         return true;
     }
+
     public void displayView(int viewId) {
 
         Fragment fragment = null;
@@ -134,11 +155,38 @@ public class MainActivity extends AppCompatActivity
         // you can leave this empty
     }
 
-
     private void gotoLoginActivity() {
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
         finish();
         MainActivity.this.startActivity(myIntent);
+    }
+
+    private void testFirebase() {
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        Log.d("SIT", "gotoLoginActivity: " + mAuth.getCurrentUser().getUid());
+
+        ShoppingList shoppingList = new ShoppingList("titel", "beschreibung", mAuth.getCurrentUser().getUid());
+
+        String list = database.child("shoppinglists").push().getKey();
+
+        database.child("shoppinglists").child(list).setValue(shoppingList).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("SOMETHING", "onComplete: " + task.isSuccessful());
+
+                if(!task.isSuccessful()) {
+                    Log.d("ERROR", "onComplete: ",task.getException());
+                }
+            }
+        });
+
+
+        //update children item owner and so on.....
+
+        return;
+
     }
 
 }

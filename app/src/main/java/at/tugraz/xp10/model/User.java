@@ -1,5 +1,8 @@
 package at.tugraz.xp10.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class User {
     private String eMail;
     private String firstName;
