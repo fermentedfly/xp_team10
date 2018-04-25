@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "413815589208",
+    "firebase_url": "https://xp10-app.firebaseio.com",
+    "project_id": "xp10-app",
+    "storage_bucket": "xp10-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413815589208:android:d73300977cac3473",
+        "android_client_info": {
+          "package_name": "at.tugraz.xp10"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413815589208-cu4dm4kioqh7gq775b2cfoic0gd1m98q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "at.tugraz.xp10",
+            "certificate_hash": "5f876d77b30738c3b6efa294ebaff4ab6a417f90"
+          }
+        },
+        {
+          "client_id": "413815589208-jvbcdmrfanckrbcl3gdjqtk5j36iu0v1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5OzHs28nVYQqlLyPHw1B2a9x_PTorpJ8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413815589208-jvbcdmrfanckrbcl3gdjqtk5j36iu0v1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
