@@ -106,6 +106,14 @@ public class RegisterFragment extends Fragment {
                                         Toast.makeText(getActivity(), "Registration successful.\nPlease confirm email address",
                                                 Toast.LENGTH_LONG).show();
                                         getFragmentManager().popBackStack();
+
+//                                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                                        DatabaseReference myRef = database.getReference();
+//
+//                                        myRef.child("Users").push().setValue(new User("hallo@test.com", "1"));
+//
+
+
                                     }
                                 }
                             })

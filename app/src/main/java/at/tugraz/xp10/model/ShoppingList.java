@@ -1,5 +1,7 @@
 package at.tugraz.xp10.model;
 
+import android.text.Editable;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ServerValue;
 
