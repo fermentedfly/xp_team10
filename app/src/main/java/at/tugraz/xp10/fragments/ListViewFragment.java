@@ -12,11 +12,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.GridView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -37,7 +43,9 @@ import at.tugraz.xp10.R;
  */
 public class ListViewFragment extends Fragment implements View.OnClickListener {
     private List<Item> items;
-    private DatabaseReference mDatabase;
+    private DatabaseReference db;
+    //private FirebaseHelper dbHelper;
+    private ArrayAdapter<Item> itemsAdapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -99,7 +107,9 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         SetTitle();
 
         items = new ArrayList<>();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseDatabase.getInstance().getReference();
+        //itemsAdapter = new ArrayAdapter<Item>(this, R.id.listGridLayout, retrieve());
+        retrieve();
 
         return v;
     }
@@ -128,55 +138,61 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    public void onAddItem(View view)
+    public void addItem(Item item)
     {
-        Log.i("info", "onAddItem");
-                GridLayout layout = getView().findViewById(R.id.listGridLayout);
-                CheckBox cb = new CheckBox(layout.getContext());
-                GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
-                param.width = 0;
-                cb.setLayoutParams(param);
-                layout.addView(cb);
+        boolean isPurchased = item.isPurchased;
+        String name = item.name;
+        String category = item.category;
+        Long price = item.price;
+        Long quantity = item.quantity;
 
-                EditText tv = new EditText(layout.getContext());
-                tv.setText("Ketchup");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+        GridLayout gridView = getView().findViewById(R.id.listGridLayout);
+        CheckBox cb = new CheckBox(gridView.getContext());
+        GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
+        param.width = 0;
+        cb.setLayoutParams(param);
+        cb.setChecked(isPurchased);
+        gridView.addView(cb);
 
-                tv = new EditText(layout.getContext());
-                tv.setText("Essen");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+        EditText tv = new EditText(gridView.getContext());
+        tv.setText(name);
+        param = new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
+        param.width = 0;
+        tv.setLayoutParams(param);
+        gridView.addView(tv);
 
-                tv = new EditText(layout.getContext());
-                tv.setText("5€");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+        tv = new EditText(gridView.getContext());
+        tv.setText(category);
+        param = new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
+        param.width = 0;
+        tv.setLayoutParams(param);
+        gridView.addView(tv);
 
-                tv = new EditText(layout.getContext());
-                tv.setText("2");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+        tv = new EditText(gridView.getContext());
+        tv.setText(price.toString());
+        tv.setInputType(InputType.TYPE_CLASS_NUMBER);
+        param = new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
+        param.width = 0;
+        tv.setLayoutParams(param);
+        gridView.addView(tv);
+
+        tv = new EditText(gridView.getContext());
+        tv.setText(quantity.toString());
+        tv.setInputType(InputType.TYPE_CLASS_NUMBER);
+        param = new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
+        param.width = 0;
+        tv.setLayoutParams(param);
+        gridView.addView(tv);
     }
 
     @Override
@@ -272,12 +288,71 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
 
     public void saveListData()
     {
-        Item asd = new Item( "Ketchup2", "Essen", new Long(5), new Long(1));
-        items.add(asd);
+        for (int i = 0; i < 10; i++)
+        {
+            Item asd = new Item( "Ketchup2", "Essen", new Long(5 + i), new Long(i));
+            items.add(asd);
+        }
     }
 
     public void saveListDataDB()
     {
-        mDatabase.child("items").child("1").setValue(items.get(0));
+        try
+        {
+            for (Item item : items)
+            {
+                db.child("items").push().setValue(item);
+            }
+
+        }
+        catch (DatabaseException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Item> retrieve()
+    {
+        db.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                fetchData(dataSnapshot);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                fetchData(dataSnapshot);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return items;
+    }
+
+    private void fetchData(DataSnapshot dataSnapshot)
+    {
+        items.clear();
+
+        for (DataSnapshot ds : dataSnapshot.getChildren())
+        {
+            Item item = ds.getValue(Item.class);
+            items.add(item);
+            
+            addItem(item);
+        }
     }
 }
