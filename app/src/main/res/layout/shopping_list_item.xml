@@ -1,54 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<GridLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/shopping_list_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:columnCount="5"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="wrap_content">
 
     <CheckBox
         android:id="@+id/shopping_list_item_purchased"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_columnWeight=".5"
-        />
+        android:layout_height="65dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="-48dp"
+        android:layout_toStartOf="@+id/shopping_list_item_name"
+        android:scaleX="1.70"
+        android:scaleY="1.70" />
 
     <TextView
         android:id="@+id/shopping_list_item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_columnWeight="1.5"
+        android:layout_width="249dp"
+        android:layout_height="31dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="14dp"
+        android:text="Name"
         android:textColor="#000000"
-        android:text="Name"/>
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/shopping_list_item_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_columnWeight="1"
+        android:layout_alignBottom="@+id/shopping_list_item_purchased"
+        android:layout_alignStart="@+id/shopping_list_item_name"
+        android:text="Category"
         android:textColor="#000000"
-        android:text="Category"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/shopping_list_item_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_columnWeight="1"
+        android:layout_alignBottom="@+id/shopping_list_item_purchased"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="140dp"
+        android:text="Price"
         android:textColor="#000000"
-        android:text="Price"/>
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/shopping_list_item_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_columnWeight="1"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/shopping_list_item_name"
+        android:layout_marginStart="128dp"
+        android:text="Quantity"
         android:textColor="#000000"
-        android:text="Quantity"/>
+        android:textSize="16sp" />
 
-</GridLayout>
+    <ImageButton
+        android:id="@+id/item_edit"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/shopping_list_item_name"
+        android:background="@color/colorPrimary"
+        app:srcCompat="@android:drawable/ic_menu_edit"
+        tools:background="@color/colorPrimary" />
+
+    <ImageButton
+        android:id="@+id/item_delete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/shopping_list_item_name"
+        android:background="@color/colorAccent"
+        app:srcCompat="@drawable/ic_cancel_grey_24dp" />
+
+</RelativeLayout>

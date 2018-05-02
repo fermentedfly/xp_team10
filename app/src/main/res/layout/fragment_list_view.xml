@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context="at.tugraz.xp10.fragments.ListViewFragment">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addItemButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="24dp"
-        android:clickable="true"
-        android:onClick="onAddItem"
-        android:src="@android:drawable/ic_input_add" />
-
     <Button
         android:id="@+id/goShoppingButton"
         android:layout_width="wrap_content"
@@ -28,62 +17,94 @@
         android:background="#ffbb33"
         android:text="Go Shopping" />
 
-    <GridLayout
-        android:id="@+id/listGridLayout"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/shopping_list_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="5"
-        android:orientation="horizontal"
-        tools:context=".GridXMLActivity">
-
+        android:layout_height="81dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
         <CheckBox
-            android:id="@+id/txtCheckBox"
-            android:layout_width="0dp"
+            android:id="@+id/item_isPurchased"
+            android:layout_width="wrap_content"
+            android:layout_height="65dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="15dp"
+            android:scaleX="1.70"
+            android:scaleY="1.70" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addItemButton"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_columnWeight=".5" />
+            android:layout_alignStart="@+id/item_isPurchased"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:onClick="onAddItem"
+            android:src="@android:drawable/ic_input_add" />
 
         <EditText
             android:id="@+id/item_name"
-            android:layout_width="0dp"
+            android:layout_width="204dp"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1.5"
-            android:inputType="none"
-            android:hint="Name" />
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/item_category"
+            android:hint="Name"
+            android:textColor="#000000"
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/item_category"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:inputType="text"
-            android:hint="Category" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="65dp"
+            android:hint="Category"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/item_price"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:inputType="numberDecimal"
-            android:hint="Price" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/item_category"
+            android:layout_marginEnd="103dp"
+            android:hint="Price"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/item_quantity"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:inputType="numberDecimal"
-            android:hint="Qty" />
+            android:layout_alignTop="@+id/item_category"
+            android:layout_centerHorizontal="true"
+            android:hint="Quantity"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
-    </GridLayout>
+        <ImageButton
+            android:id="@+id/item_edit_save"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="42dp"
+            android:src="@android:drawable/ic_menu_save" />
+    </RelativeLayout>
+
 
     <ListView
         android:id="@+id/item_list_view"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_height="428dp"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="50dp">
-    </ListView>
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="83dp"></ListView>
 
 </RelativeLayout>

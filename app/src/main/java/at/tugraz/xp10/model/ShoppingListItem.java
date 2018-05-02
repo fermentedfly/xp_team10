@@ -8,15 +8,17 @@ public class ShoppingListItem {
     private Double quantity;
     private Double unitprice;
     private String category;
+    private String tempId;
     // todo unit
     private Boolean IsPurchased;
 
-    public ShoppingListItem(String name, Double quantity, Double unitprice, String category, Boolean checked) {
+    public ShoppingListItem(String name, Double quantity, Double unitprice, String category, Boolean checked, String tempId) {
         this.name = name;
         this.quantity = quantity;
         this.unitprice = unitprice;
         this.category = category;
         this.IsPurchased = checked;
+        this.tempId = tempId;
     }
 
     public ShoppingListItem() {
@@ -61,5 +63,21 @@ public class ShoppingListItem {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getTempId() {
+        return tempId;
+    }
+
+    public void setTempId(String tempId) {
+        this.tempId = tempId;
+    }
+
+    public Boolean getPurchased() {
+        return IsPurchased;
+    }
+
+    public void setPurchased(Boolean purchased) {
+        IsPurchased = purchased;
     }
 }

@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ public class ListViewFragment extends Fragment {
     private ArrayList<ShoppingListItem> mItemList = new ArrayList<>();
     ShoppingListItemListAdapter mAdapter;
 
+    private Boolean mEditMode;
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -65,7 +68,7 @@ public class ListViewFragment extends Fragment {
             mShoppingListId = getArguments().getString(ARG_SHOPPING_LIST_ID);
             m_Title = getArguments().getString(s_Title);
         }
-
+        mEditMode = false;
     }
 
     @Override
@@ -88,6 +91,11 @@ public class ListViewFragment extends Fragment {
 
             }
         });
+        CheckBox isPurchasedBox = v.findViewById(R.id.item_isPurchased);
+        isPurchasedBox.setVisibility(View.INVISIBLE);
+
+        ImageButton editSaveBtn = v.findViewById(R.id.item_edit_save);
+        editSaveBtn.setVisibility(View.INVISIBLE);
 
         SetTitle();
 
@@ -109,8 +117,11 @@ public class ListViewFragment extends Fragment {
 
         ListView mListView = v.findViewById(R.id.item_list_view);
 
-        mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList);
+        mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList, this);
         mListView.setAdapter(mAdapter);
+
+
+
 
         return v;
     }
@@ -164,9 +175,9 @@ public class ListViewFragment extends Fragment {
             Double unitprice = Double.parseDouble(((EditText) getView().findViewById(R.id.item_price)).getText().toString());
             Double quanitiy = Double.parseDouble(((EditText) getView().findViewById(R.id.item_quantity)).getText().toString());
 
-            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unitprice, category, false);
-
-            mShoppingListItems.push().setValue(item);
+            String listKey = mShoppingListItems.push().getKey();
+            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unitprice, category, false, listKey);
+            mShoppingListItems.child(listKey).setValue(item);
 
             ((EditText) getView().findViewById(R.id.item_name)).setText("");
             ((EditText) getView().findViewById(R.id.item_category)).setText("");
@@ -190,11 +201,30 @@ public class ListViewFragment extends Fragment {
         }
 
         mAdapter.notifyDataSetChanged();
-
     }
 
+    public void deleteItem(String id)
+    {
+        mShoppingListItems.child(id).removeValue();
+    }
+
+    public void editItem(ShoppingListItem item){
+        mEditMode = true;
+
+        FloatingActionButton addItemBtn = getView().findViewById(R.id.addItemButton);
+        addItemBtn.setVisibility(View.INVISIBLE);
+        CheckBox isPurchasedBox = getView().findViewById(R.id.item_isPurchased);
+        isPurchasedBox.setVisibility(View.VISIBLE);
+        ImageButton editSaveBtn = getView().findViewById(R.id.item_edit_save);
+        editSaveBtn.setVisibility(View.VISIBLE);
 
 
+        ((EditText) getView().findViewById(R.id.item_name)).setText(item.getName());
+        ((EditText) getView().findViewById(R.id.item_category)).setText(item.getCategory());
+        ((EditText) getView().findViewById(R.id.item_price)).setText(String.format("%.2f", item.getUnitprice()));
+        ((EditText) getView().findViewById(R.id.item_quantity)).setText(String.format("%.0f", item.getQuantity()));
+        ((CheckBox) getView().findViewById(R.id.item_isPurchased)).setChecked(item.getIsPurchased());
 
-
+        //TODO: Change Buttons after pressing save edit.
+    }
 }
