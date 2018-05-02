@@ -42,6 +42,7 @@
                 android:orientation="horizontal"
                 tools:context=".GridXMLActivity">
 
+
                 <CheckBox
                     android:id="@+id/txtCheckBox"
                     android:layout_width="0dp"
@@ -53,7 +54,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1.5"
-                    android:inputType="text"
+                    android:inputType="none"
                     android:text="Name" />
 
                 <EditText

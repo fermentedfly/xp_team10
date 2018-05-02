@@ -3,18 +3,22 @@ package at.tugraz.xp10.model;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-class ShoppingListItem {
+public class ShoppingListItem {
     private String shoppingListId;
     private String name;
     private Double quantity;
+    private Double unitprice;
+    private String category;
     // todo unit
-    private Boolean checked;
+    private Boolean IsPurchased;
 
-    public ShoppingListItem(String shoppingListId, String name, Double quantity, Boolean checked) {
+    public ShoppingListItem(String shoppingListId, String name, Double quantity, Double unitprice, String category, Boolean checked) {
         this.shoppingListId = shoppingListId;
         this.name = name;
         this.quantity = quantity;
-        this.checked = checked;
+        this.unitprice = unitprice;
+        this.category = category;
+        this.IsPurchased = checked;
     }
 
     public ShoppingListItem() {
@@ -45,11 +49,27 @@ class ShoppingListItem {
         this.quantity = quantity;
     }
 
-    public Boolean getChecked() {
-        return checked;
+    public Boolean getIsPurchased() {
+        return IsPurchased;
     }
 
-    public void setChecked(Boolean checked) {
-        this.checked = checked;
+    public void setIsPurchased(Boolean checked) {
+        this.IsPurchased = checked;
+    }
+
+    public Double getUnitprice() {
+        return unitprice;
+    }
+
+    public void setUnitprice(Double unitprice) {
+        this.unitprice = unitprice;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

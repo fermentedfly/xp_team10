@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import at.tugraz.xp10.Item;
+import at.tugraz.xp10.model.ShoppingListItem;
 import at.tugraz.xp10.R;
 
 
@@ -45,7 +46,7 @@ import at.tugraz.xp10.R;
  * create an instance of this fragment.
  */
 public class ListViewFragment extends Fragment implements View.OnClickListener {
-    private List<Item> items;
+    private List<ShoppingListItem> items;
     private HashMap a = new HashMap();
     private DatabaseReference db;
     //private FirebaseHelper dbHelper;
@@ -112,6 +113,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
 
         items = new ArrayList<>();
         db = FirebaseDatabase.getInstance().getReference("/items");
+        retrieve();
         //itemsAdapter = new ArrayAdapter<Item>(this, R.id.listGridLayout, retrieve());
 
         /*
@@ -166,13 +168,13 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    public void addItem(Item item)
+    public void addItem(ShoppingListItem item)
     {
-        boolean isPurchased = item.isPurchased;
-        String name = item.name;
-        String category = item.category;
-        Long price = item.price;
-        Long quantity = item.quantity;
+        boolean isPurchased = item.getIsPurchased();
+        String name = item.getName();
+        String category = item.getCategory();
+        Double price = item.getUnitprice();
+        Double quantity = item.getQuantity();
 
         GridLayout gridView = getView().findViewById(R.id.listGridLayout);
         CheckBox cb = new CheckBox(gridView.getContext());
@@ -280,7 +282,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
                 saveListData();
                 saveListDataDB();
                 // go to next fragment
-                retrieve();
+                // ;
                 break;
             default:
                 break;
@@ -317,10 +319,12 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
 
     public void saveListData()
     {
+        getView().findViewById(R.id.listGridLayout);
+
         for (int i = 0; i < 10; i++)
         {
-            Item asd = new Item( "Ketchup2", "Essen", new Long(5 + i), new Long(i));
-            items.add(asd);
+            //ShoppingListItem asd = new ShoppingListItem( "Ketchup2", "Essen", new Long(5 + i), new Long(i), );
+            //items.add(asd);
         }
     }
 
@@ -328,7 +332,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     {
         try
         {
-            for (Item item : items)
+            for (ShoppingListItem item : items)
             {
                 db.push().setValue(item);
             }
@@ -340,7 +344,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public List<Item> retrieve()
+    public List<ShoppingListItem> retrieve()
     {
         db.addValueEventListener(new ValueEventListener() {
             @Override
@@ -360,10 +364,12 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     private void fetchData(DataSnapshot dataSnapshot)
     {
         items.clear();
+        GridLayout gridLayout = getActivity().findViewById(R.id.listGridLayout);
+        gridLayout.removeAllViews();
 
         for (DataSnapshot ds : dataSnapshot.getChildren())
         {
-            Item item = ds.getValue(Item.class);
+            ShoppingListItem item = ds.getValue(ShoppingListItem.class);
             items.add(item);
 
             addItem(item);
