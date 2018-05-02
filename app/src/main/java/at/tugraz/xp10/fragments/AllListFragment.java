@@ -24,7 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import at.tugraz.xp10.MainActivity;
@@ -34,31 +33,31 @@ import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 import at.tugraz.xp10.util.ListEntry;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * interface.
- */
 public class AllListFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String TAG = "AllListFragment";
-    // TODO: Customize parameters
     private int mColumnCount = 2;
     private ArrayList<ListEntry> mShoppingLists = new ArrayList<>();
     private HashMap<String, ShoppingList> mShoppingMap = new HashMap<>();
     private AllListRecyclerViewAdapter mAdapter;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+    private DetailListener mListener = new DetailListener() {
+        @Override
+        public void onDetail(ListEntry entry) {
+            Log.d(TAG, "Item clicked: " + entry.id);
+
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            Fragment fragment = ListViewFragment.newInstance("foo", "bar", "foobar");
+            fragmentTransaction.replace(R.id.content_frame, fragment, "ListSetting").addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+    };
+
     public AllListFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static AllListFragment newInstance(int columnCount) {
         AllListFragment fragment = new AllListFragment();
         Bundle args = new Bundle();
@@ -91,9 +90,8 @@ public class AllListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mAdapter = new AllListRecyclerViewAdapter(mShoppingLists);
+            mAdapter = new AllListRecyclerViewAdapter(mShoppingLists, mListener);
             recyclerView.setAdapter(mAdapter);
-
         }
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("My Lists");
@@ -103,15 +101,10 @@ public class AllListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                Bundle bundle = new Bundle();
+
                 //TODO: has to be replaced by title from database
-                bundle.putString("Title", "My List");
-
-
-                Fragment fragment = new ListSettingFragment();
-                fragment.setArguments(bundle);
+                Fragment fragment = ListSettingFragment.newInstance("Title");
                 fragmentTransaction.replace(R.id.content_frame, fragment, "ListSetting").addToBackStack(null);
                 fragmentTransaction.commit();
             }
@@ -154,18 +147,17 @@ public class AllListFragment extends Fragment {
 
                         Log.d(TAG, "got Shoppinglist " + dataSnapshot.getValue(ShoppingList.class).toString());
                         mAdapter.notifyDataSetChanged();
-
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
             }
         }
-
     }
 
-
+    public interface DetailListener {
+        void onDetail(ListEntry entry);
+    }
 }
