@@ -154,22 +154,24 @@ public class ListSettingFragment extends Fragment  {
 
         Map<String, String> users = new HashMap<String, String>();
         List<Chip> selectedUsers = (List<Chip>) mUsers.getSelectedChipList();
-
-        users.put(mAuth.getCurrentUser().getUid(),Constants.OWNER);
-
+        
         for(Chip selUser : selectedUsers) {
             users.put(selUser.getId().toString(), Constants.MEMBER);
         }
+
+        users.put(mAuth.getCurrentUser().getUid(),Constants.OWNER);
+
         shoppingList.setMembers(users);
 
         String listKey = mShoppingListRef.push().getKey();
 
         mShoppingListRef.child(listKey).setValue(shoppingList);
 
-        Map<String, Object> newList = new HashMap<>();
-        newList.put(listKey, true);
-        FirebaseDatabase.getInstance().getReference().child("users").child(mAuth.getCurrentUser().getUid()).child("shoppinglists").updateChildren(newList);
-
+        for (String uid : shoppingList.getMembers().keySet()) {
+            Map<String, Object> newList = new HashMap<>();
+            newList.put(listKey, true);
+            mUserRef.child(uid).child("shoppinglists").updateChildren(newList);
+        }
         closeFragment();
     }
 
@@ -191,7 +193,9 @@ public class ListSettingFragment extends Fragment  {
     }
 
     private void addUserToChip(User user, String key) {
-        mContactList.add(new Chip(key, user.getFirstName() + " " + user.getLastName(), user.geteMail()));
+        if (!key.equals(mAuth.getCurrentUser().getUid())) {
+            mContactList.add(new Chip(key, user.getFirstName() + " " + user.getLastName(), user.geteMail()));
+        }
     }
 
 
