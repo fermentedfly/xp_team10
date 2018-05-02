@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.GridView;
+import android.widget.ListView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import at.tugraz.xp10.Item;
+import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
 import at.tugraz.xp10.model.ShoppingListItem;
 import at.tugraz.xp10.R;
 
@@ -65,6 +67,9 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
+    private ArrayList<ShoppingListItem> itemList = new ArrayList<>();
+
+
     public ListViewFragment() {
         // Required empty public constructor
     }
@@ -96,6 +101,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
             m_Title = getArguments().getString(s_Title);
         }
+
     }
 
     @Override
@@ -113,7 +119,16 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
 
         items = new ArrayList<>();
         db = FirebaseDatabase.getInstance().getReference("/items");
-        retrieve();
+
+        ListView mListView = v.findViewById(R.id.item_list_view);
+
+        itemList.add(new ShoppingListItem("null", "Name1", 1.0, 5.0, "Category1", false));
+        itemList.add(new ShoppingListItem("null", "Name2", 2.0, 3.0, "Category2", true));
+        ShoppingListItemListAdapter adapter = new ShoppingListItemListAdapter(getContext(), itemList);
+        mListView.setAdapter(adapter);
+
+
+//        retrieve();
         //itemsAdapter = new ArrayAdapter<Item>(this, R.id.listGridLayout, retrieve());
 
         /*
@@ -365,7 +380,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     {
         items.clear();
         GridLayout gridLayout = getActivity().findViewById(R.id.listGridLayout);
-        gridLayout.removeAllViews();
+//        gridLayout.removeAllViews();
 
         for (DataSnapshot ds : dataSnapshot.getChildren())
         {
