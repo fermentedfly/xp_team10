@@ -115,55 +115,102 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    public void onAddItem(View view)
+    public void addItem()
     {
-        Log.i("info", "onAddItem");
-                GridLayout layout = getView().findViewById(R.id.listGridLayout);
-                CheckBox cb = new CheckBox(layout.getContext());
-                GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
-                param.width = 0;
-                cb.setLayoutParams(param);
-                layout.addView(cb);
+        GridLayout layout = getView().findViewById(R.id.listGridLayout);
+        CheckBox cb = new CheckBox(layout.getContext());
+        GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
+        param.width = 0;
+        cb.setLayoutParams(param);
+        layout.addView(cb);
 
-                EditText tv = new EditText(layout.getContext());
-                tv.setText("Ketchup");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+        final EditText tv = new EditText(layout.getContext());
+        tv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && tv.getText().toString().equals("Name")) {
+                    tv.setText("");
+                }
+                else {
+                    if (tv.getText().length() == 0)
+                        tv.setText("Name");
+                }
+            }
+        });
+        tv.setText("Name");
+        param = new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
+        param.width = 0;
+        tv.setLayoutParams(param);
+        layout.addView(tv);
 
-                tv = new EditText(layout.getContext());
-                tv.setText("Essen");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+        final EditText tv2 = new EditText(layout.getContext());
+        tv2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && tv2.getText().toString().equals("Category")) {
+                    tv2.setText("");
+                }
+                else {
+                    if (tv2.getText().length() == 0)
+                        tv2.setText("Category");
+                }
+            }
+        });
+        tv2.setText("Category");
+        param = new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
+        param.width = 0;
+        tv2.setLayoutParams(param);
+        layout.addView(tv2);
 
-                tv = new EditText(layout.getContext());
-                tv.setText("5€");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+        final EditText tv3 = new EditText(layout.getContext());
+        tv3.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && tv3.getText().toString().equals("Price")) {
+                    tv3.setText("");
+                }
+                else {
+                    if (tv3.getText().length() == 0)
+                        tv3.setText("Price");
+                }
+            }
+        });
+        tv3.setText("Price");
+        tv3.setInputType(InputType.TYPE_CLASS_NUMBER);
+        param = new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
+        param.width = 0;
+        tv3.setLayoutParams(param);
+        layout.addView(tv3);
 
-                tv = new EditText(layout.getContext());
-                tv.setText("2");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+        final EditText tv4 = new EditText(layout.getContext());
+        tv4.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && tv4.getText().toString().equals("Qty")) {
+                    tv4.setText("");
+                }
+                else {
+                    if (tv4.getText().length() == 0)
+                        tv4.setText("Qty");
+                }
+            }
+        });
+        tv4.setText("Qty");
+        tv4.setInputType(InputType.TYPE_CLASS_NUMBER);
+        param = new GridLayout.LayoutParams(GridLayout.spec(
+                GridLayout.UNDEFINED,GridLayout.FILL),
+                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
+        param.width = 0;
+        tv4.setLayoutParams(param);
+        layout.addView(tv4);
     }
 
     @Override
@@ -171,52 +218,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     {
         switch (v.getId()) {
             case R.id.addItemButton:
-                GridLayout layout = getView().findViewById(R.id.listGridLayout);
-                CheckBox cb = new CheckBox(layout.getContext());
-                GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
-                param.width = 0;
-                cb.setLayoutParams(param);
-                layout.addView(cb);
-
-                EditText tv = new EditText(layout.getContext());
-                tv.setText("Ketchup");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("Essen");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("5€");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("2");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
+                addItem();
                 break;
 
             case R.id.goShoppingButton:
