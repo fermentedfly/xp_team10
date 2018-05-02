@@ -44,36 +44,36 @@
             android:layout_columnWeight=".5" />
 
         <EditText
-            android:id="@+id/txtProductName"
+            android:id="@+id/item_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1.5"
             android:inputType="none"
-            android:text="Name" />
+            android:hint="Name" />
 
         <EditText
-            android:id="@+id/txtCategoryName"
+            android:id="@+id/item_category"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:inputType="text"
-            android:text="Category" />
+            android:hint="Category" />
 
         <EditText
-            android:id="@+id/txtPrice"
+            android:id="@+id/item_price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:inputType="numberDecimal"
-            android:text="Price" />
+            android:hint="Price" />
 
         <EditText
-            android:id="@+id/txtQuantity"
+            android:id="@+id/item_quantity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:inputType="numberDecimal"
-            android:text="Qty" />
+            android:hint="Qty" />
 
     </GridLayout>
 

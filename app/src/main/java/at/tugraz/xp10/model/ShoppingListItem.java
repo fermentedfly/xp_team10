@@ -4,7 +4,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class ShoppingListItem {
-    private String shoppingListId;
     private String name;
     private Double quantity;
     private Double unitprice;
@@ -12,8 +11,7 @@ public class ShoppingListItem {
     // todo unit
     private Boolean IsPurchased;
 
-    public ShoppingListItem(String shoppingListId, String name, Double quantity, Double unitprice, String category, Boolean checked) {
-        this.shoppingListId = shoppingListId;
+    public ShoppingListItem(String name, Double quantity, Double unitprice, String category, Boolean checked) {
         this.name = name;
         this.quantity = quantity;
         this.unitprice = unitprice;
@@ -23,14 +21,6 @@ public class ShoppingListItem {
 
     public ShoppingListItem() {
 
-    }
-
-    public String getShoppingListId() {
-        return shoppingListId;
-    }
-
-    public void setShoppingListId(String shoppingListId) {
-        this.shoppingListId = shoppingListId;
     }
 
     public String getName() {

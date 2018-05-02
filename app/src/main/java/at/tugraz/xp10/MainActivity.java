@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity
                 title = "Overview";
                 break;
             case R.id.nav_desiredlist:
-                fragment = (Fragment) ListViewFragment.newInstance("foo", "bar", "");
+                fragment = (Fragment) ListViewFragment.newInstance("foo", "bar");
                 title = "List View";
                 break;
             case R.id.nav_logout:

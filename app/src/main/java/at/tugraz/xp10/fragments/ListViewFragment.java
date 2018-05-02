@@ -7,87 +7,52 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import at.tugraz.xp10.Item;
 import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
 import at.tugraz.xp10.model.ShoppingListItem;
 import at.tugraz.xp10.R;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ListViewFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ListViewFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ListViewFragment extends Fragment implements View.OnClickListener {
-    private List<ShoppingListItem> items;
-    private HashMap a = new HashMap();
-    private DatabaseReference db;
-    //private FirebaseHelper dbHelper;
-    private ArrayAdapter<Item> itemsAdapter;
+public class ListViewFragment extends Fragment {
+    private DatabaseReference mDB;
+    private DatabaseReference mShoppingListItems;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_SHOPPING_LIST_ID = "shoppingListId";
     private static final String s_Title = "Title";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mShoppingListId = "";
     private String m_Title = "";
 
     private OnFragmentInteractionListener mListener;
 
-    private ArrayList<ShoppingListItem> itemList = new ArrayList<>();
+    private ArrayList<ShoppingListItem> mItemList = new ArrayList<>();
+    ShoppingListItemListAdapter mAdapter;
 
 
     public ListViewFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListViewFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ListViewFragment newInstance(String param1, String param2, String title) {
+
+    public static ListViewFragment newInstance(String shoppingListId, String title) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_SHOPPING_LIST_ID, shoppingListId);
         args.putString(s_Title, title);
         fragment.setArguments(args);
         return fragment;
@@ -97,8 +62,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mShoppingListId = getArguments().getString(ARG_SHOPPING_LIST_ID);
             m_Title = getArguments().getString(s_Title);
         }
 
@@ -107,59 +71,50 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v =  inflater.inflate(R.layout.fragment_list_view, container, false);
 
         FloatingActionButton addItemBtn = v.findViewById(R.id.addItemButton);
-        addItemBtn.setOnClickListener(this);
+        addItemBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addItemToDB();
+            }
+        });
         Button goShoppingBtn = v.findViewById(R.id.goShoppingButton);
-        goShoppingBtn.setOnClickListener(this);
+        goShoppingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         SetTitle();
 
-        items = new ArrayList<>();
-        db = FirebaseDatabase.getInstance().getReference("/items");
-
-        ListView mListView = v.findViewById(R.id.item_list_view);
-
-        itemList.add(new ShoppingListItem("null", "Name1", 1.0, 5.0, "Category1", false));
-        itemList.add(new ShoppingListItem("null", "Name2", 2.0, 3.0, "Category2", true));
-        ShoppingListItemListAdapter adapter = new ShoppingListItemListAdapter(getContext(), itemList);
-        mListView.setAdapter(adapter);
+        mDB = FirebaseDatabase.getInstance().getReference();
+        mShoppingListItems = mDB.child("items").child(mShoppingListId);
 
 
-//        retrieve();
-        //itemsAdapter = new ArrayAdapter<Item>(this, R.id.listGridLayout, retrieve());
-
-        /*
-
-        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference mDatabaseReference = mFirebaseDatabase.getReference();
-
-        Map<String, String> map = new HashMap<>();
-        map.put("Name","Jas");
-        map.put("Age","25");
-        map.put("Country","USA");
-        mDatabaseReference.setValue(map);
-
-        Log.e("Data snapshot", "waaaaaaaaas");
-
-        mDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        mShoppingListItems.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e("Data snapshot","Fetched Name2");
+                fetchData(dataSnapshot);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e("Data snapshot error",""+databaseError);
+
             }
-        });*/
+        });
+
+        ListView mListView = v.findViewById(R.id.item_list_view);
+
+        mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList);
+        mListView.setAdapter(mAdapter);
 
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -183,139 +138,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    public void addItem(ShoppingListItem item)
-    {
-        boolean isPurchased = item.getIsPurchased();
-        String name = item.getName();
-        String category = item.getCategory();
-        Double price = item.getUnitprice();
-        Double quantity = item.getQuantity();
-
-        GridLayout gridView = getView().findViewById(R.id.listGridLayout);
-        CheckBox cb = new CheckBox(gridView.getContext());
-        GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
-        param.width = 0;
-        cb.setLayoutParams(param);
-        cb.setChecked(isPurchased);
-        gridView.addView(cb);
-
-        EditText tv = new EditText(gridView.getContext());
-        tv.setText(name);
-        param = new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
-        param.width = 0;
-        tv.setLayoutParams(param);
-        gridView.addView(tv);
-
-        tv = new EditText(gridView.getContext());
-        tv.setText(category);
-        param = new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-        param.width = 0;
-        tv.setLayoutParams(param);
-        gridView.addView(tv);
-
-        tv = new EditText(gridView.getContext());
-        tv.setText(price.toString());
-        tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-        param = new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-        param.width = 0;
-        tv.setLayoutParams(param);
-        gridView.addView(tv);
-
-        tv = new EditText(gridView.getContext());
-        tv.setText(quantity.toString());
-        tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-        param = new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-        param.width = 0;
-        tv.setLayoutParams(param);
-        gridView.addView(tv);
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        switch (v.getId()) {
-            case R.id.addItemButton:
-                GridLayout layout = getView().findViewById(R.id.listGridLayout);
-                CheckBox cb = new CheckBox(layout.getContext());
-                GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
-                param.width = 0;
-                cb.setLayoutParams(param);
-                layout.addView(cb);
-
-                EditText tv = new EditText(layout.getContext());
-                tv.setText("Ketchup");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("Essen");
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("5€");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-
-                tv = new EditText(layout.getContext());
-                tv.setText("2");
-                tv.setInputType(InputType.TYPE_CLASS_NUMBER);
-                param = new GridLayout.LayoutParams(GridLayout.spec(
-                        GridLayout.UNDEFINED,GridLayout.FILL),
-                        GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-                param.width = 0;
-                tv.setLayoutParams(param);
-                layout.addView(tv);
-                break;
-
-            case R.id.goShoppingButton:
-                saveListData();
-                saveListDataDB();
-                // go to next fragment
-                // ;
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -332,63 +155,42 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void saveListData()
-    {
-        getView().findViewById(R.id.listGridLayout);
 
-        for (int i = 0; i < 10; i++)
-        {
-            //ShoppingListItem asd = new ShoppingListItem( "Ketchup2", "Essen", new Long(5 + i), new Long(i), );
-            //items.add(asd);
+    private void addItemToDB()
+    {
+        try {
+            String name = ((EditText) getView().findViewById(R.id.item_name)).getText().toString();
+            String category = ((EditText) getView().findViewById(R.id.item_category)).getText().toString();
+            Double unitprice = Double.parseDouble(((EditText) getView().findViewById(R.id.item_price)).getText().toString());
+            Double quanitiy = Double.parseDouble(((EditText) getView().findViewById(R.id.item_quantity)).getText().toString());
+
+            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unitprice, category, false);
+
+            mShoppingListItems.push().setValue(item);
+
+            ((EditText) getView().findViewById(R.id.item_name)).setText("");
+            ((EditText) getView().findViewById(R.id.item_category)).setText("");
+            ((EditText) getView().findViewById(R.id.item_price)).setText("");
+            ((EditText) getView().findViewById(R.id.item_quantity)).setText("");
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void saveListDataDB()
-    {
-        try
-        {
-            for (ShoppingListItem item : items)
-            {
-                db.push().setValue(item);
-            }
-
-        }
-        catch (DatabaseException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public List<ShoppingListItem> retrieve()
-    {
-        db.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                fetchData(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        return items;
-    }
 
     private void fetchData(DataSnapshot dataSnapshot)
     {
-        items.clear();
-        GridLayout gridLayout = getActivity().findViewById(R.id.listGridLayout);
-//        gridLayout.removeAllViews();
+        mItemList.clear();
 
         for (DataSnapshot ds : dataSnapshot.getChildren())
         {
             ShoppingListItem item = ds.getValue(ShoppingListItem.class);
-            items.add(item);
-
-            addItem(item);
+            mItemList.add(item);
         }
+
+        mAdapter.notifyDataSetChanged();
+
     }
 
 
