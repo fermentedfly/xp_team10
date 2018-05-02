@@ -162,7 +162,13 @@ public class ListSettingFragment extends Fragment  {
         }
         shoppingList.setMembers(users);
 
-        mShoppingListRef.push().setValue(shoppingList);
+        String listKey = mShoppingListRef.push().getKey();
+
+        mShoppingListRef.child(listKey).setValue(shoppingList);
+
+        Map<String, Object> newList = new HashMap<>();
+        newList.put(listKey, true);
+        FirebaseDatabase.getInstance().getReference().child("users").child(mAuth.getCurrentUser().getUid()).child("shoppinglists").updateChildren(newList);
 
         closeFragment();
     }

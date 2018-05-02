@@ -32,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import at.tugraz.xp10.fragments.AllListOverviewFragment;
+import at.tugraz.xp10.fragments.AllListFragment;
 import at.tugraz.xp10.fragments.ListSettingFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.TestFragment;
@@ -43,11 +43,11 @@ import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener, ListSettingFragment.OnFragmentInteractionListener
-{
+        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener, ListSettingFragment.OnFragmentInteractionListener {
 
+    private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
-
+    public User currentUser = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // set startview of application
-        displayView(R.id.nav_lists);
     }
 
     @Override
@@ -74,6 +72,11 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
 
         mAuth = FirebaseAuth.getInstance();
+
+        getUser();
+
+        displayView(R.id.nav_lists);
+
     }
 
     @Override
@@ -122,7 +125,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (viewId) {
             case R.id.nav_lists:
-                fragment = (Fragment) AllListOverviewFragment.newInstance();
+                fragment = (Fragment) AllListFragment.newInstance(2);
                 title = "Overview";
                 break;
             case R.id.nav_desiredlist:
@@ -172,8 +175,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     // TODO remove, just firebase test functions to see how it works...
 
     private void testFirebase() {
@@ -191,8 +192,8 @@ public class MainActivity extends AppCompatActivity
             public void onComplete(@NonNull Task<Void> task) {
                 Log.d("SOMETHING", "onComplete: " + task.isSuccessful());
 
-                if(!task.isSuccessful()) {
-                    Log.d("ERROR", "onComplete: ",task.getException());
+                if (!task.isSuccessful()) {
+                    Log.d("ERROR", "onComplete: ", task.getException());
                 }
             }
         });
@@ -205,29 +206,29 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void firebaseGetLists() {
+    private void getUser() {
+
+        currentUser = new User();
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-        // get all lists for user X
-
         String uid = mAuth.getCurrentUser().getUid();
 
+        Query userQuery = database.child("users").child(uid);
+        userQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                currentUser.setData(dataSnapshot.getValue(User.class));
+                Log.d(TAG, "got User " + currentUser.toString());
+            }
 
-            Query userQuery = database.child("users").child(uid);
-            userQuery.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                    Log.d("Something", "onDataChange: " + user.toString());
-                }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            }
+        });
 
     }
 
 }
+
