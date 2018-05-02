@@ -1,5 +1,6 @@
 package at.tugraz.xp10.model;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.HashMap;
@@ -11,7 +12,10 @@ public class User {
     private String lastName;
     private HashMap<String, Boolean> shoppinglists;
 
+    private UserListener userListener = null;
+
     public User() {
+        this.shoppinglists = new HashMap<>();
     }
 
     public User(String eMail, String firstName, String lastName) {
@@ -20,6 +24,7 @@ public class User {
         this.lastName = lastName;
         this.shoppinglists = new HashMap<>();
     }
+
 
     public String geteMail() {
         return eMail;
@@ -61,5 +66,26 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", shoppinglists=" + shoppinglists +
                 '}';
+    }
+
+    @Exclude
+    public void setData(User data) {
+        this.eMail = data.eMail;
+        this.firstName = data.firstName;
+        this.lastName = data.lastName;
+        this.shoppinglists = data.shoppinglists;
+
+        if (userListener != null) {
+            userListener.onLoaded(this);
+        }
+    }
+
+    public interface UserListener {
+        public void onLoaded(User user);
+    }
+
+    @Exclude
+    public void setUserListener(UserListener listener) {
+        this.userListener = listener;
     }
 }
