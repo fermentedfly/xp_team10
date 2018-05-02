@@ -73,6 +73,8 @@ public class AllListFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        setHasOptionsMenu(false);
     }
 
     @Override
@@ -104,7 +106,7 @@ public class AllListFragment extends Fragment {
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
                 //TODO: has to be replaced by title from database
-                Fragment fragment = ListSettingFragment.newInstance("Title");
+                Fragment fragment = ListSettingFragment.newInstance(null);
                 fragmentTransaction.replace(R.id.content_frame, fragment, "ListSetting").addToBackStack(null);
                 fragmentTransaction.commit();
             }
