@@ -136,9 +136,6 @@ public class MainActivity extends AppCompatActivity
                 FirebaseAuth.getInstance().signOut();
                 gotoLoginActivity();
                 break;
-            case R.id.nav_testDatabase:  // TODO delete this, is only for testing purpose
-                testFirebase();
-                return;
         }
 
         // clear all left fragments from the backstack
