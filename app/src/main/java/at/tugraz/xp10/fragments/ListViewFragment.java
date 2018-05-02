@@ -5,9 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -66,6 +71,8 @@ public class ListViewFragment extends Fragment {
             m_Title = getArguments().getString(s_Title);
         }
 
+        setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -113,6 +120,27 @@ public class ListViewFragment extends Fragment {
         mListView.setAdapter(mAdapter);
 
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.list_view, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                Fragment fragment = ListSettingFragment.newInstance(mShoppingListId);
+                fragmentTransaction.replace(R.id.content_frame, fragment, "ListSetting").addToBackStack(null);
+                fragmentTransaction.commit();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void onButtonPressed(Uri uri) {

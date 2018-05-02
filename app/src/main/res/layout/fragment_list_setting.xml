@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="at.tugraz.xp10.fragments.ListSettingFragment"
     android:background="@color/colorWhite">
 
@@ -33,11 +32,6 @@
                 android:inputType="textMultiLine"
                 android:hint="@string/description" />
 
-            <!--<com.pchmn.materialchips.ChipsInput-->
-            <!---->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:hint="Enter a name" />-->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,9 +76,5 @@
                 android:layout_weight="1"
                 android:text="@string/save" />
         </LinearLayout>
-
-
-
     </RelativeLayout>
-
 </FrameLayout>
