@@ -7,59 +7,52 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.GridLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
+import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
+import at.tugraz.xp10.model.ShoppingListItem;
 import at.tugraz.xp10.R;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ListViewFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ListViewFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ListViewFragment extends Fragment implements View.OnClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class ListViewFragment extends Fragment {
+    private DatabaseReference mDB;
+    private DatabaseReference mShoppingListItems;
+
+    private static final String ARG_SHOPPING_LIST_ID = "shoppingListId";
     private static final String s_Title = "Title";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mShoppingListId = "";
     private String m_Title = "";
 
     private OnFragmentInteractionListener mListener;
+
+    private ArrayList<ShoppingListItem> mItemList = new ArrayList<>();
+    ShoppingListItemListAdapter mAdapter;
+
 
     public ListViewFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListViewFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ListViewFragment newInstance(String param1, String param2, String title) {
+
+    public static ListViewFragment newInstance(String shoppingListId, String title) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_SHOPPING_LIST_ID, shoppingListId);
         args.putString(s_Title, title);
         fragment.setArguments(args);
         return fragment;
@@ -69,29 +62,59 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mShoppingListId = getArguments().getString(ARG_SHOPPING_LIST_ID);
             m_Title = getArguments().getString(s_Title);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v =  inflater.inflate(R.layout.fragment_list_view, container, false);
 
         FloatingActionButton addItemBtn = v.findViewById(R.id.addItemButton);
-        addItemBtn.setOnClickListener(this);
+        addItemBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addItemToDB();
+            }
+        });
         Button goShoppingBtn = v.findViewById(R.id.goShoppingButton);
-        goShoppingBtn.setOnClickListener(this);
+        goShoppingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         SetTitle();
+
+        mDB = FirebaseDatabase.getInstance().getReference();
+        mShoppingListItems = mDB.child("items").child(mShoppingListId);
+
+
+        mShoppingListItems.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                fetchData(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        ListView mListView = v.findViewById(R.id.item_list_view);
+
+        mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList);
+        mListView.setAdapter(mAdapter);
 
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -115,132 +138,7 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    public void addItem()
-    {
-        GridLayout layout = getView().findViewById(R.id.listGridLayout);
-        CheckBox cb = new CheckBox(layout.getContext());
-        GridLayout.LayoutParams param= new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,0.5f));
-        param.width = 0;
-        cb.setLayoutParams(param);
-        layout.addView(cb);
-
-        final EditText tv = new EditText(layout.getContext());
-        tv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && tv.getText().toString().equals("Name")) {
-                    tv.setText("");
-                }
-                else {
-                    if (tv.getText().length() == 0)
-                        tv.setText("Name");
-                }
-            }
-        });
-        tv.setText("Name");
-        param = new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1.5f));
-        param.width = 0;
-        tv.setLayoutParams(param);
-        layout.addView(tv);
-
-        final EditText tv2 = new EditText(layout.getContext());
-        tv2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && tv2.getText().toString().equals("Category")) {
-                    tv2.setText("");
-                }
-                else {
-                    if (tv2.getText().length() == 0)
-                        tv2.setText("Category");
-                }
-            }
-        });
-        tv2.setText("Category");
-        param = new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-        param.width = 0;
-        tv2.setLayoutParams(param);
-        layout.addView(tv2);
-
-        final EditText tv3 = new EditText(layout.getContext());
-        tv3.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && tv3.getText().toString().equals("Price")) {
-                    tv3.setText("");
-                }
-                else {
-                    if (tv3.getText().length() == 0)
-                        tv3.setText("Price");
-                }
-            }
-        });
-        tv3.setText("Price");
-        tv3.setInputType(InputType.TYPE_CLASS_NUMBER);
-        param = new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-        param.width = 0;
-        tv3.setLayoutParams(param);
-        layout.addView(tv3);
-
-        final EditText tv4 = new EditText(layout.getContext());
-        tv4.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && tv4.getText().toString().equals("Qty")) {
-                    tv4.setText("");
-                }
-                else {
-                    if (tv4.getText().length() == 0)
-                        tv4.setText("Qty");
-                }
-            }
-        });
-        tv4.setText("Qty");
-        tv4.setInputType(InputType.TYPE_CLASS_NUMBER);
-        param = new GridLayout.LayoutParams(GridLayout.spec(
-                GridLayout.UNDEFINED,GridLayout.FILL),
-                GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL,1f));
-        param.width = 0;
-        tv4.setLayoutParams(param);
-        layout.addView(tv4);
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        switch (v.getId()) {
-            case R.id.addItemButton:
-                addItem();
-                break;
-
-            case R.id.goShoppingButton:
-                // go to next fragment
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -256,4 +154,47 @@ public class ListViewFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+
+    private void addItemToDB()
+    {
+        try {
+            String name = ((EditText) getView().findViewById(R.id.item_name)).getText().toString();
+            String category = ((EditText) getView().findViewById(R.id.item_category)).getText().toString();
+            Double unitprice = Double.parseDouble(((EditText) getView().findViewById(R.id.item_price)).getText().toString());
+            Double quanitiy = Double.parseDouble(((EditText) getView().findViewById(R.id.item_quantity)).getText().toString());
+
+            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unitprice, category, false);
+
+            mShoppingListItems.push().setValue(item);
+
+            ((EditText) getView().findViewById(R.id.item_name)).setText("");
+            ((EditText) getView().findViewById(R.id.item_category)).setText("");
+            ((EditText) getView().findViewById(R.id.item_price)).setText("");
+            ((EditText) getView().findViewById(R.id.item_quantity)).setText("");
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    private void fetchData(DataSnapshot dataSnapshot)
+    {
+        mItemList.clear();
+
+        for (DataSnapshot ds : dataSnapshot.getChildren())
+        {
+            ShoppingListItem item = ds.getValue(ShoppingListItem.class);
+            mItemList.add(item);
+        }
+
+        mAdapter.notifyDataSetChanged();
+
+    }
+
+
+
+
+
 }

@@ -28,60 +28,62 @@
         android:background="#ffbb33"
         android:text="Go Shopping" />
 
-    <ScrollView
+    <GridLayout
+        android:id="@+id/listGridLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
+        android:layout_height="wrap_content"
+        android:columnCount="5"
+        android:orientation="horizontal"
+        tools:context=".GridXMLActivity">
 
-        <GridLayout
-            android:id="@+id/listGridLayout"
-            android:layout_width="match_parent"
+
+        <CheckBox
+            android:id="@+id/txtCheckBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:columnCount="5"
-            android:orientation="horizontal"
-            tools:context=".GridXMLActivity">
+            android:layout_columnWeight=".5" />
 
-            <CheckBox
-                android:id="@+id/txtCheckBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight=".5" />
+        <EditText
+            android:id="@+id/item_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1.5"
+            android:inputType="none"
+            android:hint="Name" />
 
-            <EditText
-                android:id="@+id/txtProductName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1.5"
-                android:inputType="text"
-                android:text="Name" />
+        <EditText
+            android:id="@+id/item_category"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:inputType="text"
+            android:hint="Category" />
 
-            <EditText
-                android:id="@+id/txtCategoryName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:inputType="text"
-                android:text="Category" />
+        <EditText
+            android:id="@+id/item_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:inputType="numberDecimal"
+            android:hint="Price" />
 
-            <EditText
-                android:id="@+id/txtPrice"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:inputType="numberDecimal"
-                android:text="Price" />
+        <EditText
+            android:id="@+id/item_quantity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:inputType="numberDecimal"
+            android:hint="Qty" />
 
-            <EditText
-                android:id="@+id/txtQuantity"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:inputType="numberDecimal"
-                android:text="Qty" />
+    </GridLayout>
 
-        </GridLayout>
-
-    </ScrollView>
+    <ListView
+        android:id="@+id/item_list_view"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp">
+    </ListView>
 
 </RelativeLayout>
