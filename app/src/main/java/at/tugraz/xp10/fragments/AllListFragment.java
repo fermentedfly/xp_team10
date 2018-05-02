@@ -49,7 +49,7 @@ public class AllListFragment extends Fragment {
 
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            Fragment fragment = ListViewFragment.newInstance("foo", "bar", "foobar");
+            Fragment fragment = ListViewFragment.newInstance(entry.id, entry.shoppingList.getTitle());
             fragmentTransaction.replace(R.id.content_frame, fragment, "ListSetting").addToBackStack(null);
             fragmentTransaction.commit();
         }
