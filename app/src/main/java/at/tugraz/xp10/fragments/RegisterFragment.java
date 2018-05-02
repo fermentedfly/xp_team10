@@ -22,9 +22,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import at.tugraz.xp10.LoginActivity;
 import at.tugraz.xp10.R;
+import at.tugraz.xp10.model.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +48,7 @@ public class RegisterFragment extends Fragment {
     private EditText mInputConfirmPassword;
     private Button mButtonCancel;
     private Button mButtonRegister;
+    private DatabaseReference mDatabase;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -89,30 +93,27 @@ public class RegisterFragment extends Fragment {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
 
-                                    // TODO refactor
-
                                     FirebaseUser currentUser = mAuth.getCurrentUser();
                                     if (currentUser != null) {
                                         currentUser.sendEmailVerification();
 
-                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                                .setDisplayName(mInputFirstName.getText().toString() + " " + mInputLastName.getText().toString())
-                                                .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-                                                .build();
+                                        User user = new User(mInputEmail.getText().toString(),
+                                                mInputFirstName.getText().toString(),
+                                                mInputLastName.getText().toString());
 
-                                        currentUser.updateProfile(profileUpdates)
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Log.d(TAG, "User profile updated.");
-                                                        }
-                                                    }
-                                                });
+                                        mDatabase.child("users").child(currentUser.getUid()).setValue(user);
 
                                         Toast.makeText(getActivity(), "Registration successful.\nPlease confirm email address",
                                                 Toast.LENGTH_LONG).show();
                                         getFragmentManager().popBackStack();
+
+//                                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//                                        DatabaseReference myRef = database.getReference();
+//
+//                                        myRef.child("Users").push().setValue(new User("hallo@test.com", "1"));
+//
+
+
                                     }
                                 }
                             })
@@ -139,6 +140,7 @@ public class RegisterFragment extends Fragment {
         mInputConfirmPassword = view.findViewById(R.id.register_confirm_password);
         mButtonCancel = view.findViewById(R.id.register_cancel_button);
         mButtonRegister = view.findViewById(R.id.register_register_button);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     private Boolean validate() {
