@@ -14,6 +14,10 @@
             android:icon="@drawable/ic_assignment_turned_in_black_24dp"
             android:title="Personal list " />
         <item
+            android:id="@+id/nav_manage_friends"
+            android:icon="@drawable/ic_settings_power_black_24dp"
+            android:title="Manage friends" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_settings_power_black_24dp"
             android:title="Logout" />
