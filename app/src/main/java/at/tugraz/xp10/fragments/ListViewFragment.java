@@ -48,6 +48,7 @@ public class ListViewFragment extends Fragment {
 
     private Boolean mEditMode;
     private View mEditableView;
+    private ShoppingListItem mTmpShoppingListItem;
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -96,9 +97,6 @@ public class ListViewFragment extends Fragment {
         CheckBox isPurchasedBox = v.findViewById(R.id.item_isPurchased);
         isPurchasedBox.setVisibility(View.INVISIBLE);
 
-        ImageButton editSaveBtn = v.findViewById(R.id.item_edit_save);
-        editSaveBtn.setVisibility(View.INVISIBLE);
-
         final Button cancelButton = v.findViewById(R.id.lvCancelButton);
         final Button saveButton = v.findViewById(R.id.lvSaveButton);
         Button goShoppingButton = v.findViewById(R.id.goShoppingButton);
@@ -134,6 +132,7 @@ public class ListViewFragment extends Fragment {
                 mAdapter.setButtonsVisibility(view, View.VISIBLE);
                 goShoppingBtn.setVisibility(View.GONE);
                 cancelButton.setVisibility(View.VISIBLE);
+                view.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
                 return true;
             }
         });
@@ -144,17 +143,24 @@ public class ListViewFragment extends Fragment {
                 mEditMode = false;
                 mAdapter.setButtonsVisibility(mEditableView, View.INVISIBLE);
                 //mEditableView = null;
+                mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                getView().findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorWhite));
                 goShoppingBtn.setVisibility(View.VISIBLE);
                 cancelButton.setVisibility(View.GONE);
                 saveButton.setVisibility(View.GONE);
-            }
+                setItemFieldsEmpty();
+              }
         });
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mEditMode = false;
-                mEditableView = null;
+                updateItemToDB(mTmpShoppingListItem);
+                mTmpShoppingListItem = null;
+                getView().findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorWhite));
+
                 goShoppingBtn.setVisibility(View.VISIBLE);
                 cancelButton.setVisibility(View.GONE);
                 saveButton.setVisibility(View.GONE);
@@ -217,16 +223,21 @@ public class ListViewFragment extends Fragment {
             ShoppingListItem item = new ShoppingListItem(name, quanitiy, unitprice, category, false, listKey);
             mShoppingListItems.child(listKey).setValue(item);
 
-            ((EditText) getView().findViewById(R.id.item_name)).setText("");
-            ((EditText) getView().findViewById(R.id.item_category)).setText("");
-            ((EditText) getView().findViewById(R.id.item_price)).setText("");
-            ((EditText) getView().findViewById(R.id.item_quantity)).setText("");
+            setItemFieldsEmpty();
 
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();
         }
     }
 
+    private void setItemFieldsEmpty() {
+        ((EditText) getView().findViewById(R.id.item_name)).setText("");
+        ((EditText) getView().findViewById(R.id.item_category)).setText("");
+        ((EditText) getView().findViewById(R.id.item_price)).setText("");
+        ((EditText) getView().findViewById(R.id.item_quantity)).setText("");
+        getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.item_isPurchased).setVisibility(View.INVISIBLE);
+    }
 
     private void fetchData(DataSnapshot dataSnapshot)
     {
@@ -243,6 +254,9 @@ public class ListViewFragment extends Fragment {
 
     public void deleteItem(String id)
     {
+        getView().findViewById(R.id.goShoppingButton).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.lvCancelButton).setVisibility(View.GONE);
+
         mShoppingListItems.child(id).removeValue();
         mEditMode = false;
     }
@@ -250,7 +264,9 @@ public class ListViewFragment extends Fragment {
     public void editItem(ShoppingListItem item){
 
         mAdapter.setButtonsVisibility(mEditableView, View.INVISIBLE);
+        getView().findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
 
+        mTmpShoppingListItem = item;
         FloatingActionButton addItemBtn = getView().findViewById(R.id.addItemButton);
         addItemBtn.setVisibility(View.INVISIBLE);
         CheckBox isPurchasedBox = getView().findViewById(R.id.item_isPurchased);
@@ -258,13 +274,30 @@ public class ListViewFragment extends Fragment {
         Button editSaveBtn = getView().findViewById(R.id.lvSaveButton);
         editSaveBtn.setVisibility(View.VISIBLE);
 
-
         ((EditText) getView().findViewById(R.id.item_name)).setText(item.getName());
         ((EditText) getView().findViewById(R.id.item_category)).setText(item.getCategory());
         ((EditText) getView().findViewById(R.id.item_price)).setText(String.format("%.2f", item.getUnitprice()));
         ((EditText) getView().findViewById(R.id.item_quantity)).setText(String.format("%.0f", item.getQuantity()));
         ((CheckBox) getView().findViewById(R.id.item_isPurchased)).setChecked(item.getIsPurchased());
+    }
 
-        //TODO: Change Buttons after pressing save edit.
+    private void updateItemToDB(ShoppingListItem item)
+    {
+        try {
+            String name = ((EditText) getView().findViewById(R.id.item_name)).getText().toString();
+            String category = ((EditText) getView().findViewById(R.id.item_category)).getText().toString();
+            Double unitprice = Double.parseDouble(((EditText) getView().findViewById(R.id.item_price)).getText().toString());
+            Double quanitiy = Double.parseDouble(((EditText) getView().findViewById(R.id.item_quantity)).getText().toString());
+            Boolean isPurchased = ((CheckBox) getView().findViewById(R.id.item_isPurchased)).isChecked();
+
+            String listKey = item.getTempId();
+            ShoppingListItem new_item = new ShoppingListItem(name, quanitiy, unitprice, category, isPurchased, listKey);
+            mShoppingListItems.child(listKey).setValue(new_item);
+
+            setItemFieldsEmpty();
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();
+        }
     }
 }
