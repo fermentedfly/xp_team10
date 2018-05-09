@@ -19,7 +19,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pchmn.materialchips.ChipView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import at.tugraz.xp10.R;
@@ -28,6 +27,7 @@ import at.tugraz.xp10.model.User;
 final class UserChip extends ChipView {
 
     private String uid;
+    private User user;
 
     public UserChip(Context context) {
         super(context);
@@ -40,12 +40,19 @@ final class UserChip extends ChipView {
     public void setUid(String uid) {
         this.uid = uid;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
 
 
 public class ManageFriendsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
-
     private FirebaseAuth mAuth;
     private DatabaseReference mUserRef;
     private HashMap<String, User> mContactList;
@@ -53,10 +60,11 @@ public class ManageFriendsFragment extends Fragment {
     private EditText mEmailAddress;
     private Button mAddButton;
     private View mView;
-    private LinearLayout mChipContainer;
+    private LinearLayout mFriendsView;
+    private LinearLayout mPendingView;
+    private String mCurrentUserID;
 
     public ManageFriendsFragment() {
-        // Required empty public constructor
     }
 
     public static ManageFriendsFragment newInstance() {
@@ -71,6 +79,7 @@ public class ManageFriendsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         mUserRef = mDatabase.getReference("/users");
+        mCurrentUserID = mAuth.getCurrentUser().getUid();
     }
 
     @Override
@@ -79,7 +88,8 @@ public class ManageFriendsFragment extends Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_manage_friends, container, false);
 
-        mChipContainer = mView.findViewById(R.id.chipview_friends);
+        mFriendsView = mView.findViewById(R.id.chipview_friends);
+        mPendingView = mView.findViewById(R.id.chipview_pending);
 
         mEmailAddress = mView.findViewById(R.id.textedit_friend_email);
         mEmailAddress.setEnabled(false);
@@ -96,8 +106,6 @@ public class ManageFriendsFragment extends Fragment {
         load_list_of_users();
 
         return mView;
-
-
     }
 
     private void add_user()
@@ -105,36 +113,40 @@ public class ManageFriendsFragment extends Fragment {
         String email = mEmailAddress.getText().toString();
         if(!email.isEmpty())
         {
-            add_user_to_friends(email);
-        }
-    }
-
-    private void add_user_to_friends(String email)
-    {
-        for(String uid: mContactList.keySet())
-        {
-            User user = mContactList.get(uid);
-            if((user.geteMail().equals(email)) && (!mCurrentUser.getFriends().containsKey(uid)))
+            for(String uid: mContactList.keySet())
             {
-                mCurrentUser.addFriend(uid);
-                add_friend_to_view(uid, user);
-                save_to_database();
-                return;
+                User user = mContactList.get(uid);
+                if(user.geteMail().equals(email))
+                {
+                    if(!mCurrentUser.getFriends().containsKey(uid)) {
+                        mCurrentUser.addFriend(uid);
+                        user.addFriendRequest(mCurrentUserID);
+                        add_user_to_friend_view(uid, user, "Issued");
+                        save_to_database(mCurrentUserID, mCurrentUser);
+                        save_to_database(uid, user);
+                    }
+                    return;
+                }
             }
+            mEmailAddress.setError(getString(R.string.invalid_email));
         }
-        mEmailAddress.setError(getString(R.string.invalid_email));
     }
 
-    private void save_to_database()
+    private void save_to_database(String uid, User user)
     {
-        mUserRef.child(mAuth.getCurrentUser().getUid()).setValue(mCurrentUser);
+        mUserRef.child(uid).setValue(user);
     }
 
-    private void add_friend_to_view(String uid, User user)
+    private void add_user_to_friend_view(String uid, User user, String state)
     {
         UserChip chip = new UserChip(mView.getContext());
-        chip.setLabel(user.getFirstName());
+        chip.setLabel(user.getName());
         chip.setUid(uid);
+        chip.setUser(user);
+        if(state.equals("Confirmed")) {
+            chip.setLabelColor(getResources().getColor(R.color.colorWhite));
+            chip.setChipBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        }
         chip.setPadding(2,2,2,2);
         chip.setDeletable(true);
         chip.setOnDeleteClicked(new View.OnClickListener() {
@@ -142,13 +154,51 @@ public class ManageFriendsFragment extends Fragment {
             public void onClick(View v) {
                 UserChip current_chip = (UserChip)(v.getParent().getParent().getParent());
                 mCurrentUser.removeFriend(current_chip.getUid());
-                mChipContainer.removeView(current_chip);
-                save_to_database();
+                current_chip.getUser().removeFriend(mCurrentUserID);
+                mFriendsView.removeView(current_chip);
+                save_to_database(mCurrentUserID, mCurrentUser);
+                save_to_database(current_chip.getUid(), current_chip.getUser());
             }
         });
 
-        mChipContainer.addView(chip);
+        mFriendsView.addView(chip);
 
+    }
+
+    private void add_user_to_pending_view(String uid, User user)
+    {
+        UserChip chip = new UserChip(mView.getContext());
+        chip.setLabel(user.getName());
+        chip.setUid(uid);
+        chip.setUser(user);
+        chip.setPadding(2,2,2,2);
+        chip.setDeletable(true);
+        chip.setClickable(true);
+        chip.setOnDeleteClicked(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserChip current_chip = (UserChip)(v.getParent().getParent().getParent());
+                mCurrentUser.removeFriend(current_chip.getUid());
+                current_chip.getUser().removeFriend(mCurrentUserID);
+                mPendingView.removeView(current_chip);
+                save_to_database(mCurrentUserID, mCurrentUser);
+                save_to_database(current_chip.getUid(), current_chip.getUser());
+            }
+        });
+        chip.setOnChipClicked(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserChip current_chip = (UserChip)(v.getParent().getParent());
+                mCurrentUser.confirmFriend(current_chip.getUid());
+                current_chip.getUser().confirmFriend(mCurrentUserID);
+                save_to_database(mCurrentUserID, mCurrentUser);
+                save_to_database(current_chip.getUid(), current_chip.getUser());
+                mPendingView.removeView(current_chip);
+                add_user_to_friend_view(current_chip.getUid(), current_chip.getUser(), "Confirmed");
+            }
+        });
+
+        mPendingView.addView(chip);
     }
 
     private void load_list_of_users()
@@ -161,7 +211,7 @@ public class ManageFriendsFragment extends Fragment {
                     User user = ds.getValue(User.class);
                     mContactList.put(ds.getKey(), user);
 
-                    if(ds.getKey().equals(mAuth.getCurrentUser().getUid()))
+                    if(ds.getKey().equals(mCurrentUserID))
                     {
                         mCurrentUser = user;
                     }
@@ -170,7 +220,15 @@ public class ManageFriendsFragment extends Fragment {
                 for(String uid: mCurrentUser.getFriends().keySet())
                 {
                     if(mContactList.containsKey(uid)) {
-                        add_friend_to_view(uid, mContactList.get(uid));
+                        String state = mCurrentUser.getFriends().get(uid);
+                        if(state.equals("Pending"))
+                        {
+                            add_user_to_pending_view(uid, mContactList.get(uid));
+                        }
+                        else
+                        {
+                            add_user_to_friend_view(uid, mContactList.get(uid), state);
+                        }
                     }
                 }
 
