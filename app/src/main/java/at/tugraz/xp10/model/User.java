@@ -11,6 +11,7 @@ public class User {
     private String firstName;
     private String lastName;
     private HashMap<String, Boolean> shoppinglists;
+    private HashMap<String, Boolean> friends;
 
     private UserListener userListener = null;
 
@@ -58,6 +59,14 @@ public class User {
         this.shoppinglists = shoppinglists;
     }
 
+    public HashMap<String, Boolean> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(HashMap<String, Boolean> friends) {
+        this.friends = friends;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -88,4 +97,18 @@ public class User {
     public void setUserListener(UserListener listener) {
         this.userListener = listener;
     }
+
+    public void addFriend(String uid)
+    {
+        friends.put(uid, true);
+    }
+
+    public void removeFriend(String uid)
+    {
+        if(friends.containsKey(uid))
+        {
+            friends.remove(uid);
+        }
+    }
+
 }
