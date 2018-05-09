@@ -251,3 +251,4 @@ modules.xml
 
 
 # End of https://www.gitignore.io/api/android,intellij,intellij+all,intellij+iml
+cloud_functions/functions/node_modules/
