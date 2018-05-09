@@ -86,4 +86,13 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
 
         return rowView;
     }
+
+    public void setButtonsVisibility(View v, int visibility) {
+
+        ImageButton editBtn = v.findViewById(R.id.item_edit);
+        ImageButton deleteBtn = v.findViewById(R.id.item_delete);
+
+        editBtn.setVisibility(visibility);
+        deleteBtn.setVisibility(visibility);
+    }
 }

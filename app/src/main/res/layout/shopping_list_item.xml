@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/shopping_list_item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:longClickable="true">
 
     <CheckBox
         android:id="@+id/shopping_list_item_purchased"
@@ -68,6 +69,7 @@
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/shopping_list_item_name"
         android:background="@color/colorPrimary"
+        android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_edit"
         tools:background="@color/colorPrimary" />
 
@@ -78,6 +80,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/shopping_list_item_name"
         android:background="@color/colorAccent"
+        android:visibility="invisible"
         app:srcCompat="@drawable/ic_cancel_grey_24dp" />
 
 </RelativeLayout>

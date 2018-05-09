@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context="at.tugraz.xp10.fragments.ListViewFragment">
 
-    <Button
-        android:id="@+id/goShoppingButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="24dp"
-        android:background="#ffbb33"
-        android:text="Go Shopping" />
-
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -105,6 +94,36 @@
         android:layout_height="428dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="83dp"></ListView>
+        android:layout_marginTop="83dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center|bottom">
+
+        <Button
+            android:id="@+id/lvCancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/lvSaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save"
+            android:visibility="gone" />
+        <Button
+            android:id="@+id/goShoppingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#ffbb33"
+            android:text="Go Shopping"/>
+    </LinearLayout>
 
 </RelativeLayout>

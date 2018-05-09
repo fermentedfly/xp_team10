@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -46,6 +47,7 @@ public class ListViewFragment extends Fragment {
     ShoppingListItemListAdapter mAdapter;
 
     private Boolean mEditMode;
+    private View mEditableView;
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -84,7 +86,7 @@ public class ListViewFragment extends Fragment {
                 addItemToDB();
             }
         });
-        Button goShoppingBtn = v.findViewById(R.id.goShoppingButton);
+        final Button goShoppingBtn = v.findViewById(R.id.goShoppingButton);
         goShoppingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +98,10 @@ public class ListViewFragment extends Fragment {
 
         ImageButton editSaveBtn = v.findViewById(R.id.item_edit_save);
         editSaveBtn.setVisibility(View.INVISIBLE);
+
+        final Button cancelButton = v.findViewById(R.id.lvCancelButton);
+        final Button saveButton = v.findViewById(R.id.lvSaveButton);
+        Button goShoppingButton = v.findViewById(R.id.goShoppingButton);
 
         SetTitle();
 
@@ -116,12 +122,44 @@ public class ListViewFragment extends Fragment {
         });
 
         ListView mListView = v.findViewById(R.id.item_list_view);
-
         mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList, this);
         mListView.setAdapter(mAdapter);
 
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                if(mEditMode) return true;
+                mEditMode = true;
+                mEditableView = view;
+                mAdapter.setButtonsVisibility(view, View.VISIBLE);
+                goShoppingBtn.setVisibility(View.GONE);
+                cancelButton.setVisibility(View.VISIBLE);
+                return true;
+            }
+        });
 
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mEditMode = false;
+                mAdapter.setButtonsVisibility(mEditableView, View.INVISIBLE);
+                //mEditableView = null;
+                goShoppingBtn.setVisibility(View.VISIBLE);
+                cancelButton.setVisibility(View.GONE);
+                saveButton.setVisibility(View.GONE);
+            }
+        });
 
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mEditMode = false;
+                mEditableView = null;
+                goShoppingBtn.setVisibility(View.VISIBLE);
+                cancelButton.setVisibility(View.GONE);
+                saveButton.setVisibility(View.GONE);
+            }
+        });
 
         return v;
     }
@@ -206,16 +244,18 @@ public class ListViewFragment extends Fragment {
     public void deleteItem(String id)
     {
         mShoppingListItems.child(id).removeValue();
+        mEditMode = false;
     }
 
     public void editItem(ShoppingListItem item){
-        mEditMode = true;
+
+        mAdapter.setButtonsVisibility(mEditableView, View.INVISIBLE);
 
         FloatingActionButton addItemBtn = getView().findViewById(R.id.addItemButton);
         addItemBtn.setVisibility(View.INVISIBLE);
         CheckBox isPurchasedBox = getView().findViewById(R.id.item_isPurchased);
         isPurchasedBox.setVisibility(View.VISIBLE);
-        ImageButton editSaveBtn = getView().findViewById(R.id.item_edit_save);
+        Button editSaveBtn = getView().findViewById(R.id.lvSaveButton);
         editSaveBtn.setVisibility(View.VISIBLE);
 
 
