@@ -60,6 +60,7 @@ public class ListSettingFragment extends Fragment  {
     private HashMap<String, User> mUserList;
     private User mCurrentUser;
     private User owner;
+    private String ownerID;
 
     public ListSettingFragment() {
         // Required empty public constructor
@@ -128,9 +129,10 @@ public class ListSettingFragment extends Fragment  {
                 ShoppingList list = dataSnapshot.getValue(ShoppingList.class);
                 for(Map.Entry<String, String> entry: list.getMembers().entrySet())
                 {
-                    if(entry.getValue().equals("owner"))
+                    if(entry.getValue().equals(Constants.OWNER))
                     {
                         owner = mUserList.get(entry.getKey());
+                        ownerID = entry.getKey();
                     }
                 }
                 fill_ui_fields(list);
@@ -206,6 +208,7 @@ public class ListSettingFragment extends Fragment  {
                 }
                 else {
                     owner = mCurrentUser;
+                    ownerID = mAuth.getCurrentUser().getUid();
                     fill_ui_fields(null);
                 }
             }
@@ -236,7 +239,12 @@ public class ListSettingFragment extends Fragment  {
             users.put(selUser.getId().toString(), Constants.MEMBER);
         }
 
-        users.put(mAuth.getCurrentUser().getUid(),Constants.OWNER);
+        users.put(ownerID,Constants.OWNER);
+
+        if (mAuth.getCurrentUser().getUid() != ownerID)
+        {
+            users.put(mAuth.getCurrentUser().getUid(), Constants.MEMBER);
+        }
 
         shoppingList.setMembers(users);
 
