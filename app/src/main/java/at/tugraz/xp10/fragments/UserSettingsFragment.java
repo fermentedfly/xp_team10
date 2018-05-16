@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -47,8 +48,9 @@ public class UserSettingsFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        mUserRef = mDatabase.getReference("/users");
         mCurrentUserID = mAuth.getCurrentUser().getUid();
+        mUserRef = mDatabase.getReference("/users/").child(mCurrentUserID);
+
     }
 
     @Override
@@ -59,17 +61,25 @@ public class UserSettingsFragment extends Fragment {
 
         mEmailNotifications = mView.findViewById(R.id.email_notifications);
 
-//        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
+        mUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mCurrentUser = dataSnapshot.getValue(User.class);
+                mEmailNotifications.setChecked(mCurrentUser.getEmailNotifications());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mEmailNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           @Override
+           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+             mUserRef.child("emailNotifications").setValue(isChecked);
+           }
+       });
 
         return mView;
     }
