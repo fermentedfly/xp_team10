@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
+    private View mProgressViewPlaceholder;
     private View mLoginFormView;
     private CountingIdlingResource mIdlingResource = new CountingIdlingResource(TAG);
 
@@ -82,7 +83,8 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
         });
 
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mProgressViewPlaceholder = findViewById(R.id.login_progress);
+        mProgressView = findViewById(R.id.login_progress2);
     }
 
     @Override
@@ -266,6 +268,15 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
             @Override
             public void onAnimationEnd(Animator animation) {
                 mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        mProgressViewPlaceholder.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressViewPlaceholder.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressViewPlaceholder.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
     }

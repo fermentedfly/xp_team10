@@ -35,6 +35,7 @@ import java.util.Map;
 import at.tugraz.xp10.fragments.AllListFragment;
 import at.tugraz.xp10.fragments.ListSettingFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
+import at.tugraz.xp10.fragments.ManageFriendsFragment;
 import at.tugraz.xp10.fragments.TestFragment;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
@@ -43,7 +44,7 @@ import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener, ListSettingFragment.OnFragmentInteractionListener {
+        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener, ListSettingFragment.OnFragmentInteractionListener, ManageFriendsFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
 
     }
 
@@ -87,28 +89,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -135,6 +115,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 gotoLoginActivity();
+                break;
+            case R.id.nav_manage_friends:
+                fragment = ManageFriendsFragment.newInstance();
+                title = "Manage Friends";
                 break;
         }
 

@@ -33,11 +33,29 @@
                 android:inputType="textMultiLine"
                 android:hint="@string/description" />
 
-            <!--<com.pchmn.materialchips.ChipsInput-->
-            <!---->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:hint="Enter a name" />-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Owner"
+                android:visibility="visible"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>
+
+            <com.pchmn.materialchips.ChipView
+                android:id="@+id/owner_chip_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,9 +100,5 @@
                 android:layout_weight="1"
                 android:text="@string/save" />
         </LinearLayout>
-
-
-
     </RelativeLayout>
-
 </FrameLayout>
