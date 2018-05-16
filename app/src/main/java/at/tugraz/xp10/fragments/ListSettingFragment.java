@@ -129,7 +129,7 @@ public class ListSettingFragment extends Fragment  {
                 ShoppingList list = dataSnapshot.getValue(ShoppingList.class);
                 for(Map.Entry<String, String> entry: list.getMembers().entrySet())
                 {
-                    if(entry.getValue().equals(Constants.OWNER))
+                    if(entry.getValue().equalsIgnoreCase(Constants.OWNER))
                     {
                         owner = mUserList.get(entry.getKey());
                         ownerID = entry.getKey();
@@ -149,7 +149,8 @@ public class ListSettingFragment extends Fragment  {
     {
         for(Map.Entry<String, User>entry : mUserList.entrySet())
         {
-            if(mCurrentUser.getFriends().containsKey(entry.getKey())) {
+            if((mCurrentUser.getFriends().containsKey(entry.getKey())) && (
+                    mCurrentUser.getFriends().get(entry.getKey()).equalsIgnoreCase("Confirmed"))) {
                 addUserToChip(entry.getValue(), entry.getKey());
             }
         }
@@ -197,7 +198,7 @@ public class ListSettingFragment extends Fragment  {
                     User user = ds.getValue(User.class);
                     mUserList.put(ds.getKey(), user);
 
-                    if(ds.getKey().equals(mAuth.getCurrentUser().getUid()))
+                    if(ds.getKey().equalsIgnoreCase(mAuth.getCurrentUser().getUid()))
                     {
                         mCurrentUser = user;
                     }
@@ -239,9 +240,9 @@ public class ListSettingFragment extends Fragment  {
             users.put(selUser.getId().toString(), Constants.MEMBER);
         }
 
-        users.put(ownerID,Constants.OWNER);
+        users.put(ownerID, Constants.OWNER);
 
-        if (mAuth.getCurrentUser().getUid() != ownerID)
+        if (!mAuth.getCurrentUser().getUid().equals(ownerID))
         {
             users.put(mAuth.getCurrentUser().getUid(), Constants.MEMBER);
         }
@@ -263,7 +264,7 @@ public class ListSettingFragment extends Fragment  {
     }
 
     private void addUserToChip(User user, String key) {
-        if (!key.equals(mAuth.getCurrentUser().getUid()) && user != owner) {
+        if (!key.equalsIgnoreCase(mAuth.getCurrentUser().getUid()) && user != owner) {
             mContactList.add(new Chip(key, user.getFirstName() + " " + user.getLastName(), user.geteMail()));
         }
     }
