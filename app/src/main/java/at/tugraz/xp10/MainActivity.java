@@ -38,6 +38,7 @@ import at.tugraz.xp10.fragments.ListSettingFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.ManageFriendsFragment;
 import at.tugraz.xp10.fragments.TestFragment;
+import at.tugraz.xp10.fragments.UserSettingsFragment;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 
@@ -126,6 +127,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_manage_categories:
                 fragment = CategoriesFragment.newInstance();
                 title = "Manage Categories";
+                break;
+            case R.id.nav_user_settings:
+                fragment = UserSettingsFragment.newInstance();
+                title = "User Settings";
                 break;
         }
 

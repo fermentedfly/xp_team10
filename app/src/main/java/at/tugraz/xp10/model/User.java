@@ -10,6 +10,7 @@ public class User {
     private String eMail;
     private String firstName;
     private String lastName;
+    private boolean emailNotifications;
     private HashMap<String, Boolean> shoppinglists;
     private HashMap<String, String> friends;
 
@@ -24,6 +25,7 @@ public class User {
         this.eMail = eMail;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.emailNotifications = true;
         this.shoppinglists = new HashMap<>();
         this.friends = new HashMap<>();
     }
@@ -52,6 +54,10 @@ public class User {
         this.lastName = lastName;
     }
 
+    public boolean getEmailNotifications() { return emailNotifications; }
+
+    public void setEmailNotifications(boolean emailNotifications) { this.emailNotifications = emailNotifications; }
+
     public HashMap<String, Boolean> getShoppinglists() {
         return shoppinglists;
     }
@@ -74,6 +80,7 @@ public class User {
                 "eMail='" + eMail + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", emailNotifications='" + emailNotifications + '\'' +
                 ", shoppinglists=" + shoppinglists +
                 '}';
     }
