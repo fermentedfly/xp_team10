@@ -26,6 +26,35 @@ const mailTransport = nodemailer.createTransport({
 
 const APP_NAME = 'XP10';
 
+exports.sendFriendNotification = functions.database.ref('/users/{user_id}/friends/{friend}').onCreate((snapshot, context) => {
+  const friend = snapshot.val();
+  if (friend === "Pending") {
+    const user = snapshot.ref.parent.parent.key;
+    
+    console.log("Friend Request");
+    console.log("User_ID:" + user);
+    const sender = snapshot.ref.key;
+    console.log("Sender_ID:" + sender);
+
+    // admin.database().ref('/users/').child(user).child('eMail')
+    
+     admin.database().ref('/users/' + user).once('value').then(function(snapshot) {
+        var email = (snapshot.val() && snapshot.val().eMail);
+        console.log("Email:" + email);
+
+        admin.database().ref('/users/' + sender).once('value').then(function(snapshot) {
+          var sender_email = (snapshot.val() && snapshot.val().eMail);
+          console.log("Sender_Email:" + sender_email);
+
+          sendFriendRequestEmail(sender_email, email);
+
+       });
+
+     });
+    // return sendWelcomeEmail(email, "Friend Test");
+  }
+});
+
 // Take the text parameter passed to this HTTP endpoint and insert it into the
 // Realtime Database under the path /messages/:pushId/original
 exports.addMessage = functions.https.onRequest((req, res) => {
@@ -50,7 +79,7 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
 
 function sendWelcomeEmail(email, displayName) {
   const mailOptions = {
-    from: `${APP_NAME} <noreply@firebase.com>`,
+    from: `${APP_NAME} <noreply.xp10@gmail.com>`,
     to: email,
   };
 
@@ -59,5 +88,18 @@ function sendWelcomeEmail(email, displayName) {
   mailOptions.text = `Hey ${displayName || ''}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
   return mailTransport.sendMail(mailOptions).then(() => {
     return console.log('New welcome email sent to:', email);
+  });
+}
+
+function sendFriendRequestEmail(sender, receiver) {
+    const mailOptions = {
+    from: `${APP_NAME} <noreply.xp10@gmail.com>`,
+    to: receiver,
+  };
+
+  mailOptions.subject = `${APP_NAME} Friend Request`;
+  mailOptions.text = `Hey ${receiver || ''}! ${sender}, has send you a friend request on ${APP_NAME}!`;
+  return mailTransport.sendMail(mailOptions).then(() => {
+    return console.log('New friend request email sent to:', email);
   });
 }
