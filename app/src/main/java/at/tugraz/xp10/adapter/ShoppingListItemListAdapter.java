@@ -5,9 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -57,26 +59,28 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         CheckBox purchasedView = (CheckBox) rowView.findViewById(R.id.shopping_list_item_purchased);
         TextView nameTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_name);
         TextView categoryTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_category);
-        TextView priceTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_price);
         TextView quantityTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_quantity);
-        ImageButton editBtn = (ImageButton) rowView.findViewById(R.id.item_edit);
         ImageButton deleteBtn = (ImageButton) rowView.findViewById(R.id.item_delete);
 
         final ShoppingListItem item = (ShoppingListItem) getItem(position);
 
-        purchasedView.setChecked(item.getIsPurchased());
+        Spinner spinner = (Spinner) rowView.findViewById(R.id.shopping_list_item_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext, R.array.planets_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+
         purchasedView.setEnabled(false);
+        nameTextView.setEnabled(false);
+        categoryTextView.setEnabled(false);
+        quantityTextView.setEnabled(false);
+        spinner.setEnabled(false);
+        deleteBtn.setVisibility(View.INVISIBLE);
+
+        purchasedView.setChecked(item.getIsPurchased());
         nameTextView.setText(item.getName());
         categoryTextView.setText(item.getCategory());
-        priceTextView.setText(String.format("%.2f", item.getUnitprice()));
         quantityTextView.setText(String.format("%.0f", item.getQuantity()));
-
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListViewFragment.editItem(item);
-            }
-        });
 
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,10 +94,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
 
     public void setButtonsVisibility(View v, int visibility) {
 
-        ImageButton editBtn = v.findViewById(R.id.item_edit);
         ImageButton deleteBtn = v.findViewById(R.id.item_delete);
-
-        editBtn.setVisibility(visibility);
         deleteBtn.setVisibility(visibility);
     }
 }

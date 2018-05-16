@@ -6,19 +6,18 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class ShoppingListItem {
     private String name;
     private Double quantity;
-    private Double unitprice;
     private String category;
     private String tempId;
-    // todo unit
+    private String unit;
     private Boolean IsPurchased;
 
-    public ShoppingListItem(String name, Double quantity, Double unitprice, String category, Boolean checked, String tempId) {
+    public ShoppingListItem(String name, Double quantity, String unit, String category, Boolean checked, String tempId) {
         this.name = name;
         this.quantity = quantity;
-        this.unitprice = unitprice;
         this.category = category;
         this.IsPurchased = checked;
         this.tempId = tempId;
+        this.unit = unit;
     }
 
     public ShoppingListItem() {
@@ -49,14 +48,6 @@ public class ShoppingListItem {
         this.IsPurchased = checked;
     }
 
-    public Double getUnitprice() {
-        return unitprice;
-    }
-
-    public void setUnitprice(Double unitprice) {
-        this.unitprice = unitprice;
-    }
-
     public String getCategory() {
         return category;
     }
@@ -79,5 +70,13 @@ public class ShoppingListItem {
 
     public void setPurchased(Boolean purchased) {
         IsPurchased = purchased;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }
