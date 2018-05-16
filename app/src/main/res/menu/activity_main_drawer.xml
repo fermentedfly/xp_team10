@@ -17,15 +17,16 @@
             android:id="@+id/nav_manage_friends"
             android:icon="@drawable/ic_friends_black_24dp"
             android:title="Manage friends" />
+
+        <item
+            android:id="@+id/nav_manage_categories"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="Manage Categories" />
+        
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_settings_power_black_24dp"
             android:title="Logout" />
-
-        <item
-            android:id="@+id/nav_testDatabase"
-            android:icon="@drawable/ic_settings_power_black_24dp"
-            android:title="Test Firebase, do not press just for fun" />
 
     </group>
 
