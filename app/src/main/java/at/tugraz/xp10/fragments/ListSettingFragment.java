@@ -1,6 +1,8 @@
 package at.tugraz.xp10.fragments;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -164,11 +166,11 @@ public class ListSettingFragment extends Fragment  {
             mUsers.setMaxRows(10);
             mUsers.setMaxHeight(ViewUtil.dpToPx(400)+8);
 
+            mUsers.getEditText().setTextColor(Color.WHITE);
             LinearLayout ll = v.findViewById(R.id.list_setting_chips_input);
             ll.addView(mUsers);
 
             mUsers.setFilterableList(mContactList);
-
             if (list != null) {
                 mTitle.setText(list.getTitle());
                 mDescription.setText(list.getDescription());

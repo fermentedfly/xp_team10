@@ -1,104 +1,144 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="at.tugraz.xp10.fragments.ListSettingFragment"
-    android:background="@color/colorWhite">
+    android:background="@color/colorAccent"
+    tools:context="at.tugraz.xp10.fragments.ListSettingFragment">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/list_setting_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:singleLine="true"
-                android:hint="@string/title" />
-
-            <EditText
-                android:id="@+id/list_setting_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textMultiLine"
-                android:hint="@string/description" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Owner"
-                android:visibility="visible"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
-
-            <com.pchmn.materialchips.ChipView
-                android:id="@+id/owner_chip_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="List users"
-                android:visibility="visible"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
-
-            <LinearLayout
-                android:id="@+id/list_setting_chips_input"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
-
-
-        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            >
 
-            <Button
-                android:id="@+id/list_setting_cancel"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cancel" />
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="7dp"
+                android:background="@drawable/background_rounded_corners"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <Button
-                android:id="@+id/list_setting_save"
-                android:layout_width="wrap_content"
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorHint">
+
+                    <EditText
+                        android:id="@+id/list_setting_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/title"
+                        android:inputType="textPersonName"
+                        android:singleLine="true"
+                        android:textColor="@color/colorWhite"
+                        android:textColorHint="@color/colorHint" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorHint">
+
+                    <EditText
+                        android:id="@+id/list_setting_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/description"
+                        android:inputType="textMultiLine"
+                        android:textColor="@color/colorWhite"
+                        android:textColorHint="@color/colorHint" />
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Owner"
+                    android:textColor="@color/colorWhite"
+                    android:visibility="visible" />
+
+
+
+                <com.pchmn.materialchips.ChipView
+                    android:id="@+id/owner_chip_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorWhite" />
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="List users"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorWhite"
+                    android:visibility="visible" />
+
+
+                <LinearLayout
+                    android:id="@+id/list_setting_chips_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="20dp"
+                    android:orientation="vertical"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorWhite" />
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/save" />
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/list_setting_save"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_rounded_corners"
+                    android:text="@string/save"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorWhite"
+                    tools:ignore="ButtonStyle" />
+
+                <Button
+                    android:id="@+id/list_setting_cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_rounded_corners"
+                    android:text="@string/cancel"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorWhite"
+                    tools:ignore="ButtonStyle" />
+            </LinearLayout>
         </LinearLayout>
-    </RelativeLayout>
+    </ScrollView>
 </FrameLayout>
