@@ -3,6 +3,8 @@ package at.tugraz.xp10.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +13,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +74,7 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
 
-        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+        final AlertDialog dialog = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.AlertDialogCustom))
                 .setView(inflater.inflate(R.layout.fragment_forgot_password, null))
                 .setTitle("Forgot Password")
                 .setPositiveButton(R.string.submit, null) //Set to null. We override the onclick
@@ -127,6 +130,8 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
                 });
             }
         });
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         return dialog;
     }
