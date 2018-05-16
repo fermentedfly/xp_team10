@@ -219,6 +219,15 @@ public class ListViewFragment extends Fragment {
             }
         });
 
+        CheckBox purchasedView = (CheckBox) v.findViewById(R.id.shopping_list_item_purchased);
+        purchasedView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return false;
+            }
+        });
+
+
         return v;
     }
 
