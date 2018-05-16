@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import at.tugraz.xp10.fragments.AllListFragment;
+import at.tugraz.xp10.fragments.CategoriesFragment;
 import at.tugraz.xp10.fragments.ListSettingFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.ManageFriendsFragment;
@@ -44,7 +45,9 @@ import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener, ListSettingFragment.OnFragmentInteractionListener, ManageFriendsFragment.OnFragmentInteractionListener {
+        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener,
+        ListSettingFragment.OnFragmentInteractionListener,
+        ManageFriendsFragment.OnFragmentInteractionListener, CategoriesFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
@@ -119,6 +122,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_manage_friends:
                 fragment = ManageFriendsFragment.newInstance();
                 title = "Manage Friends";
+                break;
+            case R.id.nav_manage_categories:
+                fragment = CategoriesFragment.newInstance();
+                title = "Manage Categories";
                 break;
         }
 
