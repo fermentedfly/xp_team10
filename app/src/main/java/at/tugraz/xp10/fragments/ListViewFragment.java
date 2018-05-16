@@ -186,6 +186,7 @@ public class ListViewFragment extends Fragment {
                 goShoppingBtn.setVisibility(View.VISIBLE);
                 cancelButton.setVisibility(View.GONE);
                 saveButton.setVisibility(View.GONE);
+                getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
               }
         });
 
@@ -328,18 +329,10 @@ public class ListViewFragment extends Fragment {
     public void editItem(ShoppingListItem item){
 
         getView().findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
-
         mTmpShoppingListItem = item;
-//        FloatingActionButton addItemBtn = getView().findViewById(R.id.addItemButton);
-//        addItemBtn.setVisibility(View.INVISIBLE);
-//        CheckBox isPurchasedBox = getView().findViewById(R.id.item_isPurchased);
-//        isPurchasedBox.setVisibility(View.VISIBLE);
         Button editSaveBtn = getView().findViewById(R.id.lvSaveButton);
         editSaveBtn.setVisibility(View.VISIBLE);
-
-        ((EditText) getView().findViewById(R.id.item_name)).setText(item.getName());
-        ((EditText) getView().findViewById(R.id.item_category)).setText(item.getCategory());
-        ((EditText) getView().findViewById(R.id.item_quantity)).setText(String.format("%.0f", item.getQuantity()));
+        getView().findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
     }
 
     private void updateItemToDB(ShoppingListItem item)
