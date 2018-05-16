@@ -81,6 +81,9 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         categoryTextView.setText(item.getCategory());
         quantityTextView.setText(String.format("%.0f", item.getQuantity()));
 
+        spinner.setSelection(adapter.getPosition(item.getUnit()));
+
+
         rowView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -98,8 +101,10 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         purchasedView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListViewFragment.mEditableView = rowView;
-                mListViewFragment.updateItemToDB(item);
+                if(!mListViewFragment.mEditMode) {
+                    mListViewFragment.mEditableView = rowView;
+                    mListViewFragment.updateItemToDB(item);
+                }
              }
         });
 

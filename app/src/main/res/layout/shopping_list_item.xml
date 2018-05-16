@@ -28,7 +28,8 @@
         android:layout_marginStart="51dp"
         android:hint="Name"
         android:textColor="#000000"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:longClickable="true" />
 
     <EditText
         android:id="@+id/shopping_list_item_category"
