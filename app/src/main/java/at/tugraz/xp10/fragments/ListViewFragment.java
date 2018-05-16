@@ -54,7 +54,7 @@ public class ListViewFragment extends Fragment {
 
     private Boolean mEditMode;
     private Boolean mAddMode;
-    private View mEditableView;
+    public View mEditableView;
     private ShoppingListItem originShoppingListItem;
     private ShoppingListItem mTmpShoppingListItem;
 
@@ -219,21 +219,9 @@ public class ListViewFragment extends Fragment {
             }
         });
 
-        CheckBox purchasedView = (CheckBox) v.findViewById(R.id.shopping_list_item_purchased);
-        purchasedView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                return false;
-            }
-        });
-
-
         return v;
     }
 
-    private void onLongClick(){
-
-    }
 
     private void setFieldsReadOnly(View v) {
         CheckBox purchasedView = (CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased);
@@ -251,7 +239,7 @@ public class ListViewFragment extends Fragment {
         ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
         spinner.setSelection(myAdap.getPosition(originShoppingListItem.getUnit()));
 
-        purchasedView.setEnabled(false);
+        purchasedView.setEnabled(true);
         nameTextView.setEnabled(false);
         categoryTextView.setEnabled(false);
         quantityTextView.setEnabled(false);
@@ -362,7 +350,7 @@ public class ListViewFragment extends Fragment {
         getView().findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
     }
 
-    private void updateItemToDB(ShoppingListItem item)
+    public void updateItemToDB(ShoppingListItem item)
     {
         try {
             String name = ((EditText) mEditableView.findViewById(R.id.shopping_list_item_name)).getText().toString();
@@ -374,8 +362,6 @@ public class ListViewFragment extends Fragment {
             String listKey = item.getTempId();
             ShoppingListItem new_item = new ShoppingListItem(name, quanitiy, unit, category, isPurchased, listKey);
             mShoppingListItems.child(listKey).setValue(new_item);
-
-            setItemFieldsEmpty();
 
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();

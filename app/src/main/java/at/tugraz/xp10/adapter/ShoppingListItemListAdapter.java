@@ -54,9 +54,9 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get view for row item
-        View rowView = mInflater.inflate(R.layout.shopping_list_item, parent, false);
+        final View rowView = mInflater.inflate(R.layout.shopping_list_item, parent, false);
 
-        CheckBox purchasedView = (CheckBox) rowView.findViewById(R.id.shopping_list_item_purchased);
+        final CheckBox purchasedView = (CheckBox) rowView.findViewById(R.id.shopping_list_item_purchased);
         TextView nameTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_name);
         TextView categoryTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_category);
         TextView quantityTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_quantity);
@@ -69,7 +69,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        purchasedView.setEnabled(false);
+        purchasedView.setEnabled(true);
         nameTextView.setEnabled(false);
         categoryTextView.setEnabled(false);
         quantityTextView.setEnabled(false);
@@ -94,6 +94,16 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
                 mListViewFragment.deleteItem(item.getTempId());
             }
         });
+
+        purchasedView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListViewFragment.mEditableView = rowView;
+                mListViewFragment.updateItemToDB(item);
+             }
+        });
+
+
 
         return rowView;
     }
