@@ -24,7 +24,7 @@ const mailTransport = nodemailer.createTransport({
   },
 });
 
-const APP_NAME = 'XP10';
+const APP_NAME = 'L|I|T';
 
 exports.sendFriendNotification = functions.database.ref('/users/{user_id}/friends/{friend}').onCreate((snapshot, context) => {
   const friend = snapshot.val();
@@ -39,16 +39,25 @@ exports.sendFriendNotification = functions.database.ref('/users/{user_id}/friend
     // admin.database().ref('/users/').child(user).child('eMail')
     
      admin.database().ref('/users/' + user).once('value').then(function(snapshot) {
-        var email = (snapshot.val() && snapshot.val().eMail);
-        console.log("Email:" + email);
+        var emailNotifications = (snapshot.val() && snapshot.val().emailNotifications);
+        console.log("emailNotifications:" + emailNotifications);
+        if (emailNotifications) {
+          var email = (snapshot.val() && snapshot.val().eMail);
+          var firstName = (snapshot.val() && snapshot.val().firstName);
 
-        admin.database().ref('/users/' + sender).once('value').then(function(snapshot) {
-          var sender_email = (snapshot.val() && snapshot.val().eMail);
-          console.log("Sender_Email:" + sender_email);
+          console.log("Email:" + email);
 
-          sendFriendRequestEmail(sender_email, email);
+          admin.database().ref('/users/' + sender).once('value').then(function(snapshot) {
+            var sender_email = (snapshot.val() && snapshot.val().eMail);
+            var sender_firstName = (snapshot.val() && snapshot.val().firstName);
+            var sender_lastName = (snapshot.val() && snapshot.val().lastName);
+            var sender_name = sender_firstName + " " + sender_lastName;
+            console.log("Sender_Email:" + sender_email);
 
-       });
+            sendFriendRequestEmail(sender_email, email, firstName, sender_name);
+
+          });
+        }
 
      });
     // return sendWelcomeEmail(email, "Friend Test");
@@ -91,15 +100,15 @@ function sendWelcomeEmail(email, displayName) {
   });
 }
 
-function sendFriendRequestEmail(sender, receiver) {
+function sendFriendRequestEmail(sender, receiver, receiverFirstName, senderName) {
     const mailOptions = {
     from: `${APP_NAME} <noreply.xp10@gmail.com>`,
     to: receiver,
   };
 
   mailOptions.subject = `${APP_NAME} Friend Request`;
-  mailOptions.text = `Hey ${receiver || ''}! ${sender}, has send you a friend request on ${APP_NAME}!`;
+  mailOptions.text = `Hey ${receiverFirstName || ''}! ${senderName}, has send you a friend request on ${APP_NAME}!`;
   return mailTransport.sendMail(mailOptions).then(() => {
-    return console.log('New friend request email sent to:', email);
+    return console.log('New friend request email sent to:', receiver);
   });
 }
