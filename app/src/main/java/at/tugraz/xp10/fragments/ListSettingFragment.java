@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pchmn.materialchips.ChipView;
 import com.pchmn.materialchips.ChipsInput;
 import com.pchmn.materialchips.model.Chip;
 import com.pchmn.materialchips.util.ViewUtil;
@@ -56,6 +57,9 @@ public class ListSettingFragment extends Fragment  {
     private EditText mTitle;
     private EditText mDescription;
     private ChipsInput mUsers;
+    private HashMap<String, User> mUserList;
+    private User mCurrentUser;
+    private User owner;
 
     public ListSettingFragment() {
         // Required empty public constructor
@@ -111,7 +115,7 @@ public class ListSettingFragment extends Fragment  {
             }
         });
 
-        load_user_ids();
+        loadFriends();
 
         return view;
     }
@@ -122,6 +126,13 @@ public class ListSettingFragment extends Fragment  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ShoppingList list = dataSnapshot.getValue(ShoppingList.class);
+                for(Map.Entry<String, String> entry: list.getMembers().entrySet())
+                {
+                    if(entry.getValue().equals("owner"))
+                    {
+                        owner = mUserList.get(entry.getKey());
+                    }
+                }
                 fill_ui_fields(list);
             }
 
@@ -134,11 +145,22 @@ public class ListSettingFragment extends Fragment  {
 
     private void fill_ui_fields(ShoppingList list)
     {
+        for(Map.Entry<String, User>entry : mUserList.entrySet())
+        {
+            if(mCurrentUser.getFriends().containsKey(entry.getKey())) {
+                addUserToChip(entry.getValue(), entry.getKey());
+            }
+        }
+
         Fragment current = getFragmentManager().findFragmentByTag("ListSetting");
         View v = current.getView();
         if(v != null) {
+            ChipView ownerChipView = v.findViewById(R.id.owner_chip_view);
+            ownerChipView.setLabel(owner.getName());
+            ownerChipView.setHasAvatarIcon(true);
 
             mUsers = new ChipsInput(getContext());
+            mUsers.setChipDeletable(true);
             mUsers.setMaxRows(10);
             mUsers.setMaxHeight(ViewUtil.dpToPx(400)+8);
 
@@ -162,7 +184,8 @@ public class ListSettingFragment extends Fragment  {
         mCancelButton.setEnabled(true);
     }
 
-    private void load_user_ids() {
+    private void loadFriends() {
+        mUserList = new HashMap<>();
         mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -170,13 +193,19 @@ public class ListSettingFragment extends Fragment  {
                 mContactList = new ArrayList<>();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     User user = ds.getValue(User.class);
-                    addUserToChip(user, ds.getKey());
+                    mUserList.put(ds.getKey(), user);
+
+                    if(ds.getKey().equals(mAuth.getCurrentUser().getUid()))
+                    {
+                        mCurrentUser = user;
+                    }
                 }
 
                 if (mListID != null) {
                     load_list_by_id();
                 }
                 else {
+                    owner = mCurrentUser;
                     fill_ui_fields(null);
                 }
             }
@@ -226,7 +255,7 @@ public class ListSettingFragment extends Fragment  {
     }
 
     private void addUserToChip(User user, String key) {
-        if (!key.equals(mAuth.getCurrentUser().getUid())) {
+        if (!key.equals(mAuth.getCurrentUser().getUid()) && user != owner) {
             mContactList.add(new Chip(key, user.getFirstName() + " " + user.getLastName(), user.geteMail()));
         }
     }

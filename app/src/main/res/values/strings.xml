@@ -37,5 +37,10 @@
     <string name="description">Description</string>
     <string name="AddUser">Add User</string>
     <string name="insert_user_email">Insert User Email</string>
+    <string name="friend_email">Friends Email Address</string>
+    <string name="addFriend">Add Friend</string>
+    <string name="invalid_email">Invalid Email Address</string>
+    <string name="friends">Friends</string>
+    <string name="friends_pending">Pending Requests</string>
 
 </resources>

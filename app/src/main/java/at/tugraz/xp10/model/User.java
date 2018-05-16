@@ -11,11 +11,13 @@ public class User {
     private String firstName;
     private String lastName;
     private HashMap<String, Boolean> shoppinglists;
+    private HashMap<String, String> friends;
 
     private UserListener userListener = null;
 
     public User() {
         this.shoppinglists = new HashMap<>();
+        this.friends = new HashMap<>();
     }
 
     public User(String eMail, String firstName, String lastName) {
@@ -23,8 +25,8 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.shoppinglists = new HashMap<>();
+        this.friends = new HashMap<>();
     }
-
 
     public String geteMail() {
         return eMail;
@@ -58,6 +60,14 @@ public class User {
         this.shoppinglists = shoppinglists;
     }
 
+    public HashMap<String, String> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(HashMap<String, String> friends) {
+        this.friends = friends;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -88,4 +98,37 @@ public class User {
     public void setUserListener(UserListener listener) {
         this.userListener = listener;
     }
+
+    public void addFriend(String uid)
+    {
+        friends.put(uid, "Issued");
+    }
+
+    public void addFriendRequest(String uid)
+    {
+        friends.put(uid, "Pending");
+    }
+
+    @Exclude
+    public String getName()
+    {
+        return firstName + " " + lastName;
+    }
+
+    public void confirmFriend(String uid)
+    {
+        if(friends.containsKey(uid))
+        {
+            friends.put(uid, "Confirmed");
+        }
+    }
+
+    public void removeFriend(String uid)
+    {
+        if(friends.containsKey(uid))
+        {
+            friends.remove(uid);
+        }
+    }
+
 }
