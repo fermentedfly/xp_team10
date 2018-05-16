@@ -55,6 +55,7 @@ public class ListViewFragment extends Fragment {
     private Boolean mEditMode;
     private Boolean mAddMode;
     private View mEditableView;
+    private ShoppingListItem originShoppingListItem;
     private ShoppingListItem mTmpShoppingListItem;
 
     public ListViewFragment() {
@@ -148,6 +149,7 @@ public class ListViewFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 if(mEditMode) return true;
+                originShoppingListItem = ((ShoppingListItem) mAdapter.getItem(pos));
                 mEditMode = true;
                 mEditableView = view;
 
@@ -220,6 +222,10 @@ public class ListViewFragment extends Fragment {
         return v;
     }
 
+    private void onLongClick(){
+
+    }
+
     private void setFieldsReadOnly(View v) {
         CheckBox purchasedView = (CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased);
         TextView nameTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_name);
@@ -227,6 +233,15 @@ public class ListViewFragment extends Fragment {
         TextView quantityTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_quantity);
         ImageButton deleteBtn = (ImageButton) mEditableView.findViewById(R.id.item_delete);
         Spinner spinner = (Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner);
+
+        purchasedView.setChecked(originShoppingListItem.getIsPurchased());
+        nameTextView.setText(originShoppingListItem.getName());
+        categoryTextView.setText(originShoppingListItem.getCategory());
+        quantityTextView.setText(originShoppingListItem.getQuantity().toString());
+
+        ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
+        spinner.setSelection(myAdap.getPosition(originShoppingListItem.getUnit()));
+
         purchasedView.setEnabled(false);
         nameTextView.setEnabled(false);
         categoryTextView.setEnabled(false);

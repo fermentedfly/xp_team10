@@ -69,7 +69,6 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-
         purchasedView.setEnabled(false);
         nameTextView.setEnabled(false);
         categoryTextView.setEnabled(false);
@@ -81,6 +80,13 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         nameTextView.setText(item.getName());
         categoryTextView.setText(item.getCategory());
         quantityTextView.setText(String.format("%.0f", item.getQuantity()));
+
+        rowView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return false;
+            }
+        });
 
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
