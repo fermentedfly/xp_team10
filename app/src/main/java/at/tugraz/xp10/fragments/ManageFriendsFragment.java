@@ -124,6 +124,11 @@ public class ManageFriendsFragment extends Fragment {
                         add_user_to_friend_view(uid, user, "Issued");
                         save_to_database(mCurrentUserID, mCurrentUser);
                         save_to_database(uid, user);
+                        mEmailAddress.setText("");
+                    }
+                    else
+                    {
+                        mEmailAddress.setError("User is already your friend");
                     }
                     return;
                 }
@@ -162,7 +167,6 @@ public class ManageFriendsFragment extends Fragment {
         });
 
         mFriendsView.addView(chip);
-
     }
 
     private void add_user_to_pending_view(String uid, User user)
@@ -203,9 +207,11 @@ public class ManageFriendsFragment extends Fragment {
 
     private void load_list_of_users()
     {
-        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                mFriendsView.removeAllViews();
+                mPendingView.removeAllViews();
                 mContactList = new HashMap<String, User>();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     User user = ds.getValue(User.class);

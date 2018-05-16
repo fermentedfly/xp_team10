@@ -42,5 +42,7 @@
     <string name="invalid_email">Invalid Email Address</string>
     <string name="friends">Friends</string>
     <string name="friends_pending">Pending Requests</string>
+    <string name="NewCategory">New Category</string>
+    <string name="CategoryName">Category Name</string>
 
 </resources>
