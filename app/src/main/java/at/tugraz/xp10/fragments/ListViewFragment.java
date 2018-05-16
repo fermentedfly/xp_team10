@@ -158,6 +158,7 @@ public class ListViewFragment extends Fragment {
                 view.findViewById(R.id.shopping_list_item_spinner).setEnabled(true);
 
                 view.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
+                mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
 
                 mAdapter.setButtonsVisibility(view, View.VISIBLE);
                 goShoppingBtn.setVisibility(View.GONE);
@@ -180,7 +181,8 @@ public class ListViewFragment extends Fragment {
                 else if(mEditMode){
                     mEditMode = false;
                     mAdapter.setButtonsVisibility(mEditableView, View.INVISIBLE);
-                    mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                    mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorAccent));
                     setFieldsReadOnly(view);
                 }
                 goShoppingBtn.setVisibility(View.VISIBLE);
@@ -202,7 +204,8 @@ public class ListViewFragment extends Fragment {
                     mEditMode = false;
                     updateItemToDB(mTmpShoppingListItem);
                     mTmpShoppingListItem = null;
-                    mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                    mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorAccent));
                 }
 
                 InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
