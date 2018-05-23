@@ -15,13 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +22,8 @@ import java.util.Map;
 import at.tugraz.xp10.MainActivity;
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.adapter.AllListRecyclerViewAdapter;
+import at.tugraz.xp10.firebase.ShoppingListValueEventListener;
+import at.tugraz.xp10.firebase.ShoppingLists;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 import at.tugraz.xp10.util.ListEntry;
@@ -41,6 +36,7 @@ public class AllListFragment extends Fragment {
     private ArrayList<ListEntry> mShoppingLists = new ArrayList<>();
     private HashMap<String, ShoppingList> mShoppingMap = new HashMap<>();
     private AllListRecyclerViewAdapter mAdapter;
+    private ShoppingLists mShoppingListsDB;
 
     private DetailListener mListener = new DetailListener() {
         @Override
@@ -56,6 +52,7 @@ public class AllListFragment extends Fragment {
     };
 
     public AllListFragment() {
+        mShoppingListsDB = new ShoppingLists();
     }
 
     public static AllListFragment newInstance(int columnCount) {
@@ -73,7 +70,6 @@ public class AllListFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
         setHasOptionsMenu(false);
     }
 
@@ -130,29 +126,21 @@ public class AllListFragment extends Fragment {
         mShoppingLists.clear();
         mShoppingMap.clear();
         mAdapter.notifyDataSetChanged();
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         if (!user.getShoppinglists().isEmpty()) {
             for (final String shoppingListId : user.getShoppinglists().keySet()) {
-
-                Query query = database.child("shoppinglists").child(shoppingListId);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                mShoppingListsDB.getShoppingList(shoppingListId, new ShoppingListValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        mShoppingMap.put(shoppingListId, dataSnapshot.getValue(ShoppingList.class));
+                    public void onNewData(ShoppingList data) {
+                        mShoppingMap.put(shoppingListId, data);
                         mShoppingLists.clear();
 
                         for (Map.Entry<String, ShoppingList> entry : mShoppingMap.entrySet()) {
                             mShoppingLists.add(new ListEntry(entry.getKey(), entry.getValue()));
                         }
 
-                        Log.d(TAG, "got Shoppinglist " + dataSnapshot.getValue(ShoppingList.class).toString());
+                        Log.d(TAG, "got Shoppinglist " + data.toString());
                         mAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
                     }
                 });
             }

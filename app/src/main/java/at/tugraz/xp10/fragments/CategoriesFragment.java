@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import at.tugraz.xp10.firebase.Categories;
 import at.tugraz.xp10.firebase.CategoriesValueEventListener;
@@ -28,6 +29,7 @@ public class CategoriesFragment extends Fragment {
 
     public CategoriesFragment() {
         mCategoriesList = new ArrayList<>();
+        mCategoriesFBHandle = new Categories();
     }
 
     public static CategoriesFragment newInstance() {
@@ -38,7 +40,6 @@ public class CategoriesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCategoriesFBHandle = new Categories();
     }
 
     @Override
@@ -66,9 +67,9 @@ public class CategoriesFragment extends Fragment {
     public void getCategoryList() {
         mCategoriesFBHandle.getCategories(new CategoriesValueEventListener() {
             @Override
-            public void onNewData(ArrayList<Category> Categories) {
+            public void onNewData(HashMap<String, Category> Categories) {
                 mCategoriesList.clear();
-                for (Category c : Categories)
+                for (Category c : Categories.values())
                 {
                     mCategoriesList.add(c);
                 }
