@@ -4,86 +4,123 @@
     android:id="@+id/fragment_list_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="at.tugraz.xp10.fragments.ListViewFragment">
+    tools:context="at.tugraz.xp10.fragments.ListViewFragment"
+    android:background="@color/colorAccent">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addItemButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="14dp"
         android:clickable="true"
-        android:onClick="onAddItem"
-        android:src="@android:drawable/ic_input_add" />
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/colorPrimary" />
 
-    <Button
-        android:id="@+id/goShoppingButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="24dp"
-        android:background="#ffbb33"
-        android:text="Go Shopping" />
-
-    <GridLayout
-        android:id="@+id/listGridLayout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="5"
-        android:orientation="horizontal"
-        tools:context=".GridXMLActivity">
-
-
-        <CheckBox
-            android:id="@+id/txtCheckBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight=".5" />
-
-        <EditText
-            android:id="@+id/item_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1.5"
-            android:inputType="none"
-            android:hint="Name" />
-
-        <EditText
-            android:id="@+id/item_category"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:inputType="text"
-            android:hint="Category" />
-
-        <EditText
-            android:id="@+id/item_price"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:inputType="numberDecimal"
-            android:hint="Price" />
-
-        <EditText
-            android:id="@+id/item_quantity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:inputType="numberDecimal"
-            android:hint="Qty" />
-
-    </GridLayout>
-
-    <ListView
-        android:id="@+id/item_list_view"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="50dp">
-    </ListView>
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
 
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/shopping_list_item"
+            android:layout_width="match_parent"
+            android:layout_height="151dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/colorEditGray">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp"
+                android:text="Insert new List Item:"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/item_unit_spinner"
+                android:layout_width="113dp"
+                android:layout_height="43dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/item_name"
+                android:layout_marginEnd="25dp" />
+
+            <EditText
+                android:id="@+id/item_name"
+                android:layout_width="348dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:hint="Name"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/item_category"
+                android:layout_width="174dp"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/item_name"
+                android:layout_below="@+id/item_name"
+                android:hint="Category"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/item_quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/item_name"
+                android:layout_toStartOf="@+id/item_unit_spinner"
+                android:hint="Qty"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/item_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/lvCancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:paddingRight="2dp"
+            android:text="@string/cancel"
+            android:textColor="@color/colorWhite"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/lvSaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:paddingLeft="2dp"
+            android:text="@string/save"
+            android:textColor="@color/colorWhite"
+            android:visibility="gone" />
+
+    </LinearLayout>
 </RelativeLayout>

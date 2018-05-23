@@ -3,21 +3,26 @@ package at.tugraz.xp10.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +53,12 @@ public class ListViewFragment extends Fragment {
     private ArrayList<ShoppingListItem> mItemList = new ArrayList<>();
     ShoppingListItemListAdapter mAdapter;
 
+    public Boolean mEditMode;
+    private Boolean mAddMode;
+    private Boolean mException;
+    public View mEditableView;
+    private ShoppingListItem originShoppingListItem;
+    private ShoppingListItem mTmpShoppingListItem;
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -70,9 +81,9 @@ public class ListViewFragment extends Fragment {
             mShoppingListId = getArguments().getString(ARG_SHOPPING_LIST_ID);
             m_Title = getArguments().getString(s_Title);
         }
-
-        setHasOptionsMenu(true);
-
+        mEditMode = false;
+        mAddMode = false;
+        mException = false;
     }
 
     @Override
@@ -81,17 +92,27 @@ public class ListViewFragment extends Fragment {
 
         View v =  inflater.inflate(R.layout.fragment_list_view, container, false);
 
+
+        final RelativeLayout addItemLayout = v.findViewById(R.id.shopping_list_item);
+        addItemLayout.setVisibility(View.GONE);
+
+        final Button cancelButton = v.findViewById(R.id.lvCancelButton);
+        final Button saveButton = v.findViewById(R.id.lvSaveButton);
+
+        Spinner spinner = (Spinner) v.findViewById(R.id.item_unit_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.planets_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+
         FloatingActionButton addItemBtn = v.findViewById(R.id.addItemButton);
         addItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addItemToDB();
-            }
-        });
-        Button goShoppingBtn = v.findViewById(R.id.goShoppingButton);
-        goShoppingBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                mAddMode = true;
+                displayAddLayout(v, addItemLayout);
+                cancelButton.setVisibility(View.VISIBLE);
+                saveButton.setVisibility(View.VISIBLE);
 
             }
         });
@@ -114,33 +135,122 @@ public class ListViewFragment extends Fragment {
             }
         });
 
-        ListView mListView = v.findViewById(R.id.item_list_view);
-
-        mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList);
+        final ListView mListView = v.findViewById(R.id.item_list_view);
+        mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList, this);
         mListView.setAdapter(mAdapter);
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                if(mEditMode) return true;
+                originShoppingListItem = ((ShoppingListItem) mAdapter.getItem(pos));
+                mEditMode = true;
+                mEditableView = view;
+
+
+                view.findViewById(R.id.shopping_list_item_purchased).setEnabled(true);
+                view.findViewById(R.id.shopping_list_item_name).setEnabled(true);
+                view.findViewById(R.id.shopping_list_item_category).setEnabled(true);
+                view.findViewById(R.id.shopping_list_item_quantity).setEnabled(true);
+                view.findViewById(R.id.shopping_list_item_spinner).setEnabled(true);
+
+                view.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
+                mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
+                mListView.setPadding(0,0,0,120);
+
+                mAdapter.setButtonsVisibility(view, View.VISIBLE);
+
+                cancelButton.setVisibility(View.VISIBLE);
+                saveButton.setVisibility(View.VISIBLE);
+                editItem((ShoppingListItem) mAdapter.getItem(pos));
+                return true;
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mAddMode){
+                    mAddMode = false;
+                    setItemFieldsEmpty();
+                    getView().findViewById(R.id.shopping_list_item).setVisibility(View.GONE);
+                }
+                else if(mEditMode){
+                    mEditMode = false;
+                    mAdapter.setButtonsVisibility(mEditableView, View.INVISIBLE);
+                    mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    setFieldsReadOnly();
+                }
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                cancelButton.setVisibility(View.GONE);
+                saveButton.setVisibility(View.GONE);
+                mListView.setPadding(0,0,0,0);
+                getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
+              }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mAddMode){
+                    addItemToDB();
+                    if(!mException) {
+                        mAddMode = false;
+                        addItemLayout.setVisibility(View.GONE);
+                    }
+                } else if(mEditMode) {
+
+                    updateItemToDB(mTmpShoppingListItem);
+                    if(!mException) {
+                        mEditMode = false;
+                        mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                        mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    }
+                }
+
+                if(!mException) {
+                    InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    cancelButton.setVisibility(View.GONE);
+                    saveButton.setVisibility(View.GONE);
+                    mListView.setPadding(0,0,0,0);
+                }
+                mException = false;
+            }
+        });
 
         return v;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.list_view, menu);
+
+    private void setFieldsReadOnly() {
+        CheckBox purchasedView = (CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased);
+        TextView nameTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_name);
+        TextView categoryTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_category);
+        TextView quantityTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_quantity);
+        ImageButton deleteBtn = (ImageButton) mEditableView.findViewById(R.id.item_delete);
+        Spinner spinner = (Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner);
+
+        purchasedView.setChecked(originShoppingListItem.getIsPurchased());
+        nameTextView.setText(originShoppingListItem.getName());
+        categoryTextView.setText(originShoppingListItem.getCategory());
+        quantityTextView.setText(String.format("%.0f", originShoppingListItem.getQuantity()));
+
+        ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
+        spinner.setSelection(myAdap.getPosition(spinner.getSelectedItem().toString()));
+
+        purchasedView.setEnabled(true);
+        nameTextView.setEnabled(false);
+        categoryTextView.setEnabled(false);
+        quantityTextView.setEnabled(false);
+        spinner.setEnabled(false);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings:
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                Fragment fragment = ListSettingFragment.newInstance(mShoppingListId);
-                fragmentTransaction.replace(R.id.content_frame, fragment, "ListSetting").addToBackStack(null);
-                fragmentTransaction.commit();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void displayAddLayout(View v, RelativeLayout addLayout) {
+        addLayout.setVisibility(View.VISIBLE);
+        v.findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
     }
 
     public void onButtonPressed(Uri uri) {
@@ -189,23 +299,27 @@ public class ListViewFragment extends Fragment {
         try {
             String name = ((EditText) getView().findViewById(R.id.item_name)).getText().toString();
             String category = ((EditText) getView().findViewById(R.id.item_category)).getText().toString();
-            Double unitprice = Double.parseDouble(((EditText) getView().findViewById(R.id.item_price)).getText().toString());
+            String unit = ((Spinner) getView().findViewById(R.id.item_unit_spinner)).getSelectedItem().toString();
             Double quanitiy = Double.parseDouble(((EditText) getView().findViewById(R.id.item_quantity)).getText().toString());
 
-            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unitprice, category, false);
+            String listKey = mShoppingListItems.push().getKey();
+            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unit, category, false, listKey);
+            mShoppingListItems.child(listKey).setValue(item);
 
-            mShoppingListItems.push().setValue(item);
-
-            ((EditText) getView().findViewById(R.id.item_name)).setText("");
-            ((EditText) getView().findViewById(R.id.item_category)).setText("");
-            ((EditText) getView().findViewById(R.id.item_price)).setText("");
-            ((EditText) getView().findViewById(R.id.item_quantity)).setText("");
+            setItemFieldsEmpty();
 
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();
+            mException = true;
         }
     }
 
+    private void setItemFieldsEmpty() {
+        ((EditText) getView().findViewById(R.id.item_name)).setText("");
+        ((EditText) getView().findViewById(R.id.item_category)).setText("");
+        ((EditText) getView().findViewById(R.id.item_quantity)).setText("");
+        getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
+     }
 
     private void fetchData(DataSnapshot dataSnapshot)
     {
@@ -218,11 +332,42 @@ public class ListViewFragment extends Fragment {
         }
 
         mAdapter.notifyDataSetChanged();
-
     }
 
+    public void deleteItem(String id)
+    {
+        getView().findViewById(R.id.lvCancelButton).setVisibility(View.GONE);
+        getView().findViewById(R.id.lvSaveButton).setVisibility(View.GONE);
+        mShoppingListItems.child(id).removeValue();
+        getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
+        mEditMode = false;
+    }
 
+    public void editItem(ShoppingListItem item){
 
+        getView().findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
+        mTmpShoppingListItem = item;
+        Button editSaveBtn = getView().findViewById(R.id.lvSaveButton);
+        editSaveBtn.setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
+    }
 
+    public void updateItemToDB(ShoppingListItem item)
+    {
+        try {
+            String name = ((EditText) mEditableView.findViewById(R.id.shopping_list_item_name)).getText().toString();
+            String category = ((EditText) mEditableView.findViewById(R.id.shopping_list_item_category)).getText().toString();
+            Double quanitiy = Double.parseDouble(((EditText) mEditableView.findViewById(R.id.shopping_list_item_quantity)).getText().toString());
+            Boolean isPurchased = ((CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased)).isChecked();
+            String unit = ((Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner)).getSelectedItem().toString();
 
+            String listKey = item.getTempId();
+            ShoppingListItem new_item = new ShoppingListItem(name, quanitiy, unit, category, isPurchased, listKey);
+            mShoppingListItems.child(listKey).setValue(new_item);
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();
+            mException = true;
+        }
+    }
 }
