@@ -46,6 +46,8 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     private View mProgressViewPlaceholder;
     private View mLoginFormView;
 
+
+
     public LoginActivity() {
         mAuth = FirebaseAuth.getInstance();
     }
@@ -107,7 +109,7 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    protected Boolean attemptLogin() {
 
         // Reset errors.
         mEmailView.setError(null);
@@ -146,17 +148,17 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            return false;
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             signInWithUserAndPassword(email, password);
-
-
+            return true;
         }
     }
 
     public void signInWithUserAndPassword(String email, String password) {
-        showProgress(true);
+        //showProgress(true);
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -164,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
                     public void onSuccess(AuthResult authResult) {
                         Log.d(TAG, "signInWithEmail:success");
                         FirebaseUser user = mAuth.getCurrentUser();
-                        showProgress(false);
+                        //showProgress(false);
 
                         // TODO better email verification test
                         if (user.isEmailVerified() || user.getEmail().equals(getString(R.string.admin_xp10_com)))
@@ -254,5 +256,20 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     }
 
 
+    public EditText getmEmailView() {
+        return mEmailView;
+    }
+
+    public void setmEmailView(EditText mEmailView) {
+        this.mEmailView = mEmailView;
+    }
+
+    public EditText getmPasswordView() {
+        return mPasswordView;
+    }
+
+    public void setmPasswordView(EditText mPasswordView) {
+        this.mPasswordView = mPasswordView;
+    }
 }
 
