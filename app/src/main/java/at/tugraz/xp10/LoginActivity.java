@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     }
 
     public void signInWithUserAndPassword(String email, String password) {
-        //showProgress(true);
+        showProgress(true);
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
@@ -166,9 +166,8 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
                     public void onSuccess(AuthResult authResult) {
                         Log.d(TAG, "signInWithEmail:success");
                         FirebaseUser user = mAuth.getCurrentUser();
-                        //showProgress(false);
+                        showProgress(false);
 
-                        // TODO better email verification test
                         if (user.isEmailVerified() || user.getEmail().equals(getString(R.string.admin_xp10_com)))
                             gotoMainPage();
                         else {
