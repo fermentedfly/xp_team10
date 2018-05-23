@@ -89,6 +89,7 @@ public class ListViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View v =  inflater.inflate(R.layout.fragment_list_view, container, false);
 
 
@@ -104,7 +105,7 @@ public class ListViewFragment extends Fragment {
         spinner.setAdapter(adapter);
 
 
-        Button addItemBtn = v.findViewById(R.id.addItemButton);
+        FloatingActionButton addItemBtn = v.findViewById(R.id.addItemButton);
         addItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -248,7 +249,7 @@ public class ListViewFragment extends Fragment {
 
     private void displayAddLayout(View v, RelativeLayout addLayout) {
         addLayout.setVisibility(View.VISIBLE);
-        v.findViewById(R.id.addItemButton).setVisibility(View.GONE);
+        v.findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
     }
 
     public void onButtonPressed(Uri uri) {
@@ -347,7 +348,7 @@ public class ListViewFragment extends Fragment {
         mTmpShoppingListItem = item;
         Button editSaveBtn = getView().findViewById(R.id.lvSaveButton);
         editSaveBtn.setVisibility(View.VISIBLE);
-        getView().findViewById(R.id.addItemButton).setVisibility(View.GONE);
+        getView().findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
 
     }
 
