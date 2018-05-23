@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener,
         ListSettingFragment.OnFragmentInteractionListener,
-        ManageFriendsFragment.OnFragmentInteractionListener, CategoriesFragment.OnFragmentInteractionListener {
+        ManageFriendsFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
