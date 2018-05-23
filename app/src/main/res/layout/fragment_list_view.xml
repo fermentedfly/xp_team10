@@ -7,17 +7,17 @@
     tools:context="at.tugraz.xp10.fragments.ListViewFragment"
     android:background="@color/colorAccent">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addItemButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="14dp"
-        android:clickable="true"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/colorPrimary" />
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/addItemButton"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_marginBottom="16dp"-->
+        <!--android:layout_marginEnd="14dp"-->
+        <!--android:clickable="true"-->
+        <!--android:src="@android:drawable/ic_input_add"-->
+        <!--app:backgroundTint="@color/colorPrimary" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -86,41 +86,65 @@
 
         </RelativeLayout>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
         <ListView
             android:id="@+id/item_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true" />
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center|bottom"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/lvCancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:paddingRight="2dp"
-            android:text="@string/cancel"
-            android:textColor="@color/colorWhite"
-            android:visibility="gone" />
+            android:layout_weight="1"/>
 
-        <Button
-            android:id="@+id/lvSaveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:paddingLeft="2dp"
-            android:text="@string/save"
-            android:textColor="@color/colorWhite"
-            android:visibility="gone" />
+
+        <FrameLayout android:id="@+id/FrameLayout01"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|bottom"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/lvCancelButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:paddingRight="2dp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/colorWhite"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/lvSaveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:paddingLeft="2dp"
+                    android:text="@string/save"
+                    android:textColor="@color/colorWhite"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/addItemButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:paddingLeft="2dp"
+                    android:text="@string/add_item"
+                    android:textColor="@color/colorWhite"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+        </FrameLayout>
 
     </LinearLayout>
+
+    </LinearLayout>
+
+
 </RelativeLayout>

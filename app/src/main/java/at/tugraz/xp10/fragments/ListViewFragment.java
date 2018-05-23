@@ -89,7 +89,6 @@ public class ListViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View v =  inflater.inflate(R.layout.fragment_list_view, container, false);
 
 
@@ -105,7 +104,7 @@ public class ListViewFragment extends Fragment {
         spinner.setAdapter(adapter);
 
 
-        FloatingActionButton addItemBtn = v.findViewById(R.id.addItemButton);
+        Button addItemBtn = v.findViewById(R.id.addItemButton);
         addItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,13 +157,13 @@ public class ListViewFragment extends Fragment {
 
                 mAdapter.setButtonsVisibility(view, View.VISIBLE);
 
-                cancelButton.setVisibility(View.VISIBLE);
-                saveButton.setVisibility(View.VISIBLE);
-
                 editItem((ShoppingListItem) mAdapter.getItem(pos));
 
+                cancelButton.setVisibility(View.VISIBLE);
+                saveButton.setVisibility(View.VISIBLE);
                 return true;
             }
+
         });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -249,7 +248,7 @@ public class ListViewFragment extends Fragment {
 
     private void displayAddLayout(View v, RelativeLayout addLayout) {
         addLayout.setVisibility(View.VISIBLE);
-        v.findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
+        v.findViewById(R.id.addItemButton).setVisibility(View.GONE);
     }
 
     public void onButtonPressed(Uri uri) {
@@ -348,7 +347,7 @@ public class ListViewFragment extends Fragment {
         mTmpShoppingListItem = item;
         Button editSaveBtn = getView().findViewById(R.id.lvSaveButton);
         editSaveBtn.setVisibility(View.VISIBLE);
-        getView().findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
+        getView().findViewById(R.id.addItemButton).setVisibility(View.GONE);
 
     }
 
