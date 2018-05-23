@@ -4,13 +4,18 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import at.tugraz.xp10.R;
+import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.model.ShoppingListItem;
 
 public class ShoppingListItemListAdapter extends BaseAdapter {
@@ -18,11 +23,13 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<ShoppingListItem> mDataSource;
+    private ListViewFragment mListViewFragment;
 
-    public ShoppingListItemListAdapter(Context context, ArrayList<ShoppingListItem> items) {
+    public ShoppingListItemListAdapter(Context context, ArrayList<ShoppingListItem> items, ListViewFragment listViewFragment) {
         mContext = context;
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mListViewFragment = listViewFragment;
     }
 
 
@@ -47,36 +54,68 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get view for row item
-        View rowView = mInflater.inflate(R.layout.shopping_list_item, parent, false);
+        final View rowView = mInflater.inflate(R.layout.shopping_list_item, parent, false);
 
-        CheckBox purchasedView =
-                (CheckBox) rowView.findViewById(R.id.shopping_list_item_purchased);
+        final CheckBox purchasedView = (CheckBox) rowView.findViewById(R.id.shopping_list_item_purchased);
+        TextView nameTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_name);
+        TextView categoryTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_category);
+        TextView quantityTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_quantity);
+        ImageButton deleteBtn = (ImageButton) rowView.findViewById(R.id.item_delete);
 
-        TextView nameTextView =
-                (TextView) rowView.findViewById(R.id.shopping_list_item_name);
+        final ShoppingListItem item = (ShoppingListItem) getItem(position);
 
+        Spinner spinner = (Spinner) rowView.findViewById(R.id.shopping_list_item_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext, R.array.planets_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
-        TextView categoryTextView =
-                (TextView) rowView.findViewById(R.id.shopping_list_item_category);
-
-
-        TextView priceTextView =
-                (TextView) rowView.findViewById(R.id.shopping_list_item_price);
-
-
-        TextView quantityTextView =
-                (TextView) rowView.findViewById(R.id.shopping_list_item_quantity);
-
-
-        ShoppingListItem item = (ShoppingListItem) getItem(position);
+        purchasedView.setEnabled(true);
+        nameTextView.setEnabled(false);
+        categoryTextView.setEnabled(false);
+        quantityTextView.setEnabled(false);
+        spinner.setEnabled(false);
+        deleteBtn.setVisibility(View.INVISIBLE);
 
         purchasedView.setChecked(item.getIsPurchased());
-        purchasedView.setEnabled(false);
         nameTextView.setText(item.getName());
         categoryTextView.setText(item.getCategory());
-        priceTextView.setText(String.format("%.2f", item.getUnitprice()));
         quantityTextView.setText(String.format("%.0f", item.getQuantity()));
 
+        spinner.setSelection(adapter.getPosition(item.getUnit()));
+
+
+        rowView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return false;
+            }
+        });
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListViewFragment.deleteItem(item.getTempId());
+            }
+        });
+
+        purchasedView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!mListViewFragment.mEditMode) {
+                    mListViewFragment.mEditableView = rowView;
+                    mListViewFragment.updateItemToDB(item);
+                }
+             }
+        });
+
+
+
         return rowView;
+    }
+
+    public void setButtonsVisibility(View v, int visibility) {
+
+        ImageButton deleteBtn = v.findViewById(R.id.item_delete);
+        deleteBtn.setVisibility(visibility);
     }
 }

@@ -45,13 +45,14 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     private View mProgressView;
     private View mProgressViewPlaceholder;
     private View mLoginFormView;
-    private CountingIdlingResource mIdlingResource = new CountingIdlingResource(TAG);
 
+    public LoginActivity() {
+        mAuth = FirebaseAuth.getInstance();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_login);
         // Set up the login form.
@@ -89,7 +90,6 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
 
     @Override
     public void onStart() {
-        mIdlingResource.increment();
         super.onStart();
 
         FirebaseUser currentUser = null;
@@ -100,27 +100,6 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
             gotoMainPage();
 
 
-
-//        if (currentUser != null) {
-//
-//            // TODO: put these lines to register form
-//            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-//                    .setDisplayName("Jane Q. User")
-//                    .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-//                    .build();
-//            currentUser.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
-//
-//                @Override
-//                public void onComplete(@NonNull Task<Void> task) {
-//                    if (task.isSuccessful()) {
-//                        Log.d(TAG, "User profile updated.");
-//                    }
-//                }
-//            });
-//         //---------------------------------------
-//
-//            Log.d(TAG, "Logged in " + currentUser.getDisplayName());
-//        }
     }
 
     /**
@@ -170,45 +149,47 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            showProgress(false);
-
-                            // TODO better email verification test
-                            if (user.isEmailVerified() || user.getEmail().equals(getString(R.string.admin_xp10_com)))
-                                gotoMainPage();
-                            else {
-                                Toast.makeText(LoginActivity.this, "Authentication failed.\n" + "Email address is not verified",Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(LoginActivity.this, "Authentication failed.\n" + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                            showProgress(false);
-                        }
-                    });
+            signInWithUserAndPassword(email, password);
 
 
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
+    public void signInWithUserAndPassword(String email, String password) {
+        showProgress(true);
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        showProgress(false);
+
+                        // TODO better email verification test
+                        if (user.isEmailVerified() || user.getEmail().equals(getString(R.string.admin_xp10_com)))
+                            gotoMainPage();
+                        else {
+                            Toast.makeText(LoginActivity.this, "Authentication failed.\n" + "Email address is not verified",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(LoginActivity.this, "Authentication failed.\n" + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                        showProgress(false);
+                    }
+                });
+    }
+
+    public boolean isEmailValid(String email) {
         return email.contains("@");
     }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+    public boolean isPasswordValid(String password) {
+        return password.length() > 5;
     }
 
     private void goToForgotPassword() {
@@ -232,7 +213,6 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     }
 
     private void gotoMainPage() {
-        mIdlingResource.decrement();
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         finish();
         LoginActivity.this.startActivity(myIntent);
@@ -252,31 +232,18 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        startShowProgress(!show, shortAnimTime, mLoginFormView);
+        startShowProgress(show, shortAnimTime, mProgressView);
+        startShowProgress(show, shortAnimTime, mProgressViewPlaceholder);
+    }
 
-        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
-        });
-
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressView.animate().setDuration(shortAnimTime).alpha(
+    private void startShowProgress(final boolean show, int shortAnimTime, final View viewProgress) {
+        viewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        viewProgress.animate().setDuration(shortAnimTime).alpha(
                 show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
-
-        mProgressViewPlaceholder.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressViewPlaceholder.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mProgressViewPlaceholder.setVisibility(show ? View.VISIBLE : View.GONE);
+                viewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -286,9 +253,6 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
         // nothing yet
     }
 
-    @VisibleForTesting
-    public IdlingResource getIdlingResource() {
-        return mIdlingResource;
-    }
+
 }
 
