@@ -47,8 +47,7 @@ import static java.lang.Thread.sleep;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener,
-        ListSettingFragment.OnFragmentInteractionListener,
-        ManageFriendsFragment.OnFragmentInteractionListener {
+        ListSettingFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
