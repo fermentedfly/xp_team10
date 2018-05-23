@@ -4,24 +4,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,16 +34,13 @@ import at.tugraz.xp10.fragments.CategoriesFragment;
 import at.tugraz.xp10.fragments.ListSettingFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.ManageFriendsFragment;
-import at.tugraz.xp10.fragments.TestFragment;
 import at.tugraz.xp10.fragments.UserSettingsFragment;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 
-import static java.lang.Thread.sleep;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener,
+        ListViewFragment.OnFragmentInteractionListener,
         ListSettingFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
@@ -111,10 +105,6 @@ public class MainActivity extends AppCompatActivity
                 fragment = (Fragment) AllListFragment.newInstance(2);
                 title = "Overview";
                 break;
-            case R.id.nav_desiredlist:
-                fragment = (Fragment) ListViewFragment.newInstance("foo", "bar");
-                title = "List View";
-                break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 gotoLoginActivity();
@@ -168,38 +158,6 @@ public class MainActivity extends AppCompatActivity
         finish();
         MainActivity.this.startActivity(myIntent);
     }
-
-
-    // TODO remove, just firebase test functions to see how it works...
-
-    private void testFirebase() {
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        String uid = mAuth.getCurrentUser().getUid();
-
-        ShoppingList shoppingList = new ShoppingList("titel", "beschreibung", uid);
-
-        String listKey = database.child("shoppinglists").push().getKey();
-
-        database.child("shoppinglists").child(listKey).setValue(shoppingList).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.d("SOMETHING", "onComplete: " + task.isSuccessful());
-
-                if (!task.isSuccessful()) {
-                    Log.d("ERROR", "onComplete: ", task.getException());
-                }
-            }
-        });
-
-        // add the key of the list to the users shoppinglist map ---- a MAP is used because you quickly can check if the KEY is in the MAP without iterating through it.
-        Map<String, Object> newList = new HashMap<>();
-        newList.put(listKey, true);
-        database.child("users").child(mAuth.getCurrentUser().getUid()).child("shoppinglists").updateChildren(newList);
-
-    }
-
 
     private void getUser() {
 

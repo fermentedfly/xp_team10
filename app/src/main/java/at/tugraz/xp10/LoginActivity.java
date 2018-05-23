@@ -28,12 +28,10 @@ import com.google.firebase.auth.FirebaseUser;
 import at.tugraz.xp10.fragments.ForgotPasswordDialogFragment;
 import at.tugraz.xp10.fragments.RegisterFragment;
 
-public class LoginActivity extends AppCompatActivity implements ForgotPasswordDialogFragment.OnFragmentInteractionListener,
-        RegisterFragment.OnFragmentInteractionListener {
+public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private static final String TAG = "LoginActivity";
-    // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -227,14 +225,8 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     }
 
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         startShowProgress(!show, shortAnimTime, mLoginFormView);
         startShowProgress(show, shortAnimTime, mProgressView);
@@ -251,12 +243,6 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
             }
         });
     }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        // nothing yet
-    }
-
 
     public String getmEmail() {
         return mEmailView.getText().toString();

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -19,25 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import at.tugraz.xp10.R;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ForgotPasswordDialogFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ForgotPasswordDialogFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ForgotPasswordDialogFragment extends DialogFragment {
     private static final String TAG = "ForgotPasswordDialog";
 
@@ -46,10 +34,7 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
     private String mEmail;
     private EditText mEmailEditText;
 
-    private OnFragmentInteractionListener mListener;
-
     public ForgotPasswordDialogFragment() {
-        // Required empty public constructor
     }
 
     public static ForgotPasswordDialogFragment newInstance(String email) {
@@ -70,7 +55,6 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
 
@@ -140,7 +124,6 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_forgot_password, container, false);
     }
 
@@ -150,44 +133,5 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
         mEmailEditText = (EditText) view.findViewById(R.id.email_address);
 
         mEmailEditText.setText(mEmail);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }
