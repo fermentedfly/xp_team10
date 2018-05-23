@@ -160,7 +160,7 @@ public class ListViewFragment extends Fragment {
 
                 cancelButton.setVisibility(View.VISIBLE);
                 saveButton.setVisibility(View.VISIBLE);
-             editItem((ShoppingListItem) mAdapter.getItem(pos));
+                editItem((ShoppingListItem) mAdapter.getItem(pos));
                 return true;
             }
         });
@@ -180,6 +180,8 @@ public class ListViewFragment extends Fragment {
                     mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorAccent));
                     setFieldsReadOnly();
                 }
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 cancelButton.setVisibility(View.GONE);
                 saveButton.setVisibility(View.GONE);
                 getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
