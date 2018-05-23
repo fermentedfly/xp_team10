@@ -87,13 +87,12 @@ public class ManageCategoriesUnitTest {
         Categories fb = new Categories();
         fb.getCategories(new CategoriesValueEventListener() {
             @Override
-            public void onNewData(ArrayList<Category> Categories) {
-                for (Category c : Categories)
+            public void onNewData(HashMap<String, Category> Categories) {
+                for (Category c : Categories.values())
                 {
                     Assert.assertTrue(TestData.containsValue(c));
                 }
             }
         });
     }
-
 }

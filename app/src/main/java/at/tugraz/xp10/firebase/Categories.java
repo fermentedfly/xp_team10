@@ -6,7 +6,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -26,12 +25,12 @@ public class Categories {
         mCategories.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Category> data = new ArrayList<>();
+                HashMap<String, Category> data = new HashMap<>();
                 Set<String> keys = ((HashMap<String, Object>)dataSnapshot.getValue()).keySet();
                 for (String key : keys)
                 {
                     Category item = dataSnapshot.child(key).getValue(Category.class);
-                    data.add(item);
+                    data.put(key, item);
                 }
 
                 listener.onNewData(data);
