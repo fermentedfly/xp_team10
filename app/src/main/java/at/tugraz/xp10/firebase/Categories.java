@@ -13,16 +13,16 @@ import at.tugraz.xp10.model.Category;
 
 public class Categories {
 
-    private DatabaseReference mCategories;
+    private DatabaseReference mDBRef;
 
     public Categories()
     {
-        mCategories = FirebaseDatabase.getInstance().getReference().child("categories");
+        mDBRef = FirebaseDatabase.getInstance().getReference().child("categories");
     }
 
     public void getCategories(final CategoriesValueEventListener listener)
     {
-        mCategories.addValueEventListener(new ValueEventListener() {
+        mDBRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 HashMap<String, Category> data = new HashMap<>();
@@ -45,6 +45,6 @@ public class Categories {
 
     public void put(Category c)
     {
-        mCategories.push().setValue(c);
+        mDBRef.push().setValue(c);
     }
 }

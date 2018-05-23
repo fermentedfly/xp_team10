@@ -29,6 +29,7 @@ public class CategoriesFragment extends Fragment {
 
     public CategoriesFragment() {
         mCategoriesList = new ArrayList<>();
+        mCategoriesFBHandle = new Categories();
     }
 
     public static CategoriesFragment newInstance() {
@@ -39,7 +40,6 @@ public class CategoriesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCategoriesFBHandle = new Categories();
     }
 
     @Override
