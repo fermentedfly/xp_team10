@@ -33,7 +33,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import at.tugraz.xp10.adapter.CategoriesSpinnerAdapter;
 import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
+import at.tugraz.xp10.model.Category;
 import at.tugraz.xp10.model.ShoppingListItem;
 import at.tugraz.xp10.R;
 
@@ -59,6 +61,10 @@ public class ListViewFragment extends Fragment {
     public View mEditableView;
     private ShoppingListItem originShoppingListItem;
     private ShoppingListItem mTmpShoppingListItem;
+
+    private ArrayList <Category> mCategoryList = new ArrayList<>();
+    private ArrayList <String> mCategoryNameList = new ArrayList<>();
+
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -103,6 +109,21 @@ public class ListViewFragment extends Fragment {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.planets_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+
+        mCategoryList.add(new Category("cat1"));
+        mCategoryList.add(new Category("cat2"));
+
+        mCategoryNameList.add("cat1");
+        mCategoryNameList.add("cat2");
+
+
+        Spinner spinnerCat = (Spinner) v.findViewById(R.id.item_category);
+        ArrayAdapter<String> adapterCat = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, mCategoryNameList);
+        adapterCat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        adapterCat.setDropDownViewResource(R.layout.category_spinner_item);
+        spinnerCat.setAdapter(adapterCat);
+
 
 
         FloatingActionButton addItemBtn = v.findViewById(R.id.addItemButton);
@@ -150,7 +171,7 @@ public class ListViewFragment extends Fragment {
 
                 view.findViewById(R.id.shopping_list_item_purchased).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_name).setEnabled(true);
-                view.findViewById(R.id.shopping_list_item_category).setEnabled(true);
+                //view.findViewById(R.id.shopping_list_item_category).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_quantity).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_spinner).setEnabled(true);
 
@@ -228,14 +249,14 @@ public class ListViewFragment extends Fragment {
     private void setFieldsReadOnly() {
         CheckBox purchasedView = (CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased);
         TextView nameTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_name);
-        TextView categoryTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_category);
+        //TextView categoryTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_category);
         TextView quantityTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_quantity);
         ImageButton deleteBtn = (ImageButton) mEditableView.findViewById(R.id.item_delete);
         Spinner spinner = (Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner);
 
         purchasedView.setChecked(originShoppingListItem.getIsPurchased());
         nameTextView.setText(originShoppingListItem.getName());
-        categoryTextView.setText(originShoppingListItem.getCategory());
+        //categoryTextView.setText(originShoppingListItem.getCategory());
         quantityTextView.setText(String.format("%.0f", originShoppingListItem.getQuantity()));
 
         ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
@@ -243,7 +264,7 @@ public class ListViewFragment extends Fragment {
 
         purchasedView.setEnabled(true);
         nameTextView.setEnabled(false);
-        categoryTextView.setEnabled(false);
+        //categoryTextView.setEnabled(false);
         quantityTextView.setEnabled(false);
         spinner.setEnabled(false);
     }
@@ -356,13 +377,13 @@ public class ListViewFragment extends Fragment {
     {
         try {
             String name = ((EditText) mEditableView.findViewById(R.id.shopping_list_item_name)).getText().toString();
-            String category = ((EditText) mEditableView.findViewById(R.id.shopping_list_item_category)).getText().toString();
+            //String category = ((EditText) mEditableView.findViewById(R.id.shopping_list_item_category)).getText().toString();
             Double quanitiy = Double.parseDouble(((EditText) mEditableView.findViewById(R.id.shopping_list_item_quantity)).getText().toString());
             Boolean isPurchased = ((CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased)).isChecked();
             String unit = ((Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner)).getSelectedItem().toString();
 
             String listKey = item.getTempId();
-            ShoppingListItem new_item = new ShoppingListItem(name, quanitiy, unit, category, isPurchased, listKey);
+            ShoppingListItem new_item = new ShoppingListItem(name, quanitiy, unit, "categoryTest", isPurchased, listKey);
             mShoppingListItems.child(listKey).setValue(new_item);
 
         } catch (NumberFormatException e) {
