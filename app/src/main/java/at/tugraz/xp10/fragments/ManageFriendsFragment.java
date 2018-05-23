@@ -19,6 +19,10 @@ import at.tugraz.xp10.firebase.Users;
 import at.tugraz.xp10.firebase.UsersValueEventListener;
 import at.tugraz.xp10.model.User;
 
+import static at.tugraz.xp10.util.Constants.FRIENDS_REQUEST_CONFIRMED;
+import static at.tugraz.xp10.util.Constants.FRIEND_REQUEST_ISSUED;
+import static at.tugraz.xp10.util.Constants.FRIEND_REQUEST_PENDING;
+
 final class UserChip extends ChipView {
 
     private String uid;
@@ -108,7 +112,7 @@ public class ManageFriendsFragment extends Fragment {
                     if(!mCurrentUser.getFriends().containsKey(uid)) {
                         mCurrentUser.addFriend(uid);
                         user.addFriendRequest(mUsersDB.getCurrentUserID());
-                        add_user_to_friend_view(uid, user, "Issued");
+                        add_user_to_friend_view(uid, user, FRIEND_REQUEST_ISSUED);
                         mUsersDB.setUser(mUsersDB.getCurrentUserID(), mCurrentUser);
                         mUsersDB.setUser(uid, user);
                         mEmailAddress.setText("");
@@ -130,7 +134,7 @@ public class ManageFriendsFragment extends Fragment {
         chip.setLabel(user.getName());
         chip.setUid(uid);
         chip.setUser(user);
-        if(state.equals("Confirmed")) {
+        if(state.equals(FRIENDS_REQUEST_CONFIRMED)) {
             chip.setLabelColor(getResources().getColor(R.color.colorWhite));
             chip.setChipBackgroundColor(getResources().getColor(R.color.colorPrimary));
         }
@@ -180,7 +184,7 @@ public class ManageFriendsFragment extends Fragment {
                 mUsersDB.setUser(mUsersDB.getCurrentUserID(), mCurrentUser);
                 mUsersDB.setUser(current_chip.getUid(), current_chip.getUser());
                 mPendingView.removeView(current_chip);
-                add_user_to_friend_view(current_chip.getUid(), current_chip.getUser(), "Confirmed");
+                add_user_to_friend_view(current_chip.getUid(), current_chip.getUser(), FRIENDS_REQUEST_CONFIRMED);
             }
         });
 
@@ -201,7 +205,7 @@ public class ManageFriendsFragment extends Fragment {
                 {
                     if(mContactList.containsKey(uid)) {
                         String state = mCurrentUser.getFriends().get(uid);
-                        if(state.equals("Pending"))
+                        if(state.equals(FRIEND_REQUEST_PENDING))
                         {
                             add_user_to_pending_view(uid, mContactList.get(uid));
                         }

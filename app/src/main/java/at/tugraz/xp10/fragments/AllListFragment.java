@@ -111,7 +111,6 @@ public class AllListFragment extends Fragment {
         ((MainActivity) view.getContext()).currentUser.setUserListener(new User.UserListener() {
             @Override
             public void onLoaded(User user) {
-                Log.d(TAG, "onLoaded: " + user.toString());
                 buildOverallView(view);
             }
         });

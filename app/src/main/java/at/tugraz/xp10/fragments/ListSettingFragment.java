@@ -152,7 +152,7 @@ public class ListSettingFragment extends Fragment  {
         for(Map.Entry<String, User>entry : mUserList.entrySet())
         {
             if((mCurrentUser.getFriends().containsKey(entry.getKey())) && (
-                    mCurrentUser.getFriends().get(entry.getKey()).equalsIgnoreCase("Confirmed"))) {
+                    mCurrentUser.getFriends().get(entry.getKey()).equalsIgnoreCase(Constants.FRIENDS_REQUEST_CONFIRMED))) {
                 addUserToChip(entry.getValue(), entry.getKey());
             }
         }

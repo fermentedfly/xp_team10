@@ -172,7 +172,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentUser.setData(dataSnapshot.getValue(User.class));
-                Log.d(TAG, "got User " + currentUser.toString());
             }
 
             @Override

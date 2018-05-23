@@ -1,9 +1,8 @@
 package at.tugraz.xp10;
 
-import android.view.View;
-import android.widget.EditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +15,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.when;
 
