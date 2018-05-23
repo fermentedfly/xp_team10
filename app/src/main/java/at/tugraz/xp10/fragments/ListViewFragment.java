@@ -147,7 +147,6 @@ public class ListViewFragment extends Fragment {
                 mEditMode = true;
                 mEditableView = view;
 
-
                 view.findViewById(R.id.shopping_list_item_purchased).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_name).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_category).setEnabled(true);
@@ -156,13 +155,14 @@ public class ListViewFragment extends Fragment {
 
                 view.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
                 mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
-                mListView.setPadding(0,0,0,120);
 
                 mAdapter.setButtonsVisibility(view, View.VISIBLE);
 
                 cancelButton.setVisibility(View.VISIBLE);
                 saveButton.setVisibility(View.VISIBLE);
+
                 editItem((ShoppingListItem) mAdapter.getItem(pos));
+
                 return true;
             }
         });
@@ -186,7 +186,7 @@ public class ListViewFragment extends Fragment {
                 inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 cancelButton.setVisibility(View.GONE);
                 saveButton.setVisibility(View.GONE);
-                mListView.setPadding(0,0,0,0);
+
                 getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
               }
         });
@@ -215,7 +215,6 @@ public class ListViewFragment extends Fragment {
                     inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     cancelButton.setVisibility(View.GONE);
                     saveButton.setVisibility(View.GONE);
-                    mListView.setPadding(0,0,0,0);
                 }
                 mException = false;
             }
@@ -350,6 +349,7 @@ public class ListViewFragment extends Fragment {
         Button editSaveBtn = getView().findViewById(R.id.lvSaveButton);
         editSaveBtn.setVisibility(View.VISIBLE);
         getView().findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
+
     }
 
     public void updateItemToDB(ShoppingListItem item)
