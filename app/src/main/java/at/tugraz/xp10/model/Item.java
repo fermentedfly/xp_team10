@@ -1,4 +1,4 @@
-package at.tugraz.xp10;
+package at.tugraz.xp10.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
