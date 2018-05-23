@@ -15,6 +15,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="12dp"
+        android:enabled="true"
         android:scaleX="1.70"
         android:scaleY="1.70"
         android:buttonTint="@color/colorPrimary"/>
@@ -29,7 +30,10 @@
         android:hint="Name"
         android:textColor="#000000"
         android:textSize="18sp"
-        android:longClickable="true" />
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:enabled="true"
+        android:longClickable="true"/>
 
     <EditText
         android:id="@+id/shopping_list_item_category"
@@ -38,6 +42,9 @@
         android:layout_alignStart="@+id/shopping_list_item_name"
         android:layout_below="@+id/shopping_list_item_name"
         android:hint="Category"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:enabled="true"
         android:textColor="#000000"
         android:textSize="16sp" />
 
@@ -48,6 +55,9 @@
         android:layout_below="@+id/shopping_list_item_name"
         android:layout_toEndOf="@+id/shopping_list_item_category"
         android:hint="Qty"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:enabled="true"
         android:textColor="#000000"
         android:textSize="16sp" />
 
@@ -64,13 +74,15 @@
         android:scaleType="fitXY"
         android:scaleX="0.8"
         android:scaleY="0.8"
-        android:visibility="visible"
-        app:srcCompat="@drawable/ic_delete_item" />
-
+        android:visibility="invisible"
+        app:srcCompat="@drawable/ic_delete_item"/>
     <Spinner
         android:id="@+id/shopping_list_item_spinner"
         android:layout_width="113dp"
         android:layout_height="43dp"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:enabled="true"
         android:layout_below="@+id/shopping_list_item_name"
         android:layout_toEndOf="@+id/shopping_list_item_quantity" />
 
