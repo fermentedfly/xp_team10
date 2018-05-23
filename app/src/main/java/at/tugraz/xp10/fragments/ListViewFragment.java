@@ -135,7 +135,7 @@ public class ListViewFragment extends Fragment {
             }
         });
 
-        ListView mListView = v.findViewById(R.id.item_list_view);
+        final ListView mListView = v.findViewById(R.id.item_list_view);
         mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList, this);
         mListView.setAdapter(mAdapter);
 
@@ -147,6 +147,7 @@ public class ListViewFragment extends Fragment {
                 mEditMode = true;
                 mEditableView = view;
 
+
                 view.findViewById(R.id.shopping_list_item_purchased).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_name).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_category).setEnabled(true);
@@ -155,6 +156,7 @@ public class ListViewFragment extends Fragment {
 
                 view.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
                 mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
+                mListView.setPadding(0,0,0,120);
 
                 mAdapter.setButtonsVisibility(view, View.VISIBLE);
 
@@ -184,6 +186,7 @@ public class ListViewFragment extends Fragment {
                 inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 cancelButton.setVisibility(View.GONE);
                 saveButton.setVisibility(View.GONE);
+                mListView.setPadding(0,0,0,0);
                 getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
               }
         });
@@ -212,6 +215,7 @@ public class ListViewFragment extends Fragment {
                     inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     cancelButton.setVisibility(View.GONE);
                     saveButton.setVisibility(View.GONE);
+                    mListView.setPadding(0,0,0,0);
                 }
                 mException = false;
             }
