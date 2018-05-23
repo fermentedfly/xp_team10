@@ -8,9 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -31,9 +28,6 @@ import com.google.firebase.auth.FirebaseUser;
 import at.tugraz.xp10.fragments.ForgotPasswordDialogFragment;
 import at.tugraz.xp10.fragments.RegisterFragment;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity implements ForgotPasswordDialogFragment.OnFragmentInteractionListener,
         RegisterFragment.OnFragmentInteractionListener {
 
@@ -45,7 +39,7 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     private View mProgressView;
     private View mProgressViewPlaceholder;
     private View mLoginFormView;
-
+    private View mFocusView;
 
 
     public LoginActivity() {
@@ -112,42 +106,42 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     protected Boolean attemptLogin() {
 
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        resetErrors();
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String email = getmEmail();
+        String password = getmPassword();
 
         boolean cancel = false;
-        View focusView = null;
+        mFocusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+        if ((password == null) || password.isEmpty())
+        {
+            setmEditTextError(mPasswordView, getString(R.string.error_field_required));
+            setFocus(mPasswordView);
             cancel = true;
-        } else if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_field_required));
-            focusView = mPasswordView;
+        }else if( !isPasswordValid(password)) {
+            setmEditTextError(mPasswordView, getString(R.string.error_invalid_password));
+            setFocus(mPasswordView);
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+        if((email == null) || email.isEmpty())
+        {
+            setmEditTextError(mEmailView, getString(R.string.error_field_required));
+            setFocus(mEmailView);
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            setmEditTextError(mEmailView, getString(R.string.error_invalid_email));
+            setFocus(mEmailView);
             cancel = true;
         }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            focusView.requestFocus();
+            requestFocus();
             return false;
         } else {
             // Show a progress spinner, and kick off a background task to
@@ -155,6 +149,15 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
             signInWithUserAndPassword(email, password);
             return true;
         }
+    }
+
+    protected void requestFocus() {
+        mFocusView.requestFocus();
+    }
+
+    protected void resetErrors() {
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
     }
 
     public void signInWithUserAndPassword(String email, String password) {
@@ -255,20 +258,21 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     }
 
 
-    public EditText getmEmailView() {
-        return mEmailView;
+    public String getmEmail() {
+        return mEmailView.getText().toString();
     }
 
-    public void setmEmailView(EditText mEmailView) {
-        this.mEmailView = mEmailView;
+    public String getmPassword() {
+        return mPasswordView.getText().toString();
     }
 
-    public EditText getmPasswordView() {
-        return mPasswordView;
+    public void setmEditTextError(EditText e, String error) {
+        e.setError(error);
     }
 
-    public void setmPasswordView(EditText mPasswordView) {
-        this.mPasswordView = mPasswordView;
+    public void setFocus(View v)
+    {
+        mFocusView = v;
     }
 }
 
