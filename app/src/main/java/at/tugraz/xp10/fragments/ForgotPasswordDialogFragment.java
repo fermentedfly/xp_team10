@@ -1,17 +1,14 @@
 package at.tugraz.xp10.fragments;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,22 +16,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-
 import at.tugraz.xp10.R;
+import at.tugraz.xp10.firebase.Login;
 
 
 public class ForgotPasswordDialogFragment extends DialogFragment {
     private static final String TAG = "ForgotPasswordDialog";
-
     private static final String ARG_EMAIL = "email";
 
     private String mEmail;
     private EditText mEmailEditText;
+    private Login mLogin;
 
     public ForgotPasswordDialogFragment() {
+        mLogin = new Login();
     }
 
     public static ForgotPasswordDialogFragment newInstance(String email) {
@@ -84,21 +79,7 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
                             return;
                         }
 
-                        FirebaseAuth.getInstance().sendPasswordResetEmail(mEmailEditText.getText().toString())
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "Email send.");
-
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                mEmailEditText.setError(e.getMessage());
-                                Log.d(TAG, "onFailure: " + e.getMessage());
-                            }
-                        });
-
+                        mLogin.setForgotPasswordMail(mEmailEditText, getContext());
                     }
                 });
 

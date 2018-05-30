@@ -9,18 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import at.tugraz.xp10.R;
-import at.tugraz.xp10.model.User;
+import at.tugraz.xp10.firebase.Login;
 
 public class RegisterFragment extends Fragment {
     private static final String TAG = "RegisterFragment";
@@ -32,9 +23,11 @@ public class RegisterFragment extends Fragment {
     private EditText mInputConfirmPassword;
     private Button mButtonCancel;
     private Button mButtonRegister;
-    private DatabaseReference mDatabase;
+
+    private Login mLogin;
 
     public RegisterFragment() {
+        mLogin = new Login();
     }
 
     public static RegisterFragment newInstance() {
@@ -68,36 +61,12 @@ public class RegisterFragment extends Fragment {
             public void onClick(View view) {
 
                 if (validate()) {
-
-                    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                    mAuth.createUserWithEmailAndPassword(mInputEmail.getText().toString(), mInputPassword.getText().toString())
-                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                @Override
-                                public void onSuccess(AuthResult authResult) {
-
-                                    FirebaseUser currentUser = mAuth.getCurrentUser();
-                                    if (currentUser != null) {
-                                        currentUser.sendEmailVerification();
-
-                                        User user = new User(mInputEmail.getText().toString(),
-                                                mInputFirstName.getText().toString(),
-                                                mInputLastName.getText().toString());
-
-                                        mDatabase.child("users").child(currentUser.getUid()).setValue(user);
-
-                                        Toast.makeText(getActivity(), "Registration successful.\nPlease confirm email address",
-                                                Toast.LENGTH_LONG).show();
-                                        getFragmentManager().popBackStack();
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getActivity(), "Registration failed.\n" + e.getMessage(),
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            });
+                    mLogin.createUserWithEmailAndPassword(
+                            mInputEmail.getText().toString(),
+                            mInputPassword.getText().toString(),
+                            mInputFirstName.getText().toString(),
+                            mInputLastName.getText().toString(),
+                            getActivity(), getFragmentManager());
                 }
             }
         });
@@ -114,7 +83,6 @@ public class RegisterFragment extends Fragment {
         mInputConfirmPassword = view.findViewById(R.id.register_confirm_password);
         mButtonCancel = view.findViewById(R.id.register_cancel_button);
         mButtonRegister = view.findViewById(R.id.register_register_button);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     private Boolean validate() {

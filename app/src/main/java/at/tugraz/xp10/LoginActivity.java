@@ -21,16 +21,22 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.AuthResult;
+//import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashMap;
+
+import at.tugraz.xp10.firebase.Login;
+import at.tugraz.xp10.firebase.LoginValueEventListener;
 import at.tugraz.xp10.fragments.ForgotPasswordDialogFragment;
 import at.tugraz.xp10.fragments.RegisterFragment;
+import at.tugraz.xp10.model.User;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+//    private FirebaseAuth mAuth;
     private static final String TAG = "LoginActivity";
     private EditText mEmailView;
     private EditText mPasswordView;
@@ -38,10 +44,11 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressViewPlaceholder;
     private View mLoginFormView;
     private View mFocusView;
-
+    private Login mLogin;
 
     public LoginActivity() {
-        mAuth = FirebaseAuth.getInstance();
+        mLogin = new Login();
+//        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -86,11 +93,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        FirebaseUser currentUser = null;
-        if(mAuth != null)
-            currentUser = mAuth.getCurrentUser();
-
-        if(currentUser != null && (currentUser.isEmailVerified() || currentUser.getEmail().equals(getString(R.string.admin_xp10_com))))
+        if(mLogin.getCurrentUser() != null && (mLogin.getCurrentUser().isEmailVerified() || mLogin.getCurrentUser().getEmail().equals(getString(R.string.admin_xp10_com))))
             gotoMainPage();
 
 
@@ -160,30 +163,28 @@ public class LoginActivity extends AppCompatActivity {
 
     public void signInWithUserAndPassword(String email, String password) {
         showProgress(true);
+        mLogin.signInWithUserAndPassword(email, password, new LoginValueEventListener() {
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        Log.d(TAG, "signInWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        showProgress(false);
+            @Override
+            public void onSuccess() {
 
-                        if (user.isEmailVerified() || user.getEmail().equals(getString(R.string.admin_xp10_com)))
-                            gotoMainPage();
-                        else {
-                            Toast.makeText(LoginActivity.this, "Authentication failed.\n" + "Email address is not verified",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivity.this, "Authentication failed.\n" + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                        showProgress(false);
-                    }
-                });
+                Log.d(TAG, "signInWithEmail:success");
+                showProgress(false);
+
+                if (mLogin.getCurrentUser().isEmailVerified() || mLogin.getCurrentUser().getEmail().equals(getString(R.string.admin_xp10_com)))
+                    gotoMainPage();
+                else {
+                    Toast.makeText(LoginActivity.this, "Authentication failed.\n" + "Email address is not verified",Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(LoginActivity.this, "Authentication failed.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                showProgress(false);
+            }
+
+        });
     }
 
     public boolean isEmailValid(String email) {
@@ -221,7 +222,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean isUserLoggedIn() {
-        return mAuth.getCurrentUser() != null;
+        return mLogin.isUserLoggedIn();
     }
 
 
