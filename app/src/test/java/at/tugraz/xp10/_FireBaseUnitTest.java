@@ -58,42 +58,42 @@ public class _FireBaseUnitTest {
         when(FirebaseDatabase.getInstance()).thenReturn(mockedFirebaseDatabase);
     }
 
-    @Test
-    public void getListOfCategoriesTest() {
-        when(mockedDatabaseReference.child(anyString())).thenReturn(mockedDatabaseReference);
-
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                ValueEventListener valueEventListener = (ValueEventListener) invocation.getArguments()[0];
-
-                DataSnapshot mockedDataSnapshot = Mockito.mock(DataSnapshot.class);
-                when(mockedDataSnapshot.getValue()).thenReturn(TestData);
-
-                ArrayList<DataSnapshot> mockedSnapshots = new ArrayList<>();
-                for (String key : TestData.keySet())
-                {
-                    DataSnapshot ms = Mockito.mock(DataSnapshot.class);
-                    when(ms.getValue(Category.class)).thenReturn(((Category)(TestData.get(key))));
-                    when(mockedDataSnapshot.child(key)).thenReturn(ms);
-                    mockedSnapshots.add(ms);
-                }
-
-                valueEventListener.onDataChange(mockedDataSnapshot);
-
-                return null;
-            }
-        }).when(mockedDatabaseReference).addValueEventListener(any(ValueEventListener.class));
-
-        Categories fb = new Categories();
-        fb.getCategories(new DatabaseListValueEventListener() {
-            @Override
-            public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
-                for (T c : data.values())
-                {
-                    Assert.assertTrue(TestData.containsValue(c));
-                }
-            }
-        });
-    }
+//    @Test
+//    public void getListOfCategoriesTest() {
+//        when(mockedDatabaseReference.child(anyString())).thenReturn(mockedDatabaseReference);
+//
+//        doAnswer(new Answer<Void>() {
+//            @Override
+//            public Void answer(InvocationOnMock invocation) throws Throwable {
+//                ValueEventListener valueEventListener = (ValueEventListener) invocation.getArguments()[0];
+//
+//                DataSnapshot mockedDataSnapshot = Mockito.mock(DataSnapshot.class);
+//                when(mockedDataSnapshot.getValue()).thenReturn(TestData);
+//
+//                ArrayList<DataSnapshot> mockedSnapshots = new ArrayList<>();
+//                for (String key : TestData.keySet())
+//                {
+//                    DataSnapshot ms = Mockito.mock(DataSnapshot.class);
+//                    when(ms.getValue(Category.class)).thenReturn(((Category)(TestData.get(key))));
+//                    when(mockedDataSnapshot.child(key)).thenReturn(ms);
+//                    mockedSnapshots.add(ms);
+//                }
+//
+//                valueEventListener.onDataChange(mockedDataSnapshot);
+//
+//                return null;
+//            }
+//        }).when(mockedDatabaseReference).addValueEventListener(any(ValueEventListener.class));
+//
+//        Categories fb = new Categories();
+//        fb.getCategories(new DatabaseListValueEventListener() {
+//            @Override
+//            public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
+//                for (T c : data.values())
+//                {
+//                    Assert.assertTrue(TestData.containsValue(c));
+//                 }
+//           }
+//        });
+//    }
 }

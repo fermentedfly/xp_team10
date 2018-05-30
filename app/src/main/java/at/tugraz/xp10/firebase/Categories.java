@@ -13,7 +13,7 @@ public class Categories {
 
     public void getCategories(final DatabaseListValueEventListener listener)
     {
-        mDBRef.getListOfValues(Category.class, listener);
+        mDBRef.installListListener(Category.class, listener);
     }
 
     public void putCategory(Category c)

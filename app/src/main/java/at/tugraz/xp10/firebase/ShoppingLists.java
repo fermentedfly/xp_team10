@@ -12,7 +12,7 @@ public class ShoppingLists {
 
     public void getShoppingList(String key, final DatabaseValueEventListener listener)
     {
-        mDBRef.getValue(ShoppingList.class, key, listener);
+        mDBRef.installValueListener(ShoppingList.class, key, listener);
     }
 
     public void updateShoppingList(String key, ShoppingList list)

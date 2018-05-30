@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.firebase.Login;
+import at.tugraz.xp10.firebase.LoginValueEventListener;
 
 
 public class ForgotPasswordDialogFragment extends DialogFragment {
@@ -78,11 +80,21 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
                             mEmailEditText.setError(getString(R.string.error_field_required));
                             return;
                         }
+                        mLogin.setForgotPasswordMail(mEmailEditText.getText().toString(),
+                                new LoginValueEventListener() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(getContext(), "Mail send successfully!", Toast.LENGTH_LONG).show();
+                            }
 
-                        mLogin.setForgotPasswordMail(mEmailEditText, getContext());
+                            @Override
+                            public void onFailure(Exception e) {
+                                mEmailEditText.setError(e.getMessage());
+                                Toast.makeText(getContext(), "Error. Please try again!", Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 });
-
 
                 // POSITIVE
                 Button buttonNeg = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);

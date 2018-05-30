@@ -1,14 +1,5 @@
 package at.tugraz.xp10.firebase;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
-
-import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.ShoppingListItem;
 
 public class ShoppingListItems {
@@ -26,7 +17,7 @@ public class ShoppingListItems {
 
     public void getShoppingListItems(final DatabaseListValueEventListener listener)
     {
-        mDBRef.getListOfValues(ShoppingListItem.class, listener);
+        mDBRef.installListListener(ShoppingListItem.class, listener);
     }
 
     public void addItemToShoppingList(String name, Double quantity, String unit, String category, Boolean checked)

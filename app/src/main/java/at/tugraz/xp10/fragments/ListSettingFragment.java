@@ -224,7 +224,7 @@ public class ListSettingFragment extends Fragment {
     }
 
     private void closeFragment() {
-
+        mUsersFBHandle.uninstallAllListeners();
         getActivity().getSupportFragmentManager().popBackStackImmediate();
     }
 }
