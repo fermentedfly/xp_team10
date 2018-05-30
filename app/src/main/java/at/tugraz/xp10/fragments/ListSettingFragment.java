@@ -1,14 +1,10 @@
 package at.tugraz.xp10.fragments;
 
-import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.google.firebase.auth.FirebaseAuth;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.pchmn.materialchips.ChipView;
 import com.pchmn.materialchips.ChipsInput;
 import com.pchmn.materialchips.model.Chip;
@@ -30,28 +19,25 @@ import com.pchmn.materialchips.util.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import at.tugraz.xp10.R;
+import at.tugraz.xp10.firebase.ShoppingListValueEventListener;
+import at.tugraz.xp10.firebase.ShoppingLists;
+import at.tugraz.xp10.firebase.Users;
+import at.tugraz.xp10.firebase.UserListValueEventListener;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 import at.tugraz.xp10.util.Constants;
 
 
-public class ListSettingFragment extends Fragment  {
+public class ListSettingFragment extends Fragment {
     private static final String ARG_LIST_ID = "ID";
-    private static final String TAG = "ListSetting";
 
     private String mListID;
-    private FirebaseAuth mAuth;
+    private Users mUsersFBHandle;
+    private ShoppingLists mShoppingListsFBHandle;
 
-    private DatabaseReference mUserRef;
-    private DatabaseReference mShoppingListRef;
-
-    private List<Chip> mContactList;
-
-    private OnFragmentInteractionListener mListener;
+    private ArrayList<Chip> mContactList;
 
     private Button mSaveButton;
     private Button mCancelButton;
@@ -65,7 +51,8 @@ public class ListSettingFragment extends Fragment  {
     private String ownerID;
 
     public ListSettingFragment() {
-        // Required empty public constructor
+        mUsersFBHandle = new Users();
+        mShoppingListsFBHandle = new ShoppingLists();
     }
 
     public static ListSettingFragment newInstance(String list_id) {
@@ -81,20 +68,13 @@ public class ListSettingFragment extends Fragment  {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mListID = getArguments().getString(ARG_LIST_ID);
-        }
-        else {
+        } else {
             mListID = null;
         }
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        mUserRef = mDatabase.getReference("/users");
-        mShoppingListRef = mDatabase.getReference("/shoppinglists");
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list_setting, container, false);
 
         mTitle = view.findViewById(R.id.list_setting_title);
@@ -123,43 +103,56 @@ public class ListSettingFragment extends Fragment  {
         return view;
     }
 
-    private void load_list_by_id()
-    {
-        mShoppingListRef.child(mListID).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void loadFriends() {
+        mUserList = new HashMap<>();
+        mUsersFBHandle.getUsers(new UserListValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ShoppingList list = dataSnapshot.getValue(ShoppingList.class);
-                for(Map.Entry<String, String> entry: list.getMembers().entrySet())
-                {
-                    if(entry.getValue().equalsIgnoreCase(Constants.OWNER))
-                    {
-                        owner = mUserList.get(entry.getKey());
-                        ownerID = entry.getKey();
+            public void onNewData(HashMap<String, User> data) {
+                mContactList = new ArrayList<>();
+
+                for (HashMap.Entry<String, User> d : data.entrySet()) {
+                    mUserList.put(d.getKey(), d.getValue());
+                    if (d.getKey().equalsIgnoreCase(mUsersFBHandle.getCurrentUserID())) {
+                        mCurrentUser = d.getValue();
                     }
                 }
-                fill_ui_fields(list);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+                if (mListID != null) {
+                    load_list_by_id();
+                } else {
+                    owner = mCurrentUser;
+                    ownerID = mUsersFBHandle.getCurrentUserID();
+                    fill_ui_fields(null);
+                }
             }
         });
     }
 
-    private void fill_ui_fields(ShoppingList list)
-    {
-        for(Map.Entry<String, User>entry : mUserList.entrySet())
-        {
-            if((mCurrentUser.getFriends().containsKey(entry.getKey())) && (
-                    mCurrentUser.getFriends().get(entry.getKey()).equalsIgnoreCase("Confirmed"))) {
+    private void load_list_by_id() {
+        mShoppingListsFBHandle.getShoppingList(mListID, new ShoppingListValueEventListener() {
+            @Override
+            public void onNewData(ShoppingList data) {
+                for (HashMap.Entry<String, String> entry : data.getMembers().entrySet()) {
+                    if (entry.getValue().equalsIgnoreCase(Constants.OWNER)) {
+                        owner = mUserList.get(entry.getKey());
+                        ownerID = entry.getKey();
+                    }
+                }
+                fill_ui_fields(data);
+            }
+        });
+    }
+
+    private void fill_ui_fields(ShoppingList list) {
+        for (HashMap.Entry<String, User> entry : mUserList.entrySet()) {
+            if ((mCurrentUser.getFriends().containsKey(entry.getKey())) && (
+                    mCurrentUser.getFriends().get(entry.getKey()).equalsIgnoreCase(Constants.FRIENDS_REQUEST_CONFIRMED))) {
                 addUserToChip(entry.getValue(), entry.getKey());
             }
         }
 
         Fragment current = getFragmentManager().findFragmentByTag("ListSetting");
         View v = current.getView();
-        if(v != null) {
+        if (v != null) {
             ChipView ownerChipView = v.findViewById(R.id.owner_chip_view);
             ownerChipView.setLabel(owner.getName());
             ownerChipView.setHasAvatarIcon(true);
@@ -167,7 +160,7 @@ public class ListSettingFragment extends Fragment  {
             mUsers = new ChipsInput(getContext());
             mUsers.setChipDeletable(true);
             mUsers.setMaxRows(10);
-            mUsers.setMaxHeight(ViewUtil.dpToPx(400)+8);
+            mUsers.setMaxHeight(ViewUtil.dpToPx(400) + 8);
 
             mUsers.getEditText().setTextColor(Color.WHITE);
             LinearLayout ll = v.findViewById(R.id.list_setting_chips_input);
@@ -189,120 +182,49 @@ public class ListSettingFragment extends Fragment  {
         mCancelButton.setEnabled(true);
     }
 
-    private void loadFriends() {
-        mUserList = new HashMap<>();
-        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                mContactList = new ArrayList<>();
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    User user = ds.getValue(User.class);
-                    mUserList.put(ds.getKey(), user);
-
-                    if(ds.getKey().equalsIgnoreCase(mAuth.getCurrentUser().getUid()))
-                    {
-                        mCurrentUser = user;
-                    }
-                }
-
-                if (mListID != null) {
-                    load_list_by_id();
-                }
-                else {
-                    owner = mCurrentUser;
-                    ownerID = mAuth.getCurrentUser().getUid();
-                    fill_ui_fields(null);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-    }
 
     private void saveDataToDatabase() {
 
-        if(TextUtils.isEmpty(mTitle.getText().toString())) {
+        if (TextUtils.isEmpty(mTitle.getText().toString())) {
             mTitle.setError(getString(R.string.error_field_required));
             return;
         }
 
         ShoppingList shoppingList = new ShoppingList();
         shoppingList.setTitle(mTitle.getText().toString());
-        if(!mDescription.getText().toString().isEmpty())
+        if (!mDescription.getText().toString().isEmpty())
             shoppingList.setDescription(mDescription.getText().toString());
 
-        Map<String, String> users = new HashMap<String, String>();
-        List<Chip> selectedUsers = (List<Chip>) mUsers.getSelectedChipList();
-        
-        for(Chip selUser : selectedUsers) {
+        HashMap<String, String> users = new HashMap<>();
+        ArrayList<Chip> selectedUsers = (ArrayList<Chip>) mUsers.getSelectedChipList();
+
+        for (Chip selUser : selectedUsers) {
             users.put(selUser.getId().toString(), Constants.MEMBER);
         }
 
         users.put(ownerID, Constants.OWNER);
 
-        if (!mAuth.getCurrentUser().getUid().equals(ownerID))
-        {
-            users.put(mAuth.getCurrentUser().getUid(), Constants.MEMBER);
+        if (!mUsersFBHandle.getCurrentUserID().equals(ownerID)) {
+            users.put(mUsersFBHandle.getCurrentUserID(), Constants.MEMBER);
         }
 
         shoppingList.setMembers(users);
-
-        if (mListID == null) {
-            mListID = mShoppingListRef.push().getKey();
-        }
-
-        mShoppingListRef.child(mListID).setValue(shoppingList);
+        mShoppingListsFBHandle.updateShoppingList(mListID, shoppingList);
 
         for (String uid : shoppingList.getMembers().keySet()) {
-            Map<String, Object> newList = new HashMap<>();
-            newList.put(mListID, true);
-            mUserRef.child(uid).child("shoppinglists").updateChildren(newList);
+            mUsersFBHandle.addShoppingListToUser(uid, mListID);
         }
         closeFragment();
     }
 
     private void addUserToChip(User user, String key) {
-        if (!key.equalsIgnoreCase(mAuth.getCurrentUser().getUid()) && user != owner) {
+        if (!key.equalsIgnoreCase(mUsersFBHandle.getCurrentUserID()) && user != owner) {
             mContactList.add(new Chip(key, user.getFirstName() + " " + user.getLastName(), user.geteMail()));
         }
     }
 
-
     private void closeFragment() {
         getActivity().getSupportFragmentManager().popBackStackImmediate();
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 }
 

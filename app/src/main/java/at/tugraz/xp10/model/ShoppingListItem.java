@@ -64,14 +64,6 @@ public class ShoppingListItem {
         this.tempId = tempId;
     }
 
-    public Boolean getPurchased() {
-        return IsPurchased;
-    }
-
-    public void setPurchased(Boolean purchased) {
-        IsPurchased = purchased;
-    }
-
     public String getUnit() {
         return unit;
     }

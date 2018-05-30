@@ -1,25 +1,118 @@
 package at.tugraz.xp10;
 
-import org.junit.Rule;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.when;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockRunnerDelegate(JUnit4.class)
+@PrepareForTest({FirebaseAuth.class})
 public class LoginUnitTest {
 
-    LoginActivity loginActivity = new LoginActivity();
-    //TODO: ask if tests are necessary
+    private FirebaseAuth mockedFirebaseAuth;
+    private FirebaseUser mockedUser;
+    private LoginActivity loginActivity;
+    private LoginActivity loginActivityMock;
+
+    @Before
+    public void before() {
+        mockedFirebaseAuth = Mockito.mock(FirebaseAuth.class);
+        mockedUser = Mockito.mock(FirebaseUser.class);
+
+        PowerMockito.mockStatic(FirebaseAuth.class);
+        when(FirebaseAuth.getInstance()).thenReturn(mockedFirebaseAuth);
+
+        loginActivity = new LoginActivity();
+        loginActivityMock = Mockito.mock(LoginActivity.class);
+    }
+
     @Test
-    public void loginFail() throws Exception{
+    public void testLoggedInUser() {
+        when(mockedFirebaseAuth.getCurrentUser()).thenReturn(null);
+        assertEquals(false, loginActivity.isUserLoggedIn());
+
+        // Mock User
+        when(mockedFirebaseAuth.getCurrentUser()).thenReturn(mockedUser);
+        assertEquals(true, loginActivity.isUserLoggedIn());
+    }
+
+    @Test
+    public void signIn() throws Exception {
 
     }
+
+    @Test
+    public void loginFail() throws Exception {
+
+    }
+
     @Test
     public void loginSuccess() throws Exception {
-
     }
+
     @Test
     public void pushRegisterButton() throws Exception {
 
+    }
+
+    @Test
+    public void attemptLogin() throws Exception {
+        when(loginActivityMock.isPasswordValid(anyString())).thenCallRealMethod();
+        when(loginActivityMock.isEmailValid(anyString())).thenCallRealMethod();
+        when(loginActivityMock.attemptLogin()).thenCallRealMethod();
+
+        doReturn("admin@xp10.com").when(loginActivityMock).getmEmail();
+        doReturn("admin123").when(loginActivityMock).getmPassword();
+        assertEquals(loginActivityMock.attemptLogin(), true);
+
+        doReturn("admin@xp10.com").when(loginActivityMock).getmEmail();
+        doReturn("").when(loginActivityMock).getmPassword();
+        assertEquals(loginActivityMock.attemptLogin(), false);
+
+        doReturn("").when(loginActivityMock).getmEmail();
+        doReturn("admin123").when(loginActivityMock).getmPassword();
+        assertEquals(loginActivityMock.attemptLogin(), false);
+
+        doReturn("admin(at)xp10.com").when(loginActivityMock).getmEmail();
+        doReturn("admin123").when(loginActivityMock).getmPassword();
+        assertEquals(loginActivityMock.attemptLogin(), false);
+
+        doReturn("admin@xp10.com").when(loginActivityMock).getmEmail();
+        doReturn("foo").when(loginActivityMock).getmPassword();
+        assertEquals(loginActivityMock.attemptLogin(), false);
+    }
+
+    @Test
+    public void testSignInWithUserAndPassword() {
+
+
+    }
+
+    @Test
+    public void testEmailVerifier() {
+        assertEquals(true, loginActivity.isEmailValid("hallo@abc.de"));
+        assertEquals(false, loginActivity.isEmailValid("halloabc.de"));
+    }
+
+    @Test
+    public void testPasswordVerifier() {
+        assertEquals(true, loginActivity.isPasswordValid("admin123"));
+        assertEquals(false, loginActivity.isPasswordValid("admin"));
+        assertEquals(false, loginActivity.isPasswordValid(""));
     }
 
 }

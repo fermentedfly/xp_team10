@@ -8,9 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -24,34 +21,39 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.AuthResult;
+//import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashMap;
+
+import at.tugraz.xp10.firebase.Login;
+import at.tugraz.xp10.firebase.LoginValueEventListener;
 import at.tugraz.xp10.fragments.ForgotPasswordDialogFragment;
 import at.tugraz.xp10.fragments.RegisterFragment;
+import at.tugraz.xp10.model.User;
 
-/**
- * A login screen that offers login via email/password.
- */
-public class LoginActivity extends AppCompatActivity implements ForgotPasswordDialogFragment.OnFragmentInteractionListener,
-        RegisterFragment.OnFragmentInteractionListener {
+public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+//    private FirebaseAuth mAuth;
     private static final String TAG = "LoginActivity";
-    // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mProgressViewPlaceholder;
     private View mLoginFormView;
-    private CountingIdlingResource mIdlingResource = new CountingIdlingResource(TAG);
+    private View mFocusView;
+    private Login mLogin;
 
+    public LoginActivity() {
+        mLogin = new Login();
+//        mAuth = FirebaseAuth.getInstance();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_login);
         // Set up the login form.
@@ -89,38 +91,12 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
 
     @Override
     public void onStart() {
-        mIdlingResource.increment();
         super.onStart();
 
-        FirebaseUser currentUser = null;
-        if(mAuth != null)
-            currentUser = mAuth.getCurrentUser();
-
-        if(currentUser != null && (currentUser.isEmailVerified() || currentUser.getEmail().equals(getString(R.string.admin_xp10_com))))
+        if(mLogin.getCurrentUser() != null && (mLogin.getCurrentUser().isEmailVerified() || mLogin.getCurrentUser().getEmail().equals(getString(R.string.admin_xp10_com))))
             gotoMainPage();
 
 
-
-//        if (currentUser != null) {
-//
-//            // TODO: put these lines to register form
-//            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-//                    .setDisplayName("Jane Q. User")
-//                    .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-//                    .build();
-//            currentUser.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
-//
-//                @Override
-//                public void onComplete(@NonNull Task<Void> task) {
-//                    if (task.isSuccessful()) {
-//                        Log.d(TAG, "User profile updated.");
-//                    }
-//                }
-//            });
-//         //---------------------------------------
-//
-//            Log.d(TAG, "Logged in " + currentUser.getDisplayName());
-//        }
     }
 
     /**
@@ -128,87 +104,95 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    protected Boolean attemptLogin() {
 
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        resetErrors();
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String email = getmEmail();
+        String password = getmPassword();
 
         boolean cancel = false;
-        View focusView = null;
+        mFocusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+        if ((password == null) || password.isEmpty())
+        {
+            setmEditTextError(mPasswordView, getString(R.string.error_field_required));
+            setFocus(mPasswordView);
             cancel = true;
-        } else if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_field_required));
-            focusView = mPasswordView;
+        }else if( !isPasswordValid(password)) {
+            setmEditTextError(mPasswordView, getString(R.string.error_invalid_password));
+            setFocus(mPasswordView);
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+        if((email == null) || email.isEmpty())
+        {
+            setmEditTextError(mEmailView, getString(R.string.error_field_required));
+            setFocus(mEmailView);
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            setmEditTextError(mEmailView, getString(R.string.error_invalid_email));
+            setFocus(mEmailView);
             cancel = true;
         }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            focusView.requestFocus();
+            requestFocus();
+            return false;
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            showProgress(false);
-
-                            // TODO better email verification test
-                            if (user.isEmailVerified() || user.getEmail().equals(getString(R.string.admin_xp10_com)))
-                                gotoMainPage();
-                            else {
-                                Toast.makeText(LoginActivity.this, "Authentication failed.\n" + "Email address is not verified",Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(LoginActivity.this, "Authentication failed.\n" + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                            showProgress(false);
-                        }
-                    });
-
-
+            signInWithUserAndPassword(email, password);
+            return true;
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
+    protected void requestFocus() {
+        mFocusView.requestFocus();
+    }
+
+    protected void resetErrors() {
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+    }
+
+    public void signInWithUserAndPassword(String email, String password) {
+        showProgress(true);
+        mLogin.signInWithUserAndPassword(email, password, new LoginValueEventListener() {
+
+            @Override
+            public void onSuccess() {
+
+                Log.d(TAG, "signInWithEmail:success");
+                showProgress(false);
+
+                if (mLogin.getCurrentUser().isEmailVerified() || mLogin.getCurrentUser().getEmail().equals(getString(R.string.admin_xp10_com)))
+                    gotoMainPage();
+                else {
+                    Toast.makeText(LoginActivity.this, "Authentication failed.\n" + "Email address is not verified",Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(LoginActivity.this, "Authentication failed.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                showProgress(false);
+            }
+
+        });
+    }
+
+    public boolean isEmailValid(String email) {
         return email.contains("@");
     }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+    public boolean isPasswordValid(String password) {
+        return password.length() > 5;
     }
 
     private void goToForgotPassword() {
@@ -232,63 +216,50 @@ public class LoginActivity extends AppCompatActivity implements ForgotPasswordDi
     }
 
     private void gotoMainPage() {
-        mIdlingResource.decrement();
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         finish();
         LoginActivity.this.startActivity(myIntent);
     }
 
     public boolean isUserLoggedIn() {
-        return mAuth.getCurrentUser() != null;
+        return mLogin.isUserLoggedIn();
     }
 
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        startShowProgress(!show, shortAnimTime, mLoginFormView);
+        startShowProgress(show, shortAnimTime, mProgressView);
+        startShowProgress(show, shortAnimTime, mProgressViewPlaceholder);
+    }
 
-        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
-        });
-
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressView.animate().setDuration(shortAnimTime).alpha(
+    private void startShowProgress(final boolean show, int shortAnimTime, final View viewProgress) {
+        viewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        viewProgress.animate().setDuration(shortAnimTime).alpha(
                 show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
-
-        mProgressViewPlaceholder.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressViewPlaceholder.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mProgressViewPlaceholder.setVisibility(show ? View.VISIBLE : View.GONE);
+                viewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        // nothing yet
+    public String getmEmail() {
+        return mEmailView.getText().toString();
     }
 
-    @VisibleForTesting
-    public IdlingResource getIdlingResource() {
-        return mIdlingResource;
+    public String getmPassword() {
+        return mPasswordView.getText().toString();
+    }
+
+    public void setmEditTextError(EditText e, String error) {
+        e.setError(error);
+    }
+
+    public void setFocus(View v)
+    {
+        mFocusView = v;
     }
 }
 

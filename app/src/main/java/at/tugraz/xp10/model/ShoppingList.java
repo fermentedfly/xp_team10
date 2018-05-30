@@ -1,13 +1,9 @@
 package at.tugraz.xp10.model;
 
-import android.text.Editable;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ServerValue;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import at.tugraz.xp10.util.Constants;

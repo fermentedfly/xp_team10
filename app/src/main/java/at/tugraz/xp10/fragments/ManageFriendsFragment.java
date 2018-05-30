@@ -1,7 +1,6 @@
 package at.tugraz.xp10.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,18 +10,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.pchmn.materialchips.ChipView;
 
 import java.util.HashMap;
 
 import at.tugraz.xp10.R;
+import at.tugraz.xp10.firebase.Users;
+import at.tugraz.xp10.firebase.UserListValueEventListener;
 import at.tugraz.xp10.model.User;
+
+import static at.tugraz.xp10.util.Constants.FRIENDS_REQUEST_CONFIRMED;
+import static at.tugraz.xp10.util.Constants.FRIEND_REQUEST_ISSUED;
+import static at.tugraz.xp10.util.Constants.FRIEND_REQUEST_PENDING;
 
 final class UserChip extends ChipView {
 
@@ -52,9 +51,7 @@ final class UserChip extends ChipView {
 
 
 public class ManageFriendsFragment extends Fragment {
-    private OnFragmentInteractionListener mListener;
-    private FirebaseAuth mAuth;
-    private DatabaseReference mUserRef;
+    private final Users mUsersDB;
     private HashMap<String, User> mContactList;
     private User mCurrentUser;
     private EditText mEmailAddress;
@@ -62,9 +59,9 @@ public class ManageFriendsFragment extends Fragment {
     private View mView;
     private LinearLayout mFriendsView;
     private LinearLayout mPendingView;
-    private String mCurrentUserID;
 
     public ManageFriendsFragment() {
+        mUsersDB = new Users();
     }
 
     public static ManageFriendsFragment newInstance() {
@@ -75,17 +72,11 @@ public class ManageFriendsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        mUserRef = mDatabase.getReference("/users");
-        mCurrentUserID = mAuth.getCurrentUser().getUid();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_manage_friends, container, false);
 
         mFriendsView = mView.findViewById(R.id.chipview_friends);
@@ -120,10 +111,10 @@ public class ManageFriendsFragment extends Fragment {
                 {
                     if(!mCurrentUser.getFriends().containsKey(uid)) {
                         mCurrentUser.addFriend(uid);
-                        user.addFriendRequest(mCurrentUserID);
-                        add_user_to_friend_view(uid, user, "Issued");
-                        save_to_database(mCurrentUserID, mCurrentUser);
-                        save_to_database(uid, user);
+                        user.addFriendRequest(mUsersDB.getCurrentUserID());
+                        add_user_to_friend_view(uid, user, FRIEND_REQUEST_ISSUED);
+                        mUsersDB.setUser(mUsersDB.getCurrentUserID(), mCurrentUser);
+                        mUsersDB.setUser(uid, user);
                         mEmailAddress.setText("");
                     }
                     else
@@ -137,18 +128,13 @@ public class ManageFriendsFragment extends Fragment {
         }
     }
 
-    private void save_to_database(String uid, User user)
-    {
-        mUserRef.child(uid).setValue(user);
-    }
-
     private void add_user_to_friend_view(String uid, User user, String state)
     {
         UserChip chip = new UserChip(mView.getContext());
         chip.setLabel(user.getName());
         chip.setUid(uid);
         chip.setUser(user);
-        if(state.equals("Confirmed")) {
+        if(state.equals(FRIENDS_REQUEST_CONFIRMED)) {
             chip.setLabelColor(getResources().getColor(R.color.colorWhite));
             chip.setChipBackgroundColor(getResources().getColor(R.color.colorPrimary));
         }
@@ -159,10 +145,10 @@ public class ManageFriendsFragment extends Fragment {
             public void onClick(View v) {
                 UserChip current_chip = (UserChip)(v.getParent().getParent().getParent());
                 mCurrentUser.removeFriend(current_chip.getUid());
-                current_chip.getUser().removeFriend(mCurrentUserID);
+                current_chip.getUser().removeFriend(mUsersDB.getCurrentUserID());
                 mFriendsView.removeView(current_chip);
-                save_to_database(mCurrentUserID, mCurrentUser);
-                save_to_database(current_chip.getUid(), current_chip.getUser());
+                mUsersDB.setUser(mUsersDB.getCurrentUserID(), mCurrentUser);
+                mUsersDB.setUser(current_chip.getUid(), current_chip.getUser());
             }
         });
 
@@ -183,10 +169,10 @@ public class ManageFriendsFragment extends Fragment {
             public void onClick(View v) {
                 UserChip current_chip = (UserChip)(v.getParent().getParent().getParent());
                 mCurrentUser.removeFriend(current_chip.getUid());
-                current_chip.getUser().removeFriend(mCurrentUserID);
+                current_chip.getUser().removeFriend(mUsersDB.getCurrentUserID());
                 mPendingView.removeView(current_chip);
-                save_to_database(mCurrentUserID, mCurrentUser);
-                save_to_database(current_chip.getUid(), current_chip.getUser());
+                mUsersDB.setUser(mUsersDB.getCurrentUserID(), mCurrentUser);
+                mUsersDB.setUser(current_chip.getUid(), current_chip.getUser());
             }
         });
         chip.setOnChipClicked(new View.OnClickListener() {
@@ -194,11 +180,11 @@ public class ManageFriendsFragment extends Fragment {
             public void onClick(View v) {
                 UserChip current_chip = (UserChip)(v.getParent().getParent());
                 mCurrentUser.confirmFriend(current_chip.getUid());
-                current_chip.getUser().confirmFriend(mCurrentUserID);
-                save_to_database(mCurrentUserID, mCurrentUser);
-                save_to_database(current_chip.getUid(), current_chip.getUser());
+                current_chip.getUser().confirmFriend(mUsersDB.getCurrentUserID());
+                mUsersDB.setUser(mUsersDB.getCurrentUserID(), mCurrentUser);
+                mUsersDB.setUser(current_chip.getUid(), current_chip.getUser());
                 mPendingView.removeView(current_chip);
-                add_user_to_friend_view(current_chip.getUid(), current_chip.getUser(), "Confirmed");
+                add_user_to_friend_view(current_chip.getUid(), current_chip.getUser(), FRIENDS_REQUEST_CONFIRMED);
             }
         });
 
@@ -207,27 +193,19 @@ public class ManageFriendsFragment extends Fragment {
 
     private void load_list_of_users()
     {
-        mUserRef.addValueEventListener(new ValueEventListener() {
+        mUsersDB.getUsers(new UserListValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onNewData(HashMap<String, User> data) {
                 mFriendsView.removeAllViews();
                 mPendingView.removeAllViews();
-                mContactList = new HashMap<String, User>();
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    User user = ds.getValue(User.class);
-                    mContactList.put(ds.getKey(), user);
-
-                    if(ds.getKey().equals(mCurrentUserID))
-                    {
-                        mCurrentUser = user;
-                    }
-                }
+                mContactList = data;
+                mCurrentUser = data.get(mUsersDB.getCurrentUserID());
 
                 for(String uid: mCurrentUser.getFriends().keySet())
                 {
                     if(mContactList.containsKey(uid)) {
                         String state = mCurrentUser.getFriends().get(uid);
-                        if(state.equals("Pending"))
+                        if(state.equals(FRIEND_REQUEST_PENDING))
                         {
                             add_user_to_pending_view(uid, mContactList.get(uid));
                         }
@@ -237,36 +215,9 @@ public class ManageFriendsFragment extends Fragment {
                         }
                     }
                 }
-
                 mEmailAddress.setEnabled(true);
                 mAddButton.setEnabled(true);
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 }

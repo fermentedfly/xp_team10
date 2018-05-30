@@ -5,6 +5,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.HashMap;
 
+import at.tugraz.xp10.util.Constants;
+
 @IgnoreExtraProperties
 public class User {
     private String eMail;
@@ -74,17 +76,6 @@ public class User {
         this.friends = friends;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "eMail='" + eMail + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", emailNotifications='" + emailNotifications + '\'' +
-                ", shoppinglists=" + shoppinglists +
-                '}';
-    }
-
     @Exclude
     public void setData(User data) {
         this.eMail = data.eMail;
@@ -108,12 +99,12 @@ public class User {
 
     public void addFriend(String uid)
     {
-        friends.put(uid, "Issued");
+        friends.put(uid, Constants.FRIEND_REQUEST_ISSUED);
     }
 
     public void addFriendRequest(String uid)
     {
-        friends.put(uid, "Pending");
+        friends.put(uid, Constants.FRIEND_REQUEST_PENDING);
     }
 
     @Exclude
@@ -126,7 +117,7 @@ public class User {
     {
         if(friends.containsKey(uid))
         {
-            friends.put(uid, "Confirmed");
+            friends.put(uid, Constants.FRIENDS_REQUEST_CONFIRMED);
         }
     }
 
