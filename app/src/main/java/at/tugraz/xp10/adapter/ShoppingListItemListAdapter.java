@@ -73,6 +73,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
 
+
             purchasedView.setChecked(item.getIsPurchased());
             nameTextView.setText(item.getName());
             categoryTextView.setText(item.getCategory());
