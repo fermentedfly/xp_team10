@@ -1,8 +1,5 @@
 package at.tugraz.xp10;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
@@ -15,14 +12,12 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static at.tugraz.xp10.Utils.EditTextMatchers.withErrorText;
-import static org.junit.Assert.assertEquals;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -58,18 +53,18 @@ public class LoginInstrumentedTest {
     @Test
     public void pressLoginButtonMailWrong() throws Exception {
         onView(withId(R.id.email)).perform(typeText("wrong"));
-        onView(withId(R.id.login_button)).perform(click());
+        onView(withId(R.id.login_button)).perform(scrollTo()).perform(click());
         onView(withId(R.id.email)).check(matches(withErrorText(R.string.error_invalid_email)));
     }
     @Test
     public void pressLoginButtonPasswordRequired() throws Exception {
-        onView(withId(R.id.login_button)).perform(click());
+        onView(withId(R.id.login_button)).perform(scrollTo()).perform(click());
         onView(withId(R.id.password)).check(matches(withErrorText(R.string.error_field_required)));
     }
     @Test
     public void pressLoginButtonPasswordTooShort() throws Exception {
         onView(withId(R.id.password)).perform(typeText("123"));
-        onView(withId(R.id.login_button)).perform(click());
+        onView(withId(R.id.login_button)).perform(scrollTo()).perform(click());
         onView(withId(R.id.password)).check(matches(withErrorText(R.string.error_invalid_password)));
     }
     @Test
@@ -81,7 +76,7 @@ public class LoginInstrumentedTest {
     @Test
     public void pressLoginButtonCorrect() throws Exception {
         onView(withId(R.id.email)).perform(typeText("ui@test.com"));
-        onView(withId(R.id.password)).perform(typeText("test1234"));
+        onView(withId(R.id.password)).perform(scrollTo()).perform(typeText("test1234"));
         onView(withId(R.id.login_button)).perform(click());
         //TODO: Check if next view is main page
     }
