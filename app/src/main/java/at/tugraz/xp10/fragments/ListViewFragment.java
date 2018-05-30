@@ -1,7 +1,6 @@
 package at.tugraz.xp10.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -35,7 +34,6 @@ import java.util.Map;
 import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
 import at.tugraz.xp10.firebase.ShoppingListItems;
 import at.tugraz.xp10.firebase.ShoppingListItemsValueEventListener;
-import at.tugraz.xp10.firebase.ShoppingLists;
 import at.tugraz.xp10.model.ShoppingListItem;
 import at.tugraz.xp10.R;
 

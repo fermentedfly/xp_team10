@@ -39,6 +39,25 @@ public class Users {
             });
         }
 
+        public void getUser(String key, final UsersValueEventListener listener)
+        {
+            mDBRef.child(key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, User> data = new HashMap<>();
+                    User user = dataSnapshot.getValue(User.class);
+                    data.put(dataSnapshot.getKey(), user);
+
+                    listener.onNewData(data);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
         public String getCurrentUserID()
         {
             return FirebaseAuth.getInstance().getCurrentUser().getUid();
