@@ -188,9 +188,9 @@ public class ListViewFragment extends Fragment {
                 mEditableView = view;
 
                 view.findViewById(R.id.shopping_list_item_name).setFocusableInTouchMode(true);
-                view.findViewById(R.id.shopping_list_item_category).setFocusableInTouchMode(true);
+//                view.findViewById(R.id.shopping_list_item_category).setFocusableInTouchMode(true);
                 view.findViewById(R.id.shopping_list_item_quantity).setFocusableInTouchMode(true);
-                view.findViewById(R.id.shopping_list_item_spinner).setFocusableInTouchMode(true);
+//                view.findViewById(R.id.shopping_list_item_spinner).setFocusableInTouchMode(true);
 
                 view.findViewById(R.id.shopping_list_item_purchased).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_name).setEnabled(true);
@@ -291,9 +291,11 @@ public class ListViewFragment extends Fragment {
         spinner.setSelection(myAdap.getPosition(spinner.getSelectedItem().toString()));
 
         purchasedView.setEnabled(true);
-        nameTextView.setEnabled(false);
+//        nameTextView.setEnabled(false);
+        nameTextView.setFocusableInTouchMode(false);
         categorySpinner.setEnabled(false);
-        quantityTextView.setEnabled(false);
+//        quantityTextView.setEnabled(false);
+        quantityTextView.setFocusableInTouchMode(false);
         spinner.setEnabled(false);
     }
 

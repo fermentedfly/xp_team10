@@ -175,9 +175,12 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
 
 
         nameTextView.setFocusableInTouchMode(true);
-        categorySpinner.setFocusableInTouchMode(true);
+//        categorySpinner.setFocusableInTouchMode(true);
         quantityTextView.setFocusableInTouchMode(true);
-        spinner.setFocusableInTouchMode(true);
+//        spinner.setFocusableInTouchMode(true);
+        spinner.setEnabled(true);
+        categorySpinner.setEnabled(true);
+
 
         finalRowView.setBackgroundColor(mListViewFragment.getResources().getColor(R.color.colorEditGray));
         deleteBtn.setBackgroundColor(mListViewFragment.getResources().getColor(R.color.colorEditGray));
