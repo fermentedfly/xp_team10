@@ -15,8 +15,8 @@ import com.pchmn.materialchips.ChipView;
 import java.util.HashMap;
 
 import at.tugraz.xp10.R;
-import at.tugraz.xp10.firebase.Users;
 import at.tugraz.xp10.firebase.UserListValueEventListener;
+import at.tugraz.xp10.firebase.Users;
 import at.tugraz.xp10.model.User;
 
 import static at.tugraz.xp10.util.Constants.FRIENDS_REQUEST_CONFIRMED;
@@ -135,8 +135,9 @@ public class ManageFriendsFragment extends Fragment {
         chip.setUid(uid);
         chip.setUser(user);
         if(state.equals(FRIENDS_REQUEST_CONFIRMED)) {
-            chip.setLabelColor(getResources().getColor(R.color.colorWhite));
-            chip.setChipBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            chip.setLabelColor(getActivity().getResources().getColor(R.color.colorPrimary));
+            chip.setChipBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
+            chip.setDeleteIconColor(getActivity().getResources().getColor(R.color.colorPrimary));
         }
         chip.setPadding(2,2,2,2);
         chip.setDeletable(true);
@@ -220,4 +221,5 @@ public class ManageFriendsFragment extends Fragment {
             }
         });
     }
+
 }
