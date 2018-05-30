@@ -62,7 +62,7 @@ public class DatabaseShoppingListsTest {
 
                 return null;
             }
-        }).when(mockedDatabase).getListOfValues(any(Class.class), any(DatabaseListValueEventListener.class));
+        }).when(mockedDatabase).installListListener(any(Class.class), any(DatabaseListValueEventListener.class));
 
         ShoppingLists fb = new ShoppingLists();
         fb.getShoppingList("test", new DatabaseValueEventListener() {

@@ -73,7 +73,7 @@ public class DatabaseUserTest {
 
                 return null;
             }
-        }).when(mockedDatabase).getListOfValues(any(Class.class), any(DatabaseListValueEventListener.class));
+        }).when(mockedDatabase).installListListener(any(Class.class), any(DatabaseListValueEventListener.class));
 
         Users users = new Users();
         users.getUsers(new DatabaseListValueEventListener() {
@@ -97,7 +97,7 @@ public class DatabaseUserTest {
 
                 return null;
             }
-        }).when(mockedDatabase).getListOfValues(any(Class.class), any(DatabaseListValueEventListener.class));
+        }).when(mockedDatabase).installListListener(any(Class.class), any(DatabaseListValueEventListener.class));
 
         Users users = new Users();
         users.getUser("key", new DatabaseValueEventListener() {
