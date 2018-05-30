@@ -4,27 +4,18 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.fragments.ListViewFragment;
-import at.tugraz.xp10.model.Category;
 import at.tugraz.xp10.model.ShoppingListItem;
 
 public class ShoppingListItemListAdapter extends BaseAdapter {
@@ -71,7 +62,6 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View rowView, ViewGroup parent) {
-        // Get view for row item
 
         if (rowView == null)
             rowView = mInflater.inflate(R.layout.shopping_list_item, parent, false);
@@ -175,9 +165,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
 
 
         nameTextView.setFocusableInTouchMode(true);
-//        categorySpinner.setFocusableInTouchMode(true);
         quantityTextView.setFocusableInTouchMode(true);
-//        spinner.setFocusableInTouchMode(true);
         spinner.setEnabled(true);
         categorySpinner.setEnabled(true);
 

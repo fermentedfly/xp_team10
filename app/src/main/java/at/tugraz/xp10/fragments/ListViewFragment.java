@@ -2,9 +2,7 @@ package at.tugraz.xp10.fragments;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -35,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import at.tugraz.xp10.adapter.CategoriesSpinnerAdapter;
 import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
 import at.tugraz.xp10.model.Category;
 import at.tugraz.xp10.model.ShoppingListItem;
@@ -122,18 +119,10 @@ public class ListViewFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitSpinner.setAdapter(adapter);
 
-//        mCategoryIdList.add("cat1");
-//        mCategoryIdList.add("cat2");
-//
-//        mCategoryNameList.add("cat1");
-//        mCategoryNameList.add("cat2");
-
-
         Spinner spinnerCat = (Spinner) v.findViewById(R.id.item_category);
         mAdapterCategory = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_spinner_item, mCategoryNameList);
         mAdapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        mAdapterCategory.setDropDownViewResource(R.layout.category_spinner_item);
         spinnerCat.setAdapter(mAdapterCategory);
 
 
@@ -188,9 +177,7 @@ public class ListViewFragment extends Fragment {
                 mEditableView = view;
 
                 view.findViewById(R.id.shopping_list_item_name).setFocusableInTouchMode(true);
-//                view.findViewById(R.id.shopping_list_item_category).setFocusableInTouchMode(true);
                 view.findViewById(R.id.shopping_list_item_quantity).setFocusableInTouchMode(true);
-//                view.findViewById(R.id.shopping_list_item_spinner).setFocusableInTouchMode(true);
 
                 view.findViewById(R.id.shopping_list_item_purchased).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_name).setEnabled(true);
@@ -291,10 +278,8 @@ public class ListViewFragment extends Fragment {
         spinner.setSelection(myAdap.getPosition(spinner.getSelectedItem().toString()));
 
         purchasedView.setEnabled(true);
-//        nameTextView.setEnabled(false);
         nameTextView.setFocusableInTouchMode(false);
         categorySpinner.setEnabled(false);
-//        quantityTextView.setEnabled(false);
         quantityTextView.setFocusableInTouchMode(false);
         spinner.setEnabled(false);
     }
@@ -349,7 +334,6 @@ public class ListViewFragment extends Fragment {
     {
         try {
             String name = ((EditText) getView().findViewById(R.id.item_name)).getText().toString();
-//            String category = ((EditText) getView().findViewById(R.id.item_category)).getText().toString();
             long categoryPosition = ((Spinner) getView().findViewById(R.id.item_category)).getSelectedItemPosition();
             String categoryId = mCategoryIdList.get((int)categoryPosition);
 
@@ -370,7 +354,6 @@ public class ListViewFragment extends Fragment {
 
     private void setItemFieldsEmpty() {
         ((EditText) getView().findViewById(R.id.item_name)).setText("");
-//        ((EditText) getView().findViewById(R.id.item_category)).setText("");
         ((EditText) getView().findViewById(R.id.item_quantity)).setText("");
         getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
      }
