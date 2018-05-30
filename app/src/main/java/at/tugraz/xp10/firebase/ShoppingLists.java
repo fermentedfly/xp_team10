@@ -31,4 +31,13 @@ public class ShoppingLists {
             }
         });
     }
+
+    public void updateShoppingList(String key, ShoppingList list)
+    {
+        if(key == null) {
+            key = mDBRef.push().getKey();
+        }
+
+        mDBRef.child(key).setValue(list);
+    }
 }

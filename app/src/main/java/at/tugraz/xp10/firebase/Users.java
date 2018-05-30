@@ -48,4 +48,11 @@ public class Users {
         {
             mDBRef.child(key).setValue(user);
         }
+
+        public void addShoppingListToUser(String UserKey, String ShoppingListKey)
+        {
+            HashMap<String, Object> newList = new HashMap<>();
+            newList.put(ShoppingListKey, true);
+            mDBRef.child(UserKey).child("shoppinglists").updateChildren(newList);
+        }
 }

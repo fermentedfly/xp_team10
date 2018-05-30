@@ -40,8 +40,7 @@ import at.tugraz.xp10.model.User;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener,
-        ListSettingFragment.OnFragmentInteractionListener {
+        ListViewFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
