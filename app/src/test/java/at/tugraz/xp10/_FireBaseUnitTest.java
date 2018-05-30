@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(JUnit4.class)
 @PrepareForTest({ FirebaseDatabase.class})
-public class ManageCategoriesUnitTest {
+public class _FireBaseUnitTest {
 
     private DatabaseReference mockedDatabaseReference;
     private static final HashMap<String, Object> TestData;

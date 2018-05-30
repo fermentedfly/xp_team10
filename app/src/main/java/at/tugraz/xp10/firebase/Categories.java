@@ -1,50 +1,31 @@
 package at.tugraz.xp10.firebase;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.HashMap;
-import java.util.Set;
 
 import at.tugraz.xp10.model.Category;
 
 public class Categories {
 
-    private DatabaseReference mDBRef;
+    private Database mDBRef;
 
     public Categories()
     {
-        mDBRef = FirebaseDatabase.getInstance().getReference().child("categories");
+        mDBRef =  Database.getInstance("categories");
     }
 
     public void getCategories(final CategoriesValueEventListener listener)
     {
-        mDBRef.addValueEventListener(new ValueEventListener() {
+        mDBRef.getListOfValues(Category.class, new DatabaseListValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, Category> data = new HashMap<>();
-                Set<String> keys = ((HashMap<String, Object>)dataSnapshot.getValue()).keySet();
-                for (String key : keys)
-                {
-                    Category item = dataSnapshot.child(key).getValue(Category.class);
-                    data.put(key, item);
-                }
-
-                listener.onNewData(data);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public <Category> void onNewData(HashMap<String, Category> data) {
+                listener.onNewData((HashMap<String, at.tugraz.xp10.model.Category>) data);
             }
         });
+
     }
 
-    public void put(Category c)
+    public void putCategory(Category c)
     {
-        mDBRef.push().setValue(c);
+        mDBRef.pushValue(c);
     }
 }

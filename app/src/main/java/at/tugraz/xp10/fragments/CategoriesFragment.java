@@ -104,6 +104,6 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void addCategoryToDB(String newCategory) {
-        mCategoriesFBHandle.put(new Category(newCategory));
+        mCategoriesFBHandle.putCategory(new Category(newCategory));
     }
 }
