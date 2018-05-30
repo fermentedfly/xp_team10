@@ -44,5 +44,6 @@
     <string name="friends_pending">Pending Requests</string>
     <string name="NewCategory">New Category</string>
     <string name="CategoryName">Category Name</string>
+    <string name="add_item">Add Item</string>
 
 </resources>
