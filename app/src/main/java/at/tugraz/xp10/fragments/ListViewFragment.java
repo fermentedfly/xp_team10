@@ -5,9 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -23,12 +28,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.google.firebase.database.DataSnapshot;
-//import com.google.firebase.database.DatabaseError;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
-//import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,8 +41,6 @@ import at.tugraz.xp10.R;
 
 
 public class ListViewFragment extends Fragment {
-//    private DatabaseReference mDB;
-//    private DatabaseReference mShoppingListItems;
 
     private ShoppingListItems mShoppingListItemsFBHandle;
 
@@ -70,7 +67,6 @@ public class ListViewFragment extends Fragment {
 
     public ListViewFragment() {
         mShoppingListItemsFBHandle = new ShoppingListItems();
-        // Required empty public constructor
     }
 
 
@@ -93,6 +89,8 @@ public class ListViewFragment extends Fragment {
         mEditMode = false;
         mAddMode = false;
         mException = false;
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -104,9 +102,6 @@ public class ListViewFragment extends Fragment {
         mCancelButton = v.findViewById(R.id.lvCancelButton);
         mSaveButton = v.findViewById(R.id.lvSaveButton);
         final RelativeLayout addItemLayout = v.findViewById(R.id.shopping_list_item);
-
-//        mDB = FirebaseDatabase.getInstance().getReference();
-//        mShoppingListItems = mDB.child("items").child(mShoppingListId);
 
         SetTitle();
         addItemLayout.setVisibility(View.GONE);
@@ -226,6 +221,27 @@ public class ListViewFragment extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.list_view, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                Fragment fragment = ListSettingFragment.newInstance(mShoppingListId);
+                fragmentTransaction.replace(R.id.content_frame, fragment, "ListSetting").addToBackStack(null);
+                fragmentTransaction.commit();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setButtonVisibility(int visible) {
