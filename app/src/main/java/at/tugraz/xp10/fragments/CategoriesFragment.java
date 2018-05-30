@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import at.tugraz.xp10.R;
@@ -72,9 +74,14 @@ public class CategoriesFragment extends Fragment {
             @Override
             public void onNewData(HashMap<String, Category> Categories) {
                 mCategoriesList.clear();
-                for (Category c : Categories.values()) {
-                    mCategoriesList.add(c);
-                }
+                mCategoriesList.addAll(Categories.values());
+
+                Collections.sort(mCategoriesList, new Comparator<Category>() {
+                    @Override
+                    public int compare(Category o1, Category o2) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -128,3 +135,4 @@ public class CategoriesFragment extends Fragment {
         mCategoriesFBHandle.put(new Category(newCategory));
     }
 }
+
