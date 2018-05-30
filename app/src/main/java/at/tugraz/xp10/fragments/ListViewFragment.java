@@ -2,9 +2,7 @@ package at.tugraz.xp10.fragments;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -25,22 +23,29 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+//import com.google.firebase.database.DataSnapshot;
+//import com.google.firebase.database.DatabaseError;
+//import com.google.firebase.database.DatabaseReference;
+//import com.google.firebase.database.FirebaseDatabase;
+//import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
+import at.tugraz.xp10.firebase.ShoppingListItems;
+import at.tugraz.xp10.firebase.ShoppingListItemsValueEventListener;
+import at.tugraz.xp10.firebase.ShoppingLists;
 import at.tugraz.xp10.model.ShoppingListItem;
 import at.tugraz.xp10.R;
 
 
 public class ListViewFragment extends Fragment {
-    private DatabaseReference mDB;
-    private DatabaseReference mShoppingListItems;
+//    private DatabaseReference mDB;
+//    private DatabaseReference mShoppingListItems;
+
+    private ShoppingListItems mShoppingListItemsFBHandle;
 
     private static final String ARG_SHOPPING_LIST_ID = "shoppingListId";
     private static final String s_Title = "Title";
@@ -64,6 +69,7 @@ public class ListViewFragment extends Fragment {
     private Button mSaveButton;
 
     public ListViewFragment() {
+        mShoppingListItemsFBHandle = new ShoppingListItems();
         // Required empty public constructor
     }
 
@@ -99,8 +105,8 @@ public class ListViewFragment extends Fragment {
         mSaveButton = v.findViewById(R.id.lvSaveButton);
         final RelativeLayout addItemLayout = v.findViewById(R.id.shopping_list_item);
 
-        mDB = FirebaseDatabase.getInstance().getReference();
-        mShoppingListItems = mDB.child("items").child(mShoppingListId);
+//        mDB = FirebaseDatabase.getInstance().getReference();
+//        mShoppingListItems = mDB.child("items").child(mShoppingListId);
 
         SetTitle();
         addItemLayout.setVisibility(View.GONE);
@@ -120,15 +126,18 @@ public class ListViewFragment extends Fragment {
             }
         });
 
-
-        mShoppingListItems.addValueEventListener(new ValueEventListener() {
+        mShoppingListItemsFBHandle.getShoppingListItems(mShoppingListId,
+                new ShoppingListItemsValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                fetchData(dataSnapshot);
-            }
+            public void onNewData(HashMap<String, ShoppingListItem> Items) {
+                mItemList.clear();
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                for (Map.Entry<String, ShoppingListItem> d : Items.entrySet())
+                {
+                    mItemList.add(d.getValue());
+                }
+
+                mAdapter.notifyDataSetChanged();
 
             }
         });
@@ -302,9 +311,7 @@ public class ListViewFragment extends Fragment {
             String unit = ((Spinner) getView().findViewById(R.id.item_unit_spinner)).getSelectedItem().toString();
             Double quanitiy = Double.parseDouble(((EditText) getView().findViewById(R.id.item_quantity)).getText().toString());
 
-            String listKey = mShoppingListItems.push().getKey();
-            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unit, category, false, listKey);
-            mShoppingListItems.child(listKey).setValue(item);
+            mShoppingListItemsFBHandle.addItemToShoppingList(mShoppingListId, name, quanitiy, unit, category, false);
 
             setItemFieldsEmpty();
 
@@ -321,26 +328,13 @@ public class ListViewFragment extends Fragment {
         getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
      }
 
-    private void fetchData(DataSnapshot dataSnapshot)
-    {
-        mItemList.clear();
-
-        for (DataSnapshot ds : dataSnapshot.getChildren())
-        {
-            ShoppingListItem item = ds.getValue(ShoppingListItem.class);
-            mItemList.add(item);
-        }
-
-        mAdapter.notifyDataSetChanged();
-    }
-
     public void deleteItem(String id)
     {
         getView().findViewById(R.id.lvCancelButton).setVisibility(View.GONE);
         getView().findViewById(R.id.lvSaveButton).setVisibility(View.GONE);
         getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
         getView().findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        mShoppingListItems.child(id).removeValue();
+        mShoppingListItemsFBHandle.deleteItemFromShoppingList(mShoppingListId, id);
 
         mEditMode = false;
     }
@@ -364,9 +358,8 @@ public class ListViewFragment extends Fragment {
             Boolean isPurchased = ((CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased)).isChecked();
             String unit = ((Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner)).getSelectedItem().toString();
 
-            String listKey = item.getTempId();
-            ShoppingListItem new_item = new ShoppingListItem(name, quanitiy, unit, category, isPurchased, listKey);
-            mShoppingListItems.child(listKey).setValue(new_item);
+
+            mShoppingListItemsFBHandle.updateItemInShoppingList(mShoppingListId, item.getTempId(), name, quanitiy, unit, category, isPurchased);
 
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();
