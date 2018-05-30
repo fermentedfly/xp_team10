@@ -2,8 +2,9 @@ package at.tugraz.xp10.fragments;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -18,7 +19,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -57,8 +57,11 @@ public class ListViewFragment extends Fragment {
     private Boolean mAddMode;
     private Boolean mException;
     public View mEditableView;
-    private ShoppingListItem originShoppingListItem;
-    private ShoppingListItem mTmpShoppingListItem;
+    public ShoppingListItem mOriginShoppingListItem;
+    public ShoppingListItem mTmpShoppingListItem;
+
+    private Button mCancelButton;
+    private Button mSaveButton;
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -92,18 +95,20 @@ public class ListViewFragment extends Fragment {
 
         View v =  inflater.inflate(R.layout.fragment_list_view, container, false);
 
-
+        mCancelButton = v.findViewById(R.id.lvCancelButton);
+        mSaveButton = v.findViewById(R.id.lvSaveButton);
         final RelativeLayout addItemLayout = v.findViewById(R.id.shopping_list_item);
+
+        mDB = FirebaseDatabase.getInstance().getReference();
+        mShoppingListItems = mDB.child("items").child(mShoppingListId);
+
+        SetTitle();
         addItemLayout.setVisibility(View.GONE);
 
-        final Button cancelButton = v.findViewById(R.id.lvCancelButton);
-        final Button saveButton = v.findViewById(R.id.lvSaveButton);
-
-        Spinner spinner = (Spinner) v.findViewById(R.id.item_unit_spinner);
+        Spinner unitSpinner = (Spinner) v.findViewById(R.id.item_unit_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.planets_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
+        unitSpinner.setAdapter(adapter);
 
         FloatingActionButton addItemBtn = v.findViewById(R.id.addItemButton);
         addItemBtn.setOnClickListener(new View.OnClickListener() {
@@ -111,16 +116,9 @@ public class ListViewFragment extends Fragment {
             public void onClick(View v) {
                 mAddMode = true;
                 displayAddLayout(v, addItemLayout);
-                cancelButton.setVisibility(View.VISIBLE);
-                saveButton.setVisibility(View.VISIBLE);
-
+                setButtonVisibility(View.VISIBLE);
             }
         });
-
-        SetTitle();
-
-        mDB = FirebaseDatabase.getInstance().getReference();
-        mShoppingListItems = mDB.child("items").child(mShoppingListId);
 
 
         mShoppingListItems.addValueEventListener(new ValueEventListener() {
@@ -143,31 +141,30 @@ public class ListViewFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 if(mEditMode) return true;
-                originShoppingListItem = ((ShoppingListItem) mAdapter.getItem(pos));
+
+                mOriginShoppingListItem = ((ShoppingListItem) mAdapter.getItem(pos));
                 mEditMode = true;
                 mEditableView = view;
 
-
-                view.findViewById(R.id.shopping_list_item_purchased).setEnabled(true);
-                view.findViewById(R.id.shopping_list_item_name).setEnabled(true);
-                view.findViewById(R.id.shopping_list_item_category).setEnabled(true);
-                view.findViewById(R.id.shopping_list_item_quantity).setEnabled(true);
-                view.findViewById(R.id.shopping_list_item_spinner).setEnabled(true);
+                view.findViewById(R.id.shopping_list_item_name).setFocusableInTouchMode(true);
+                view.findViewById(R.id.shopping_list_item_category).setFocusableInTouchMode(true);
+                view.findViewById(R.id.shopping_list_item_quantity).setFocusableInTouchMode(true);
+                view.findViewById(R.id.shopping_list_item_spinner).setFocusableInTouchMode(true);
 
                 view.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
                 mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorEditGray));
-                mListView.setPadding(0,0,0,120);
 
                 mAdapter.setButtonsVisibility(view, View.VISIBLE);
 
-                cancelButton.setVisibility(View.VISIBLE);
-                saveButton.setVisibility(View.VISIBLE);
                 editItem((ShoppingListItem) mAdapter.getItem(pos));
+                setButtonVisibility(View.VISIBLE);
+
                 return true;
             }
+
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mAddMode){
@@ -184,14 +181,13 @@ public class ListViewFragment extends Fragment {
                 }
                 InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                cancelButton.setVisibility(View.GONE);
-                saveButton.setVisibility(View.GONE);
-                mListView.setPadding(0,0,0,0);
+                setButtonVisibility(View.GONE);
+
                 getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
               }
         });
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mAddMode){
@@ -207,15 +203,14 @@ public class ListViewFragment extends Fragment {
                         mEditMode = false;
                         mEditableView.findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorAccent));
                         mEditableView.findViewById(R.id.item_delete).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                        mAdapter.setButtonsVisibility(mEditableView, View.INVISIBLE);
                     }
                 }
 
                 if(!mException) {
                     InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(addItemLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    cancelButton.setVisibility(View.GONE);
-                    saveButton.setVisibility(View.GONE);
-                    mListView.setPadding(0,0,0,0);
+                    setButtonVisibility(View.GONE);
                 }
                 mException = false;
             }
@@ -224,6 +219,10 @@ public class ListViewFragment extends Fragment {
         return v;
     }
 
+    private void setButtonVisibility(int visible) {
+        mCancelButton.setVisibility(visible);
+        mSaveButton.setVisibility(visible);
+    }
 
     private void setFieldsReadOnly() {
         CheckBox purchasedView = (CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased);
@@ -233,19 +232,20 @@ public class ListViewFragment extends Fragment {
         ImageButton deleteBtn = (ImageButton) mEditableView.findViewById(R.id.item_delete);
         Spinner spinner = (Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner);
 
-        purchasedView.setChecked(originShoppingListItem.getIsPurchased());
-        nameTextView.setText(originShoppingListItem.getName());
-        categoryTextView.setText(originShoppingListItem.getCategory());
-        quantityTextView.setText(String.format("%.0f", originShoppingListItem.getQuantity()));
+        purchasedView.setChecked(mOriginShoppingListItem.getIsPurchased());
+        nameTextView.setText(mOriginShoppingListItem.getName());
+        categoryTextView.setText(mOriginShoppingListItem.getCategory());
+        quantityTextView.setText(String.format("%.0f", mOriginShoppingListItem.getQuantity()));
+
 
         ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
         spinner.setSelection(myAdap.getPosition(spinner.getSelectedItem().toString()));
 
-        purchasedView.setEnabled(true);
-        nameTextView.setEnabled(false);
-        categoryTextView.setEnabled(false);
-        quantityTextView.setEnabled(false);
-        spinner.setEnabled(false);
+       // purchasedView.setEnabled(true);
+        nameTextView.setFocusableInTouchMode(false);
+        categoryTextView.setFocusableInTouchMode(false);
+        quantityTextView.setFocusableInTouchMode(false);
+        spinner.setFocusableInTouchMode(false);
     }
 
     private void displayAddLayout(View v, RelativeLayout addLayout) {
@@ -338,8 +338,10 @@ public class ListViewFragment extends Fragment {
     {
         getView().findViewById(R.id.lvCancelButton).setVisibility(View.GONE);
         getView().findViewById(R.id.lvSaveButton).setVisibility(View.GONE);
-        mShoppingListItems.child(id).removeValue();
         getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        mShoppingListItems.child(id).removeValue();
+
         mEditMode = false;
     }
 
@@ -350,6 +352,7 @@ public class ListViewFragment extends Fragment {
         Button editSaveBtn = getView().findViewById(R.id.lvSaveButton);
         editSaveBtn.setVisibility(View.VISIBLE);
         getView().findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
+
     }
 
     public void updateItemToDB(ShoppingListItem item)
