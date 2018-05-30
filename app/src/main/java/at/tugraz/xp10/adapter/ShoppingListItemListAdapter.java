@@ -13,10 +13,18 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.fragments.ListViewFragment;
+import at.tugraz.xp10.model.Category;
 import at.tugraz.xp10.model.ShoppingListItem;
 
 public class ShoppingListItemListAdapter extends BaseAdapter {
@@ -25,14 +33,23 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private ArrayList<ShoppingListItem> mDataSource;
     private ListViewFragment mListViewFragment;
+    private Map<String, String> mCategories;
+    private ArrayList <String> mCategoryNameList = new ArrayList<>();
+//    private ArrayAdapter<String> mAdapterCategory;
 
-    public ShoppingListItemListAdapter(Context context, ArrayList<ShoppingListItem> items, ListViewFragment listViewFragment) {
+    public ShoppingListItemListAdapter(Context context, ArrayList<ShoppingListItem> items,
+                                       ListViewFragment listViewFragment, Map<String, String> categories,
+                                       ArrayList<String> categoryNames) {
         mContext = context;
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mListViewFragment = listViewFragment;
+        mCategories = categories;
     }
 
+    public void setCategories(Map<String, String> categories) { mCategories = categories;}
+
+    public void setCategoryNames(ArrayList<String> categoryNames) {mCategoryNameList = categoryNames;}
 
     @Override
     public int getCount() {
@@ -62,7 +79,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         if(!mListViewFragment.mEditMode) {
             final CheckBox purchasedView = (CheckBox) rowView.findViewById(R.id.shopping_list_item_purchased);
             final TextView nameTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_name);
-            final TextView categoryTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_category);
+            final Spinner categorySpinner = (Spinner) rowView.findViewById(R.id.shopping_list_item_category);
             final TextView quantityTextView = (TextView) rowView.findViewById(R.id.shopping_list_item_quantity);
             final ImageButton deleteBtn = (ImageButton) rowView.findViewById(R.id.item_delete);
 
@@ -72,10 +89,21 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext, R.array.planets_array, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
+            spinner.setEnabled(false);
 
             purchasedView.setChecked(item.getIsPurchased());
             nameTextView.setText(item.getName());
-            categoryTextView.setText(item.getCategory());
+
+            String catID = item.getCategory();
+            String categoryName = mCategories.get(catID);
+            int categoryIndex = mCategoryNameList.indexOf(categoryName);
+
+            ArrayAdapter<String> adapterCategory = new ArrayAdapter<>(mContext, android.R.layout.simple_spinner_item, mCategoryNameList);
+            categorySpinner.setAdapter(adapterCategory);
+            categorySpinner.setSelection(categoryIndex);
+            categorySpinner.setEnabled(false);
+
+
             quantityTextView.setText(String.format("%.0f", item.getQuantity()));
 
             spinner.setSelection(adapter.getPosition(item.getUnit()));
@@ -111,25 +139,25 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
             nameTextView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    return longClick(view, finalRowView, nameTextView, categoryTextView, quantityTextView, spinner, deleteBtn, item);
+                    return longClick(view, finalRowView, nameTextView, categorySpinner, quantityTextView, spinner, deleteBtn, item);
                 }
             });
             quantityTextView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    return longClick(view, finalRowView, nameTextView, categoryTextView, quantityTextView, spinner, deleteBtn, item);
+                    return longClick(view, finalRowView, nameTextView, categorySpinner, quantityTextView, spinner, deleteBtn, item);
                 }
             });
-            categoryTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            categorySpinner.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    return longClick(view, finalRowView, nameTextView, categoryTextView, quantityTextView, spinner, deleteBtn, item);
+                    return longClick(view, finalRowView, nameTextView, categorySpinner, quantityTextView, spinner, deleteBtn, item);
                 }
             });
             spinner.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    return longClick(view, finalRowView, nameTextView, categoryTextView, quantityTextView, spinner, deleteBtn, item);
+                    return longClick(view, finalRowView, nameTextView, categorySpinner, quantityTextView, spinner, deleteBtn, item);
                 }
             });
 
@@ -137,7 +165,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         return rowView;
     }
 
-    private boolean longClick(View view, View finalRowView, TextView nameTextView, TextView categoryTextView, TextView quantityTextView, Spinner spinner, ImageButton deleteBtn, ShoppingListItem item) {
+    private boolean longClick(View view, View finalRowView, TextView nameTextView, Spinner categorySpinner, TextView quantityTextView, Spinner spinner, ImageButton deleteBtn, ShoppingListItem item) {
 
         if(mListViewFragment.mEditMode) return true;
 
@@ -147,7 +175,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
 
 
         nameTextView.setFocusableInTouchMode(true);
-        categoryTextView.setFocusableInTouchMode(true);
+        categorySpinner.setFocusableInTouchMode(true);
         quantityTextView.setFocusableInTouchMode(true);
         spinner.setFocusableInTouchMode(true);
 
@@ -174,4 +202,5 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         view.findViewById(R.id.shopping_list_item_spinner).setFocusableInTouchMode(false);
 
     }
+
 }

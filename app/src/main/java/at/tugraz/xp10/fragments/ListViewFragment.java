@@ -32,6 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import at.tugraz.xp10.adapter.CategoriesSpinnerAdapter;
 import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
@@ -43,6 +45,7 @@ import at.tugraz.xp10.R;
 public class ListViewFragment extends Fragment {
     private DatabaseReference mDB;
     private DatabaseReference mShoppingListItems;
+    private DatabaseReference mCategories;
 
     private static final String ARG_SHOPPING_LIST_ID = "shoppingListId";
     private static final String s_Title = "Title";
@@ -54,6 +57,7 @@ public class ListViewFragment extends Fragment {
 
     private ArrayList<ShoppingListItem> mItemList = new ArrayList<>();
     ShoppingListItemListAdapter mAdapter;
+    ArrayAdapter<String> mAdapterCategory;
 
     public Boolean mEditMode;
     private Boolean mAddMode;
@@ -62,8 +66,9 @@ public class ListViewFragment extends Fragment {
     public ShoppingListItem mOriginShoppingListItem;
     public ShoppingListItem mTmpShoppingListItem;
 
-    private ArrayList <Category> mCategoryList = new ArrayList<>();
+    private ArrayList <String> mCategoryIdList = new ArrayList<>();
     private ArrayList <String> mCategoryNameList = new ArrayList<>();
+    private Map<String, String> mCategoryIdNameMap = new HashMap<>();
 
 
     private Button mCancelButton;
@@ -107,6 +112,7 @@ public class ListViewFragment extends Fragment {
 
         mDB = FirebaseDatabase.getInstance().getReference();
         mShoppingListItems = mDB.child("items").child(mShoppingListId);
+        mCategories = mDB.child("categories");
 
         SetTitle();
         addItemLayout.setVisibility(View.GONE);
@@ -116,19 +122,19 @@ public class ListViewFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitSpinner.setAdapter(adapter);
 
-        mCategoryList.add(new Category("cat1"));
-        mCategoryList.add(new Category("cat2"));
-
-        mCategoryNameList.add("cat1");
-        mCategoryNameList.add("cat2");
+//        mCategoryIdList.add("cat1");
+//        mCategoryIdList.add("cat2");
+//
+//        mCategoryNameList.add("cat1");
+//        mCategoryNameList.add("cat2");
 
 
         Spinner spinnerCat = (Spinner) v.findViewById(R.id.item_category);
-        ArrayAdapter<String> adapterCat = new ArrayAdapter<>(getContext(),
+        mAdapterCategory = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_spinner_item, mCategoryNameList);
-        adapterCat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        adapterCat.setDropDownViewResource(R.layout.category_spinner_item);
-        spinnerCat.setAdapter(adapterCat);
+        mAdapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        mAdapterCategory.setDropDownViewResource(R.layout.category_spinner_item);
+        spinnerCat.setAdapter(mAdapterCategory);
 
 
 
@@ -155,8 +161,21 @@ public class ListViewFragment extends Fragment {
             }
         });
 
+        mCategories.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                fetchCategories(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         final ListView mListView = v.findViewById(R.id.item_list_view);
-        mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList, this);
+        mAdapter = new ShoppingListItemListAdapter(getContext(), mItemList, this, mCategoryIdNameMap,
+                mCategoryNameList);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -175,7 +194,7 @@ public class ListViewFragment extends Fragment {
 
                 view.findViewById(R.id.shopping_list_item_purchased).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_name).setEnabled(true);
-                //view.findViewById(R.id.shopping_list_item_category).setEnabled(true);
+                view.findViewById(R.id.shopping_list_item_category).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_quantity).setEnabled(true);
                 view.findViewById(R.id.shopping_list_item_spinner).setEnabled(true);
 
@@ -255,14 +274,16 @@ public class ListViewFragment extends Fragment {
     private void setFieldsReadOnly() {
         CheckBox purchasedView = (CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased);
         TextView nameTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_name);
-        //TextView categoryTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_category);
+        Spinner categorySpinner = (Spinner) mEditableView.findViewById(R.id.shopping_list_item_category);
         TextView quantityTextView = (TextView) mEditableView.findViewById(R.id.shopping_list_item_quantity);
         ImageButton deleteBtn = (ImageButton) mEditableView.findViewById(R.id.item_delete);
         Spinner spinner = (Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner);
 
         purchasedView.setChecked(mOriginShoppingListItem.getIsPurchased());
         nameTextView.setText(mOriginShoppingListItem.getName());
-        //categoryTextView.setText(originShoppingListItem.getCategory());
+        String categoryId = mOriginShoppingListItem.getCategory();
+        int categoryIndex = mCategoryIdList.indexOf(categoryId);
+        categorySpinner.setSelection(categoryIndex);
         quantityTextView.setText(String.format("%.0f", mOriginShoppingListItem.getQuantity()));
 
 
@@ -271,7 +292,7 @@ public class ListViewFragment extends Fragment {
 
         purchasedView.setEnabled(true);
         nameTextView.setEnabled(false);
-        //categoryTextView.setEnabled(false);
+        categorySpinner.setEnabled(false);
         quantityTextView.setEnabled(false);
         spinner.setEnabled(false);
     }
@@ -326,12 +347,15 @@ public class ListViewFragment extends Fragment {
     {
         try {
             String name = ((EditText) getView().findViewById(R.id.item_name)).getText().toString();
-            String category = ((EditText) getView().findViewById(R.id.item_category)).getText().toString();
+//            String category = ((EditText) getView().findViewById(R.id.item_category)).getText().toString();
+            long categoryPosition = ((Spinner) getView().findViewById(R.id.item_category)).getSelectedItemPosition();
+            String categoryId = mCategoryIdList.get((int)categoryPosition);
+
             String unit = ((Spinner) getView().findViewById(R.id.item_unit_spinner)).getSelectedItem().toString();
             Double quanitiy = Double.parseDouble(((EditText) getView().findViewById(R.id.item_quantity)).getText().toString());
 
             String listKey = mShoppingListItems.push().getKey();
-            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unit, category, false, listKey);
+            ShoppingListItem item = new ShoppingListItem(name, quanitiy, unit, categoryId, false, listKey);
             mShoppingListItems.child(listKey).setValue(item);
 
             setItemFieldsEmpty();
@@ -362,6 +386,23 @@ public class ListViewFragment extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
 
+    private void fetchCategories(DataSnapshot dataSnapshot)
+    {
+        mCategoryIdList.clear();
+        mCategoryNameList.clear();
+
+        for (DataSnapshot ds : dataSnapshot.getChildren())
+        {
+            mCategoryIdList.add(ds.getKey());
+            mCategoryNameList.add(ds.getValue(Category.class).getName());
+            mCategoryIdNameMap.put(ds.getKey(), ds.getValue(Category.class).getName());
+        }
+
+        mAdapterCategory.notifyDataSetChanged();
+        mAdapter.setCategories(mCategoryIdNameMap);
+        mAdapter.setCategoryNames(mCategoryNameList);
+    }
+
     public void deleteItem(String id)
     {
         getView().findViewById(R.id.lvCancelButton).setVisibility(View.GONE);
@@ -387,13 +428,14 @@ public class ListViewFragment extends Fragment {
     {
         try {
             String name = ((EditText) mEditableView.findViewById(R.id.shopping_list_item_name)).getText().toString();
-            //String category = ((EditText) mEditableView.findViewById(R.id.shopping_list_item_category)).getText().toString();
-            Double quanitiy = Double.parseDouble(((EditText) mEditableView.findViewById(R.id.shopping_list_item_quantity)).getText().toString());
+            int categoryIndex = ((Spinner) mEditableView.findViewById(R.id.shopping_list_item_category)).getSelectedItemPosition();
+            String category = mCategoryIdList.get(categoryIndex);
+            Double quantity = Double.parseDouble(((EditText) mEditableView.findViewById(R.id.shopping_list_item_quantity)).getText().toString());
             Boolean isPurchased = ((CheckBox) mEditableView.findViewById(R.id.shopping_list_item_purchased)).isChecked();
             String unit = ((Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner)).getSelectedItem().toString();
 
             String listKey = item.getTempId();
-            ShoppingListItem new_item = new ShoppingListItem(name, quanitiy, unit, "categoryTest", isPurchased, listKey);
+            ShoppingListItem new_item = new ShoppingListItem(name, quantity, unit, category, isPurchased, listKey);
             mShoppingListItems.child(listKey).setValue(new_item);
 
         } catch (NumberFormatException e) {

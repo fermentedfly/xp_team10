@@ -35,13 +35,12 @@
         android:enabled="true"
         android:longClickable="true"/>
 
-    <EditText
+    <Spinner
         android:id="@+id/shopping_list_item_category"
         android:layout_width="115dp"
-        android:layout_height="wrap_content"
+        android:layout_height="43dp"
         android:layout_alignStart="@+id/shopping_list_item_name"
         android:layout_below="@+id/shopping_list_item_name"
-        android:hint="Category"
         android:focusableInTouchMode="false"
         android:focusable="false"
         android:enabled="true"
@@ -82,7 +81,7 @@
         android:layout_height="43dp"
         android:focusableInTouchMode="false"
         android:focusable="false"
-        android:enabled="true"
+        android:enabled="false"
         android:layout_below="@+id/shopping_list_item_name"
         android:layout_toEndOf="@+id/shopping_list_item_quantity" />
 
