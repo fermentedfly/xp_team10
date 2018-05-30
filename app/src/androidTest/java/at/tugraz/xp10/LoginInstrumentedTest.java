@@ -84,11 +84,11 @@ public class LoginInstrumentedTest {
     @Test
     public void pressRegisterButton() throws Exception {
         onView(withId(R.id.register_button)).perform(click());
-        //TODO: Check if next view is register form
+        onView(withId(R.id.register_fragment)).check(matches(isDisplayed()));
     }
     @Test
     public void pressForgotPasswordButton() throws Exception {
         onView(withId(R.id.forgot_password_button)).perform(click());
-        //TODO: Check popup window
+        onView(withId(R.id.forgot_password_fragment)).check(matches(isDisplayed()));
     }
 }
