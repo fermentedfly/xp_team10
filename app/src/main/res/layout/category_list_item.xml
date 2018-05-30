@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<GridLayout
+<RelativeLayout
     android:id="@+id/category_list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:columnCount="1"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginLeft="10dp"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/category_list_item_name"
@@ -18,4 +20,4 @@
         android:textAlignment="center"
         android:text="Name"/>
 
-</GridLayout>
+</RelativeLayout>

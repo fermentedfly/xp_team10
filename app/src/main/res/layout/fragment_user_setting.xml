@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".fragments.UserSettingsFragment">
+    tools:context=".fragments.UserSettingsFragment"
+    android:background="@color/colorAccent"
+    android:orientation="vertical">
 
-    <Switch
-        android:id="@+id/email_notifications"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:checked="false"
-        android:text="Email Notifications"
-        tools:checked="false"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/background_rounded_corners"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <Switch
+            android:id="@+id/email_notifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Email Notifications"
+            tools:checked="false"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="16dp"
+            android:textColor="@color/colorWhite" />
+    </LinearLayout>
+</LinearLayout>

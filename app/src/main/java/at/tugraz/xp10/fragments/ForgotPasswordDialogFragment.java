@@ -60,7 +60,6 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
                 .setNegativeButton(R.string.cancel, null)
                 .create();
 
-
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
@@ -84,7 +83,7 @@ public class ForgotPasswordDialogFragment extends DialogFragment {
                 });
 
 
-                // POSITIVE
+                // Negative
                 Button buttonNeg = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
                 buttonNeg.setOnClickListener(new View.OnClickListener() {
 
