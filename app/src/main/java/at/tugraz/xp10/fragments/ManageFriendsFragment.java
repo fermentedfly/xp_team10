@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.firebase.Users;
-import at.tugraz.xp10.firebase.UsersValueEventListener;
+import at.tugraz.xp10.firebase.UserListValueEventListener;
 import at.tugraz.xp10.model.User;
 
 import static at.tugraz.xp10.util.Constants.FRIENDS_REQUEST_CONFIRMED;
@@ -193,7 +193,7 @@ public class ManageFriendsFragment extends Fragment {
 
     private void load_list_of_users()
     {
-        mUsersDB.getUsers(new UsersValueEventListener() {
+        mUsersDB.getUsers(new UserListValueEventListener() {
             @Override
             public void onNewData(HashMap<String, User> data) {
                 mFriendsView.removeAllViews();

@@ -19,7 +19,7 @@ public class Users {
             mDBRef = FirebaseDatabase.getInstance().getReference().child("users");
         }
 
-        public void getUsers(final UsersValueEventListener listener)
+        public void getUsers(final UserListValueEventListener listener)
         {
             mDBRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -39,16 +39,13 @@ public class Users {
             });
         }
 
-        public void getUser(String key, final UsersValueEventListener listener)
+        public void getUser(String key, final UserValueEventListener listener)
         {
             mDBRef.child(key).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    HashMap<String, User> data = new HashMap<>();
                     User user = dataSnapshot.getValue(User.class);
-                    data.put(dataSnapshot.getKey(), user);
-
-                    listener.onNewData(data);
+                    listener.onNewData(user);
                 }
 
                 @Override
@@ -56,6 +53,11 @@ public class Users {
 
                 }
             });
+        }
+
+        public void getCurrentUser(final UserValueEventListener listener)
+        {
+            getUser(getCurrentUserID(), listener);
         }
 
         public String getCurrentUserID()
@@ -66,6 +68,11 @@ public class Users {
         public void setUser(String key, User user)
         {
             mDBRef.child(key).setValue(user);
+        }
+
+        public void setCurrentUser(User user)
+        {
+            setUser(getCurrentUserID(), user);
         }
 
         public void addShoppingListToUser(String UserKey, String ShoppingListKey)

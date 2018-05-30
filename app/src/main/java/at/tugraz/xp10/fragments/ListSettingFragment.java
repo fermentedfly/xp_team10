@@ -24,7 +24,7 @@ import at.tugraz.xp10.R;
 import at.tugraz.xp10.firebase.ShoppingListValueEventListener;
 import at.tugraz.xp10.firebase.ShoppingLists;
 import at.tugraz.xp10.firebase.Users;
-import at.tugraz.xp10.firebase.UsersValueEventListener;
+import at.tugraz.xp10.firebase.UserListValueEventListener;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 import at.tugraz.xp10.util.Constants;
@@ -105,7 +105,7 @@ public class ListSettingFragment extends Fragment {
 
     private void loadFriends() {
         mUserList = new HashMap<>();
-        mUsersFBHandle.getUsers(new UsersValueEventListener() {
+        mUsersFBHandle.getUsers(new UserListValueEventListener() {
             @Override
             public void onNewData(HashMap<String, User> data) {
                 mContactList = new ArrayList<>();
