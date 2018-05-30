@@ -50,8 +50,6 @@ public class ListViewFragment extends Fragment {
     private String mShoppingListId = "";
     private String m_Title = "";
 
-    private OnFragmentInteractionListener mListener;
-
     private ArrayList<ShoppingListItem> mItemList = new ArrayList<>();
     ShoppingListItemListAdapter mAdapter;
 
@@ -276,33 +274,6 @@ public class ListViewFragment extends Fragment {
     private void displayAddLayout(View v, RelativeLayout addLayout) {
         addLayout.setVisibility(View.VISIBLE);
         v.findViewById(R.id.addItemButton).setVisibility(View.INVISIBLE);
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 
     private void SetTitle()

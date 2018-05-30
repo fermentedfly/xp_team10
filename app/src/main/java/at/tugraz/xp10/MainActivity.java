@@ -38,11 +38,8 @@ import at.tugraz.xp10.fragments.UserSettingsFragment;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
     public User currentUser = null;
 
@@ -146,11 +143,6 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
     }
 
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        // you can leave this empty
-    }
 
     private void gotoLoginActivity() {
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
