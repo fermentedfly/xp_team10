@@ -26,7 +26,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
     private ListViewFragment mListViewFragment;
     private Map<String, String> mCategories;
     private ArrayList <String> mCategoryNameList = new ArrayList<>();
-//    private ArrayAdapter<String> mAdapterCategory;
+    private ArrayAdapter<String> mAdapterCategory;
 
     public ShoppingListItemListAdapter(Context context, ArrayList<ShoppingListItem> items,
                                        ListViewFragment listViewFragment, Map<String, String> categories,
@@ -36,11 +36,9 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mListViewFragment = listViewFragment;
         mCategories = categories;
+        mCategoryNameList = categoryNames;
+        mAdapterCategory = new ArrayAdapter<>(mContext, android.R.layout.simple_spinner_item, mCategoryNameList);
     }
-
-    public void setCategories(Map<String, String> categories) { mCategories = categories;}
-
-    public void setCategoryNames(ArrayList<String> categoryNames) {mCategoryNameList = categoryNames;}
 
     @Override
     public int getCount() {
@@ -88,8 +86,8 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
             String categoryName = mCategories.get(catID);
             int categoryIndex = mCategoryNameList.indexOf(categoryName);
 
-            ArrayAdapter<String> adapterCategory = new ArrayAdapter<>(mContext, android.R.layout.simple_spinner_item, mCategoryNameList);
-            categorySpinner.setAdapter(adapterCategory);
+//            ArrayAdapter<String> adapterCategory = new ArrayAdapter<>(mContext, android.R.layout.simple_spinner_item, mCategoryNameList);
+            categorySpinner.setAdapter(mAdapterCategory);
             categorySpinner.setSelection(categoryIndex);
             categorySpinner.setEnabled(false);
 

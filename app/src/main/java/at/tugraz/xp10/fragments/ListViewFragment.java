@@ -384,8 +384,7 @@ public class ListViewFragment extends Fragment {
         }
 
         mAdapterCategory.notifyDataSetChanged();
-        mAdapter.setCategories(mCategoryIdNameMap);
-        mAdapter.setCategoryNames(mCategoryNameList);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void deleteItem(String id)
