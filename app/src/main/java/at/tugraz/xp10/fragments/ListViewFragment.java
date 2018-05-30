@@ -32,8 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import at.tugraz.xp10.adapter.ShoppingListItemListAdapter;
+import at.tugraz.xp10.firebase.DatabaseListValueEventListener;
 import at.tugraz.xp10.firebase.ShoppingListItems;
-import at.tugraz.xp10.firebase.ShoppingListItemsValueEventListener;
+import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.ShoppingListItem;
 import at.tugraz.xp10.R;
 
@@ -82,6 +83,7 @@ public class ListViewFragment extends Fragment {
             mShoppingListId = getArguments().getString(ARG_SHOPPING_LIST_ID);
             m_Title = getArguments().getString(s_Title);
         }
+        mShoppingListItemsFBHandle.selectShoppingList(mShoppingListId);
         mEditMode = false;
         mAddMode = false;
         mException = false;
@@ -117,17 +119,15 @@ public class ListViewFragment extends Fragment {
             }
         });
 
-        mShoppingListItemsFBHandle.getShoppingListItems(mShoppingListId,
-                new ShoppingListItemsValueEventListener() {
+        mShoppingListItemsFBHandle.getShoppingListItems(new DatabaseListValueEventListener() {
             @Override
-            public void onNewData(HashMap<String, ShoppingListItem> Items) {
+            public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
                 mItemList.clear();
 
-                for (Map.Entry<String, ShoppingListItem> d : Items.entrySet())
+                for (Map.Entry<String, T> d : data.entrySet())
                 {
-                    mItemList.add(d.getValue());
+                    mItemList.add((ShoppingListItem)d.getValue());
                 }
-
                 mAdapter.notifyDataSetChanged();
 
             }
@@ -296,7 +296,7 @@ public class ListViewFragment extends Fragment {
             String unit = ((Spinner) getView().findViewById(R.id.item_unit_spinner)).getSelectedItem().toString();
             Double quanitiy = Double.parseDouble(((EditText) getView().findViewById(R.id.item_quantity)).getText().toString());
 
-            mShoppingListItemsFBHandle.addItemToShoppingList(mShoppingListId, name, quanitiy, unit, category, false);
+            mShoppingListItemsFBHandle.addItemToShoppingList(name, quanitiy, unit, category, false);
 
             setItemFieldsEmpty();
 
@@ -319,7 +319,7 @@ public class ListViewFragment extends Fragment {
         getView().findViewById(R.id.lvSaveButton).setVisibility(View.GONE);
         getView().findViewById(R.id.addItemButton).setVisibility(View.VISIBLE);
         getView().findViewById(R.id.shopping_list_item).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        mShoppingListItemsFBHandle.deleteItemFromShoppingList(mShoppingListId, id);
+        mShoppingListItemsFBHandle.deleteItemFromShoppingList(id);
 
         mEditMode = false;
     }
@@ -344,7 +344,7 @@ public class ListViewFragment extends Fragment {
             String unit = ((Spinner) mEditableView.findViewById(R.id.shopping_list_item_spinner)).getSelectedItem().toString();
 
 
-            mShoppingListItemsFBHandle.updateItemInShoppingList(mShoppingListId, item.getTempId(), name, quanitiy, unit, category, isPurchased);
+            mShoppingListItemsFBHandle.updateItemInShoppingList(item.getTempId(), name, quanitiy, unit, category, isPurchased);
 
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Wrong number format!", Toast.LENGTH_LONG).show();

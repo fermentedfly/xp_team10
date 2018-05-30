@@ -22,8 +22,9 @@ import java.util.Map;
 import at.tugraz.xp10.MainActivity;
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.adapter.AllListRecyclerViewAdapter;
-import at.tugraz.xp10.firebase.ShoppingListValueEventListener;
+import at.tugraz.xp10.firebase.DatabaseValueEventListener;
 import at.tugraz.xp10.firebase.ShoppingLists;
+import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 import at.tugraz.xp10.util.ListEntry;
@@ -128,10 +129,10 @@ public class AllListFragment extends Fragment {
 
         if (!user.getShoppinglists().isEmpty()) {
             for (final String shoppingListId : user.getShoppinglists().keySet()) {
-                mShoppingListsDB.getShoppingList(shoppingListId, new ShoppingListValueEventListener() {
+                mShoppingListsDB.getShoppingList(shoppingListId, new DatabaseValueEventListener() {
                     @Override
-                    public void onNewData(ShoppingList data) {
-                        mShoppingMap.put(shoppingListId, data);
+                    public <T extends ModelBase> void onNewData(T data) {
+                        mShoppingMap.put(shoppingListId, (ShoppingList)data);
                         mShoppingLists.clear();
 
                         for (Map.Entry<String, ShoppingList> entry : mShoppingMap.entrySet()) {

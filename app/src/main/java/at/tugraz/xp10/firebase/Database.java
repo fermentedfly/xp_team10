@@ -71,4 +71,13 @@ public class Database {
     {
         mDBRef.child(key).setValue(value);
     }
+
+    public String getNewKey() {
+        return mDBRef.push().getKey();
+    }
+
+    public void deleteValue(String key)
+    {
+        mDBRef.child(key).removeValue();
+    }
 }

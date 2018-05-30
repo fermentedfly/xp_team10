@@ -8,51 +8,41 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.ShoppingListItem;
 
 public class ShoppingListItems {
 
-    private DatabaseReference mDBRef;
+    private Database mDBRef;
 
     public ShoppingListItems()
     {
-        mDBRef = FirebaseDatabase.getInstance().getReference().child("items");
     }
 
-    public void getShoppingListItems(String key, final ShoppingListItemsValueEventListener listener)
+    public void selectShoppingList(String key)
     {
-        mDBRef.child(key).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, ShoppingListItem> data = new HashMap<>();
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    ShoppingListItem item = ds.getValue(ShoppingListItem.class);
-                    data.put(ds.getKey(), item);
-                }
-                listener.onNewData(data);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        mDBRef = Database.getInstance("items/" + key);
     }
 
-    public void addItemToShoppingList(String ListKey, String name, Double quantity, String unit, String category, Boolean checked)
+    public void getShoppingListItems(final DatabaseListValueEventListener listener)
     {
-        String itemKey = mDBRef.child(ListKey).push().getKey();
+        mDBRef.getListOfValues(ShoppingListItem.class, listener);
+    }
+
+    public void addItemToShoppingList(String name, Double quantity, String unit, String category, Boolean checked)
+    {
+        String itemKey = mDBRef.getNewKey();
         ShoppingListItem item = new ShoppingListItem(name, quantity, unit, category, checked, itemKey);
-        mDBRef.child(ListKey).child(itemKey).setValue(item);
+        mDBRef.setValue(itemKey, item);
     }
 
-    public void deleteItemFromShoppingList(String ListKey, String ItemKey)
+    public void deleteItemFromShoppingList(String ItemKey)
     {
-        mDBRef.child(ListKey).child(ItemKey).removeValue();
+        mDBRef.deleteValue(ItemKey);
     }
 
-    public void updateItemInShoppingList(String ListKey, String ItemKey, String name, Double quantity, String unit, String category, Boolean checked)
+    public void updateItemInShoppingList(String ItemKey, String name, Double quantity, String unit, String category, Boolean checked)
     {
-        mDBRef.child(ListKey).child(ItemKey).setValue(new ShoppingListItem(name, quantity, unit, category, checked, ItemKey));
+        mDBRef.setValue(ItemKey, new ShoppingListItem(name, quantity, unit, category, checked, ItemKey));
     }
 }

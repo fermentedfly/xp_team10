@@ -10,7 +10,6 @@ import android.widget.Switch;
 
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.firebase.DatabaseValueEventListener;
-import at.tugraz.xp10.firebase.UserValueEventListener;
 import at.tugraz.xp10.firebase.Users;
 import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.User;

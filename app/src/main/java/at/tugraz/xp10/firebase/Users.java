@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
 
-import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.User;
 
 public class Users {
