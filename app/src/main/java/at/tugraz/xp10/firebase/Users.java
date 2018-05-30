@@ -16,12 +16,12 @@ public class Users {
 
     public void getUsers(final DatabaseListValueEventListener listener)
     {
-        mDBRef.getListOfValues(User.class, listener);
+        mDBRef.installListListener(User.class, listener);
     }
 
     public void getUser(String key, final DatabaseValueEventListener listener)
     {
-        mDBRef.getValue(User.class, key, listener);
+        mDBRef.installValueListener(User.class, key, listener);
     }
 
     public void getCurrentUser(final DatabaseValueEventListener listener)
@@ -49,5 +49,10 @@ public class Users {
         HashMap<String, Object> newList = new HashMap<>();
         newList.put(ShoppingListKey, true);
         mDBRef.setValue(UserKey + "shoppinglists/", newList);
+    }
+
+    public void uninstallAllListeners()
+    {
+        mDBRef.uninstallAllListeners();
     }
 }

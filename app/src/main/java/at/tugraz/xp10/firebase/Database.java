@@ -6,6 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import at.tugraz.xp10.model.ModelBase;
@@ -13,10 +14,12 @@ import at.tugraz.xp10.model.ModelBase;
 public class Database {
 
     private DatabaseReference mDBRef;
+    private HashMap<DatabaseEventListener, ValueEventListener> mListeners;
 
     private Database(String key)
     {
         mDBRef = FirebaseDatabase.getInstance().getReference().child(key);
+        mListeners = new HashMap<>();
     }
 
     public static Database getInstance(String key)
@@ -24,10 +27,10 @@ public class Database {
         return new Database(key);
     }
 
-    public <T extends ModelBase> void getListOfValues(final Class<T> typeParameterClass,
-                                                      final DatabaseListValueEventListener listener)
+    public <T extends ModelBase> void installListListener(final Class<T> typeParameterClass,
+                                                          final DatabaseListValueEventListener listener)
     {
-        mDBRef.addValueEventListener(new ValueEventListener() {
+        ValueEventListener inner_listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 HashMap<String, T> data = new HashMap<>();
@@ -42,13 +45,14 @@ public class Database {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
-
+        };
+        mListeners.put(listener, inner_listener);
+        mDBRef.addValueEventListener(inner_listener);
     }
 
-    public <T extends ModelBase> void getValue(final Class<T> typeParameterClass, String key, final DatabaseValueEventListener listener)
+    public <T extends ModelBase> void installValueListener(final Class<T> typeParameterClass, String key, final DatabaseValueEventListener listener)
     {
-        mDBRef.child(key).addValueEventListener(new ValueEventListener() {
+        ValueEventListener inner_listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 T data = dataSnapshot.getValue(typeParameterClass);
@@ -59,7 +63,9 @@ public class Database {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+        mListeners.put(listener, inner_listener);
+        mDBRef.child(key).addValueEventListener(inner_listener);
     }
 
     public <T> void pushValue(T value)
@@ -79,5 +85,14 @@ public class Database {
     public void deleteValue(String key)
     {
         mDBRef.child(key).removeValue();
+    }
+
+    public void uninstallAllListeners()
+    {
+        for(ValueEventListener listener : mListeners.values())
+        {
+            mDBRef.removeEventListener(listener);
+        }
+        mListeners.clear();
     }
 }

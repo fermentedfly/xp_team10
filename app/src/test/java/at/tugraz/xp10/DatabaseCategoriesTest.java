@@ -60,7 +60,7 @@ public class DatabaseCategoriesTest {
 
                 return null;
             }
-        }).when(mockedDatabase).getListOfValues(any(Class.class), any(DatabaseListValueEventListener.class));
+        }).when(mockedDatabase).installListListener(any(Class.class), any(DatabaseListValueEventListener.class));
 
         Categories fb = new Categories();
         fb.getCategories(new DatabaseListValueEventListener() {
