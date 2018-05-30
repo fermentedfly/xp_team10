@@ -1,7 +1,5 @@
 package at.tugraz.xp10;
 
-import com.google.firebase.database.FirebaseDatabase;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -19,14 +17,13 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import java.util.HashMap;
 
 import at.tugraz.xp10.firebase.Categories;
-import at.tugraz.xp10.firebase.CategoriesValueEventListener;
 import at.tugraz.xp10.firebase.Database;
 import at.tugraz.xp10.firebase.DatabaseListValueEventListener;
 import at.tugraz.xp10.model.Category;
+import at.tugraz.xp10.model.ModelBase;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -65,13 +62,13 @@ public class DatabaseCategoriesTest {
             }
         }).when(mockedDatabase).getListOfValues(any(Class.class), any(DatabaseListValueEventListener.class));
 
-        Categories cats = new Categories();
-        cats.getCategories(new CategoriesValueEventListener() {
+        Categories fb = new Categories();
+        fb.getCategories(new DatabaseListValueEventListener() {
             @Override
-            public void onNewData(HashMap<String, Category> Categories) {
-                for (Category c : Categories.values())
+            public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
+                for (T c : data.values())
                 {
-                    Assert.assertTrue(TestData.containsValue(c));
+                    Assert.assertTrue(TestData.containsValue((Category) c));
                 }
             }
         });

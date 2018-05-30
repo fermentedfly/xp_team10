@@ -15,10 +15,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import at.tugraz.xp10.firebase.Categories;
-import at.tugraz.xp10.firebase.CategoriesValueEventListener;
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.adapter.CategoriesAdapter;
+import at.tugraz.xp10.firebase.DatabaseListValueEventListener;
 import at.tugraz.xp10.model.Category;
+import at.tugraz.xp10.model.ModelBase;
 
 public class CategoriesFragment extends Fragment {
 
@@ -65,17 +66,18 @@ public class CategoriesFragment extends Fragment {
     }
 
     public void getCategoryList() {
-        mCategoriesFBHandle.getCategories(new CategoriesValueEventListener() {
-            @Override
-            public void onNewData(HashMap<String, Category> Categories) {
-                mCategoriesList.clear();
-                for (Category c : Categories.values())
-                {
-                    mCategoriesList.add(c);
-                }
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+        mCategoriesFBHandle.getCategories(
+                new DatabaseListValueEventListener() {
+                    @Override
+                    public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
+                        mCategoriesList.clear();
+                        for (T c : data.values())
+                        {
+                            mCategoriesList.add((Category) c);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
     }
 
     private void addCategory(LayoutInflater inflater) {

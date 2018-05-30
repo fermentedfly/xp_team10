@@ -8,6 +8,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import at.tugraz.xp10.model.ModelBase;
+
 public class Database {
 
     private DatabaseReference mDBRef;
@@ -22,8 +24,8 @@ public class Database {
         return new Database(key);
     }
 
-    public <T> void getListOfValues(final Class<T> typeParameterClass,
-                                    final DatabaseListValueEventListener listener)
+    public <T extends ModelBase> void getListOfValues(final Class<T> typeParameterClass,
+                                                      final DatabaseListValueEventListener listener)
     {
         mDBRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -44,8 +46,29 @@ public class Database {
 
     }
 
+    public <T extends ModelBase> void getValue(final Class<T> typeParameterClass, String key, final DatabaseValueEventListener listener)
+    {
+        mDBRef.child(key).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                T data = dataSnapshot.getValue(typeParameterClass);
+                listener.onNewData(data);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public <T> void pushValue(T value)
     {
         mDBRef.push().setValue(value);
+    }
+
+    public <T> void setValue(String key, T value)
+    {
+        mDBRef.child(key).setValue(value);
     }
 }

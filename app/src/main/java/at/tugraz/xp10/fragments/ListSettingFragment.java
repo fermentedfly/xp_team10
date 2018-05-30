@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import at.tugraz.xp10.R;
+import at.tugraz.xp10.firebase.DatabaseListValueEventListener;
 import at.tugraz.xp10.firebase.ShoppingListValueEventListener;
 import at.tugraz.xp10.firebase.ShoppingLists;
 import at.tugraz.xp10.firebase.Users;
-import at.tugraz.xp10.firebase.UserListValueEventListener;
+import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 import at.tugraz.xp10.util.Constants;
@@ -105,15 +106,15 @@ public class ListSettingFragment extends Fragment {
 
     private void loadFriends() {
         mUserList = new HashMap<>();
-        mUsersFBHandle.getUsers(new UserListValueEventListener() {
+        mUsersFBHandle.getUsers(new DatabaseListValueEventListener() {
             @Override
-            public void onNewData(HashMap<String, User> data) {
+            public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
                 mContactList = new ArrayList<>();
 
-                for (HashMap.Entry<String, User> d : data.entrySet()) {
-                    mUserList.put(d.getKey(), d.getValue());
+                for (HashMap.Entry<String, T> d : data.entrySet()) {
+                    mUserList.put(d.getKey(), (User)d.getValue());
                     if (d.getKey().equalsIgnoreCase(mUsersFBHandle.getCurrentUserID())) {
-                        mCurrentUser = d.getValue();
+                        mCurrentUser = (User)d.getValue();
                     }
                 }
                 if (mListID != null) {
