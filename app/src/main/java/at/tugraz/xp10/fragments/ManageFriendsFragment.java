@@ -135,9 +135,9 @@ public class ManageFriendsFragment extends Fragment {
         chip.setUid(uid);
         chip.setUser(user);
         if(state.equals(FRIENDS_REQUEST_CONFIRMED)) {
-            chip.setLabelColor(getResources().getColor(R.color.colorPrimary));
-            chip.setChipBackgroundColor(getResources().getColor(R.color.colorAccent));
-            chip.setDeleteIconColor(getResources().getColor(R.color.colorPrimary));
+            chip.setLabelColor(getActivity().getResources().getColor(R.color.colorPrimary));
+            chip.setChipBackgroundColor(getActivity().getResources().getColor(R.color.colorAccent));
+            chip.setDeleteIconColor(getActivity().getResources().getColor(R.color.colorPrimary));
         }
         chip.setPadding(2,2,2,2);
         chip.setDeletable(true);
@@ -221,4 +221,5 @@ public class ManageFriendsFragment extends Fragment {
             }
         });
     }
+
 }
