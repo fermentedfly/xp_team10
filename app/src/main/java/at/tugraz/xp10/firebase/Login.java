@@ -1,6 +1,7 @@
 package at.tugraz.xp10.firebase;
 
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -82,8 +83,8 @@ public class Login {
 
     }
 
-    public FirebaseUser getCurrentUser(){
-            return mDBAuth.getCurrentUser();
+    public FirebaseUser getCurrentUser() {
+        return mDBAuth.getCurrentUser();
     }
 
 }
