@@ -4,18 +4,16 @@ import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.app.FragmentManager;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import at.tugraz.xp10.fragments.ForgotPasswordDialogFragment;
-
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -37,6 +35,7 @@ public class ForgotPasswordInstrumentedTest {
             onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
             onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));
         }
+        closeSoftKeyboard();
         onView(withId(R.id.forgot_password_button)).perform(click());
     }
     @Test
@@ -47,7 +46,8 @@ public class ForgotPasswordInstrumentedTest {
     }
     @Test
     public void pressSubmitButtonMailRequired() throws Exception {
-        onView(withId(android.R.id.button1)).perform(click());
+        closeSoftKeyboard();
+        onView(withId(android.R.id.button1)).perform(scrollTo()).perform(click());
         onView(withId(R.id.email_address)).check(matches(withErrorText(R.string.error_field_required)));
     }
 

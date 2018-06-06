@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
@@ -76,18 +77,21 @@ public class LoginInstrumentedTest {
     @Test
     public void pressLoginButtonCorrect() throws Exception {
         onView(withId(R.id.email)).perform(typeText("ui@test.com"));
-        onView(withId(R.id.password)).perform(scrollTo()).perform(typeText("test1234"));
-        onView(withId(R.id.login_button)).perform(click());
+        onView(withId(R.id.password)).perform(typeText("test1234"));
+        closeSoftKeyboard();
+        onView(withId(R.id.login_button)).perform(scrollTo()).perform(click());
         //TODO: Check if next view is main page
     }
 
     @Test
     public void pressRegisterButton() throws Exception {
+        closeSoftKeyboard();
         onView(withId(R.id.register_button)).perform(click());
         onView(withId(R.id.register_fragment)).check(matches(isDisplayed()));
     }
     @Test
     public void pressForgotPasswordButton() throws Exception {
+        closeSoftKeyboard();
         onView(withId(R.id.forgot_password_button)).perform(click());
         onView(withId(R.id.forgot_password_fragment)).check(matches(isDisplayed()));
     }

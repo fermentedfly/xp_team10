@@ -4,24 +4,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,8 +38,6 @@ import at.tugraz.xp10.fragments.TestFragment;
 import at.tugraz.xp10.fragments.UserSettingsFragment;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
-
-import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -208,7 +203,7 @@ public class MainActivity extends AppCompatActivity
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-        String uid = mAuth.getCurrentUser().getUid();
+        String uid = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
 
         Query userQuery = database.child("users").child(uid);
         userQuery.addValueEventListener(new ValueEventListener() {
