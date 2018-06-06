@@ -13,6 +13,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
+import at.tugraz.xp10.firebase.Database;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -20,21 +22,26 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(JUnit4.class)
-@PrepareForTest({FirebaseAuth.class})
+@PrepareForTest({FirebaseAuth.class, Database.class})
 public class LoginUnitTest {
 
     private FirebaseAuth mockedFirebaseAuth;
     private FirebaseUser mockedUser;
     private LoginActivity loginActivity;
     private LoginActivity loginActivityMock;
+    private Database mockedDatabase;
 
     @Before
     public void before() {
         mockedFirebaseAuth = Mockito.mock(FirebaseAuth.class);
         mockedUser = Mockito.mock(FirebaseUser.class);
+        mockedDatabase = Mockito.mock(Database.class);
 
         PowerMockito.mockStatic(FirebaseAuth.class);
         when(FirebaseAuth.getInstance()).thenReturn(mockedFirebaseAuth);
+
+        PowerMockito.mockStatic(Database.class);
+        Mockito.when(Database.getInstance(Mockito.anyString())).thenReturn(mockedDatabase);
 
         loginActivity = new LoginActivity();
         loginActivityMock = Mockito.mock(LoginActivity.class);

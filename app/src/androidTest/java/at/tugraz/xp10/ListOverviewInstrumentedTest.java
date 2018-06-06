@@ -6,6 +6,7 @@ import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,7 +25,7 @@ import static junit.framework.Assert.assertNotNull;
 public class ListOverviewInstrumentedTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<MainActivity>(MainActivity.class);
 
     @Before
     public void init(){
@@ -48,5 +49,7 @@ public class ListOverviewInstrumentedTest {
     @Test
     public void clickAddListButton() throws Exception {
         onView(withId(R.id.button_add_list)).check(matches(isDisplayed()));
+        Log.d("test", "clickAddListButton: " + mActivityRule.getActivity().currentUser);
+        mActivityRule.getActivity().currentUser = null;
     }
 }

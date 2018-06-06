@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import at.tugraz.xp10.firebase.Categories;
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.adapter.CategoriesAdapter;
+import at.tugraz.xp10.firebase.Categories;
 import at.tugraz.xp10.firebase.DatabaseListValueEventListener;
 import at.tugraz.xp10.model.Category;
 import at.tugraz.xp10.model.ModelBase;
@@ -111,6 +111,11 @@ public class CategoriesFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         String newCategory = ((EditText) (dialogView.findViewById(R.id.category_name))).getText().toString();
+
+                        if (newCategory.isEmpty()) {
+                            ((EditText) (dialogView.findViewById(R.id.category_name))).setError(getString(R.string.error_field_required));
+                            return;
+                        }
                         addCategoryToDB(newCategory);
                         dialog.dismiss();
                     }

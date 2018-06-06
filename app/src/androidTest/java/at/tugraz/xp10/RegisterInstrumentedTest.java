@@ -55,6 +55,7 @@ public class RegisterInstrumentedTest {
     public void IsEmailValid() throws Exception {
         closeSoftKeyboard();
         onView(withId(R.id.register_email)).perform(typeText("invalidemail.com"));
+        closeSoftKeyboard();
         onView(withId(R.id.register_register_button)).perform(click());
         onView(withId(R.id.register_email)).check(matches(withErrorText(R.string.error_invalid_email)));
     }
