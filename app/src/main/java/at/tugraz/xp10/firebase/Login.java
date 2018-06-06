@@ -3,6 +3,7 @@ package at.tugraz.xp10.firebase;
 import android.support.annotation.NonNull;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,13 +21,14 @@ public class Login {
         }
 
         public void setForgotPasswordMail(String email, final LoginValueEventListener listener) {
-            mDBAuth.sendPasswordResetEmail(email)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            listener.onSuccess();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
+            Task<Void> task = mDBAuth.sendPasswordResetEmail(email);
+            task.addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    listener.onSuccess();
+                }
+            });
+            task.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     listener.onFailure(e);
@@ -36,28 +38,26 @@ public class Login {
 
         public void createUserWithEmailAndPassword(final String email, String password, final String firstname, final String lastname, final LoginValueEventListener listener) {
 
-            mDBAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
+            Task<AuthResult> task = mDBAuth.createUserWithEmailAndPassword(email, password);
+            task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                @Override
+                public void onSuccess(AuthResult authResult) {
 
-                            FirebaseUser currentUser = mDBAuth.getCurrentUser();
-                            if (currentUser != null) {
-                                currentUser.sendEmailVerification();
-                                User user = new User(email, firstname, lastname);
-                                mUserDBRef.setUser(currentUser.getUid(), user);
-                                listener.onSuccess();
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            listener.onFailure(e);
-                        }
-                    });
-
-
+                    FirebaseUser currentUser = mDBAuth.getCurrentUser();
+                    if (currentUser != null) {
+                        currentUser.sendEmailVerification();
+                        User user = new User(email, firstname, lastname);
+                        mUserDBRef.setUser(currentUser.getUid(), user);
+                        listener.onSuccess();
+                    }
+                }
+            });
+            task.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    listener.onFailure(e);
+                }
+            });
         }
 
     public boolean isUserLoggedIn() {
