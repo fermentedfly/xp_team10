@@ -12,53 +12,52 @@ import at.tugraz.xp10.model.User;
 
 public class Login {
 
-        private Users mUserDBRef;
-        private FirebaseAuth mDBAuth;
+    private Users mUserDBRef;
+    private FirebaseAuth mDBAuth;
 
-        public Login() {
-            mUserDBRef = new Users();
-            mDBAuth = FirebaseAuth.getInstance();
-        }
+    public Login() {
+        mUserDBRef = new Users();
+        mDBAuth = FirebaseAuth.getInstance();
+    }
 
-        public void setForgotPasswordMail(String email, final LoginValueEventListener listener) {
-            Task<Void> task = mDBAuth.sendPasswordResetEmail(email);
-            task.addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
+    public void setForgotPasswordMail(String email, final LoginValueEventListener listener) {
+        Task<Void> task = mDBAuth.sendPasswordResetEmail(email);
+        task.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                listener.onSuccess();
+            }
+        });
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                listener.onFailure(e);
+            }
+        });
+    }
+
+    public void createUserWithEmailAndPassword(final String email, final String password, final String firstname, final String lastname, final LoginValueEventListener listener) {
+
+        Task<AuthResult> task = mDBAuth.createUserWithEmailAndPassword(email, password);
+        task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                FirebaseUser currentUser = mDBAuth.getCurrentUser();
+                if (currentUser != null) {
+                    currentUser.sendEmailVerification();
+                    User user = new User(email, firstname, lastname);
+                    mUserDBRef.setUser(currentUser.getUid(), user);
                     listener.onSuccess();
                 }
-            });
-            task.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    listener.onFailure(e);
-                }
-            });
-        }
-
-        public void createUserWithEmailAndPassword(final String email, String password, final String firstname, final String lastname, final LoginValueEventListener listener) {
-
-            Task<AuthResult> task = mDBAuth.createUserWithEmailAndPassword(email, password);
-            task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                @Override
-                public void onSuccess(AuthResult authResult) {
-
-                    FirebaseUser currentUser = mDBAuth.getCurrentUser();
-                    if (currentUser != null) {
-                        currentUser.sendEmailVerification();
-                        User user = new User(email, firstname, lastname);
-                        mUserDBRef.setUser(currentUser.getUid(), user);
-                        listener.onSuccess();
-                    }
-                }
-            });
-            task.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    listener.onFailure(e);
-                }
-            });
-        }
+            }
+        });
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                listener.onFailure(e);
+            }
+        });
+    }
 
     public boolean isUserLoggedIn() {
         return mDBAuth.getCurrentUser() != null;
@@ -66,20 +65,20 @@ public class Login {
 
     public void signInWithUserAndPassword(String email, String password, final LoginValueEventListener listener) {
 
-            mDBAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        listener.onSuccess();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+        Task<AuthResult> task = mDBAuth.signInWithEmailAndPassword(email, password);
+        task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                listener.onSuccess();
+            }
+        });
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                      listener.onFailure(e);
-                    }
-                });
+                listener.onFailure(e);
+            }
+        });
 
     }
 
