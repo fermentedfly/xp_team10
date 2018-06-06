@@ -7,6 +7,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import at.tugraz.xp10.model.ModelBase;
 
@@ -78,6 +79,12 @@ public class Database {
     {
         mDBRef.child(key).setValue(value);
     }
+
+
+    public void updateChildren(String key, Map<String, Object> value) {
+        mDBRef.child(key).updateChildren(value);
+    }
+
 
     public String getNewKey() {
         return mDBRef.push().getKey();
