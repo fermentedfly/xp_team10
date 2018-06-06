@@ -3,7 +3,7 @@ package at.tugraz.xp10.model;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class ShoppingListItem {
+public class ShoppingListItem extends ModelBase {
     private String name;
     private Double quantity;
     private String category;

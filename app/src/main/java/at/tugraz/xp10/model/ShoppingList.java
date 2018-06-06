@@ -9,7 +9,7 @@ import java.util.Map;
 import at.tugraz.xp10.util.Constants;
 
 @IgnoreExtraProperties
-public class ShoppingList {
+public class ShoppingList extends ModelBase {
 
     private String title;
     private String description;

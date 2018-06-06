@@ -8,7 +8,7 @@ import java.util.HashMap;
 import at.tugraz.xp10.util.Constants;
 
 @IgnoreExtraProperties
-public class User {
+public class User extends ModelBase {
     private String eMail;
     private String firstName;
     private String lastName;

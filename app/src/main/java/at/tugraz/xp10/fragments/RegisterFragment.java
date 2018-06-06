@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.firebase.Login;
+import at.tugraz.xp10.firebase.LoginValueEventListener;
 
 public class RegisterFragment extends Fragment {
     private static final String TAG = "RegisterFragment";
@@ -66,7 +68,18 @@ public class RegisterFragment extends Fragment {
                             mInputPassword.getText().toString(),
                             mInputFirstName.getText().toString(),
                             mInputLastName.getText().toString(),
-                            getActivity(), getFragmentManager());
+                            new LoginValueEventListener() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(getActivity(), "Registration successful.\nPlease confirm email address", Toast.LENGTH_LONG).show();
+                                    getFragmentManager().popBackStack();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Toast.makeText(getActivity(), "Registration failed.\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            });
                 }
             }
         });

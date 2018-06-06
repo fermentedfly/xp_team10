@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import at.tugraz.xp10.R;
-import at.tugraz.xp10.firebase.ShoppingListValueEventListener;
+import at.tugraz.xp10.firebase.DatabaseListValueEventListener;
+import at.tugraz.xp10.firebase.DatabaseValueEventListener;
 import at.tugraz.xp10.firebase.ShoppingLists;
 import at.tugraz.xp10.firebase.Users;
-import at.tugraz.xp10.firebase.UserListValueEventListener;
+import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 import at.tugraz.xp10.util.Constants;
@@ -41,6 +42,7 @@ public class ListSettingFragment extends Fragment {
 
     private Button mSaveButton;
     private Button mCancelButton;
+    private View mView;
 
     private EditText mTitle;
     private EditText mDescription;
@@ -75,12 +77,12 @@ public class ListSettingFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_setting, container, false);
+        mView = inflater.inflate(R.layout.fragment_list_setting, container, false);
 
-        mTitle = view.findViewById(R.id.list_setting_title);
-        mDescription = view.findViewById(R.id.list_setting_description);
+        mTitle = mView.findViewById(R.id.list_setting_title);
+        mDescription = mView.findViewById(R.id.list_setting_description);
 
-        mSaveButton = view.findViewById(R.id.list_setting_save);
+        mSaveButton = mView.findViewById(R.id.list_setting_save);
         mSaveButton.setEnabled(false);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +91,7 @@ public class ListSettingFragment extends Fragment {
             }
         });
 
-        mCancelButton = view.findViewById(R.id.list_setting_cancel);
+        mCancelButton = mView.findViewById(R.id.list_setting_cancel);
         mCancelButton.setEnabled(false);
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,20 +102,20 @@ public class ListSettingFragment extends Fragment {
 
         loadFriends();
 
-        return view;
+        return mView;
     }
 
     private void loadFriends() {
         mUserList = new HashMap<>();
-        mUsersFBHandle.getUsers(new UserListValueEventListener() {
+        mUsersFBHandle.getUsers(new DatabaseListValueEventListener() {
             @Override
-            public void onNewData(HashMap<String, User> data) {
+            public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
                 mContactList = new ArrayList<>();
 
-                for (HashMap.Entry<String, User> d : data.entrySet()) {
-                    mUserList.put(d.getKey(), d.getValue());
+                for (HashMap.Entry<String, T> d : data.entrySet()) {
+                    mUserList.put(d.getKey(), (User)d.getValue());
                     if (d.getKey().equalsIgnoreCase(mUsersFBHandle.getCurrentUserID())) {
-                        mCurrentUser = d.getValue();
+                        mCurrentUser = (User)d.getValue();
                     }
                 }
                 if (mListID != null) {
@@ -128,16 +130,16 @@ public class ListSettingFragment extends Fragment {
     }
 
     private void load_list_by_id() {
-        mShoppingListsFBHandle.getShoppingList(mListID, new ShoppingListValueEventListener() {
+        mShoppingListsFBHandle.getShoppingList(mListID, new DatabaseValueEventListener() {
             @Override
-            public void onNewData(ShoppingList data) {
-                for (HashMap.Entry<String, String> entry : data.getMembers().entrySet()) {
+            public <T extends ModelBase> void onNewData(T data) {
+                for (HashMap.Entry<String, String> entry : ((ShoppingList)data).getMembers().entrySet()) {
                     if (entry.getValue().equalsIgnoreCase(Constants.OWNER)) {
                         owner = mUserList.get(entry.getKey());
                         ownerID = entry.getKey();
                     }
                 }
-                fill_ui_fields(data);
+                fill_ui_fields((ShoppingList)data);
             }
         });
     }
@@ -150,10 +152,8 @@ public class ListSettingFragment extends Fragment {
             }
         }
 
-        Fragment current = getFragmentManager().findFragmentByTag("ListSetting");
-        View v = current.getView();
-        if (v != null) {
-            ChipView ownerChipView = v.findViewById(R.id.owner_chip_view);
+        if (mView != null) {
+            ChipView ownerChipView = mView.findViewById(R.id.owner_chip_view);
             ownerChipView.setLabel(owner.getName());
             ownerChipView.setHasAvatarIcon(true);
 
@@ -163,7 +163,7 @@ public class ListSettingFragment extends Fragment {
             mUsers.setMaxHeight(ViewUtil.dpToPx(400) + 8);
 
             mUsers.getEditText().setTextColor(Color.WHITE);
-            LinearLayout ll = v.findViewById(R.id.list_setting_chips_input);
+            LinearLayout ll = mView.findViewById(R.id.list_setting_chips_input);
             ll.addView(mUsers);
 
             mUsers.setFilterableList(mContactList);
@@ -224,6 +224,7 @@ public class ListSettingFragment extends Fragment {
     }
 
     private void closeFragment() {
+        mUsersFBHandle.uninstallAllListeners();
         getActivity().getSupportFragmentManager().popBackStackImmediate();
     }
 }

@@ -79,6 +79,7 @@ public class ShoppingListItemListAdapter extends BaseAdapter {
             spinner.setAdapter(adapter);
             spinner.setEnabled(false);
 
+
             purchasedView.setChecked(item.getIsPurchased());
             nameTextView.setText(item.getName());
 

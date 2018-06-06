@@ -15,15 +15,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import at.tugraz.xp10.firebase.Categories;
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.adapter.CategoriesAdapter;
-import at.tugraz.xp10.firebase.Categories;
-import at.tugraz.xp10.firebase.CategoriesValueEventListener;
+import at.tugraz.xp10.firebase.DatabaseListValueEventListener;
 import at.tugraz.xp10.model.Category;
+import at.tugraz.xp10.model.ModelBase;
 
 public class CategoriesFragment extends Fragment {
 
@@ -70,11 +72,11 @@ public class CategoriesFragment extends Fragment {
     }
 
     public void getCategoryList() {
-        mCategoriesFBHandle.getCategories(new CategoriesValueEventListener() {
+        mCategoriesFBHandle.getCategories(new DatabaseListValueEventListener() {
             @Override
-            public void onNewData(HashMap<String, Category> Categories) {
+            public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
                 mCategoriesList.clear();
-                mCategoriesList.addAll(Categories.values());
+                mCategoriesList.addAll((Collection<Category>) data.values());
 
                 Collections.sort(mCategoriesList, new Comparator<Category>() {
                     @Override
@@ -132,7 +134,7 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void addCategoryToDB(String newCategory) {
-        mCategoriesFBHandle.put(new Category(newCategory));
+        mCategoriesFBHandle.putCategory(new Category(newCategory));
     }
 }
 

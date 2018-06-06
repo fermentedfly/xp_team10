@@ -15,8 +15,9 @@ import com.pchmn.materialchips.ChipView;
 import java.util.HashMap;
 
 import at.tugraz.xp10.R;
-import at.tugraz.xp10.firebase.UserListValueEventListener;
+import at.tugraz.xp10.firebase.DatabaseListValueEventListener;
 import at.tugraz.xp10.firebase.Users;
+import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.User;
 
 import static at.tugraz.xp10.util.Constants.FRIENDS_REQUEST_CONFIRMED;
@@ -194,13 +195,13 @@ public class ManageFriendsFragment extends Fragment {
 
     private void load_list_of_users()
     {
-        mUsersDB.getUsers(new UserListValueEventListener() {
+        mUsersDB.getUsers(new DatabaseListValueEventListener() {
             @Override
-            public void onNewData(HashMap<String, User> data) {
+            public <T extends ModelBase> void onNewData(HashMap<String, T> data) {
                 mFriendsView.removeAllViews();
                 mPendingView.removeAllViews();
-                mContactList = data;
-                mCurrentUser = data.get(mUsersDB.getCurrentUserID());
+                mContactList = (HashMap<String, User>)data;
+                mCurrentUser = (User)data.get(mUsersDB.getCurrentUserID());
 
                 for(String uid: mCurrentUser.getFriends().keySet())
                 {
@@ -221,5 +222,4 @@ public class ManageFriendsFragment extends Fragment {
             }
         });
     }
-
 }

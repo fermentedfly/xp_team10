@@ -3,7 +3,7 @@ package at.tugraz.xp10.model;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class Category {
+public class Category extends ModelBase {
     private String name;
 
     public Category(String name) {

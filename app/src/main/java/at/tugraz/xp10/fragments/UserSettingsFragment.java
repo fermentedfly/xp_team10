@@ -9,8 +9,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import at.tugraz.xp10.R;
-import at.tugraz.xp10.firebase.UserValueEventListener;
+import at.tugraz.xp10.firebase.DatabaseValueEventListener;
 import at.tugraz.xp10.firebase.Users;
+import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.User;
 
 public class UserSettingsFragment extends Fragment {
@@ -40,10 +41,10 @@ public class UserSettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_user_setting, container, false);
         mEmailNotifications = mView.findViewById(R.id.email_notifications);
-        mUsersFBHandle.getCurrentUser(new UserValueEventListener() {
+        mUsersFBHandle.getCurrentUser(new DatabaseValueEventListener() {
             @Override
-            public void onNewData(User user) {
-                mCurrentUser = user;
+            public <T extends ModelBase> void onNewData(T data) {
+                mCurrentUser = (User)data;
                 mEmailNotifications.setChecked(mCurrentUser.getEmailNotifications());
             }
         });
