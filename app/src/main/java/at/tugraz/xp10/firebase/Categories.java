@@ -19,7 +19,7 @@ public class Categories {
     {
         mDBRef = FirebaseDatabase.getInstance().getReference().child("categories");
     }
-
+    
     public void getCategories(final CategoriesValueEventListener listener)
     {
         mDBRef.addValueEventListener(new ValueEventListener() {

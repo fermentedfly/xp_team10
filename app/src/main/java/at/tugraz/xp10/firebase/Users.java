@@ -1,6 +1,12 @@
 package at.tugraz.xp10.firebase;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -10,6 +16,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 
 import at.tugraz.xp10.model.User;
+
+import static android.content.ContentValues.TAG;
 
 public class Users {
 
@@ -80,5 +88,24 @@ public class Users {
             HashMap<String, Object> newList = new HashMap<>();
             newList.put(ShoppingListKey, true);
             mDBRef.child(UserKey).child("shoppinglists").updateChildren(newList);
+        }
+
+        public void deleteUser(String key)
+        {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                Log.d(TAG, "User not null.");
+            }
+
+
+            user.delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "User account deleted.");
+                            }
+                        }
+                    });
         }
 }
