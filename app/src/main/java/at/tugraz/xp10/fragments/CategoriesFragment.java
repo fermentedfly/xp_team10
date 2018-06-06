@@ -1,12 +1,12 @@
 package at.tugraz.xp10.fragments;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,31 +14,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 import at.tugraz.xp10.R;
 import at.tugraz.xp10.adapter.CategoriesAdapter;
+import at.tugraz.xp10.firebase.Categories;
+import at.tugraz.xp10.firebase.CategoriesValueEventListener;
 import at.tugraz.xp10.model.Category;
 
 public class CategoriesFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
     private ArrayList<Category> mCategoriesList;
     private CategoriesAdapter mAdapter;
-    private DatabaseReference mDB;
-    private DatabaseReference mCategories;
-    private LayoutInflater mInflater;
     private View mView;
+    private Categories mCategoriesFBHandle;
 
     public CategoriesFragment() {
         mCategoriesList = new ArrayList<>();
+        mCategoriesFBHandle = new Categories();
     }
 
     public static CategoriesFragment newInstance() {
@@ -52,116 +48,91 @@ public class CategoriesFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mInflater = inflater;
         mView = inflater.inflate(R.layout.fragment_categories, container, false);
 
         final FloatingActionButton addCategoryButton = mView.findViewById(R.id.addCategoryButton);
         addCategoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addCategory();
+                addCategory(inflater, v);
             }
         });
 
-        ListView mListView = mView.findViewById(R.id.category_list_view);
-
+        ListView listView = mView.findViewById(R.id.category_list_view);
         mAdapter = new CategoriesAdapter(getContext(), mCategoriesList);
-        mListView.setAdapter(mAdapter);
+        listView.setAdapter(mAdapter);
 
-        mDB = FirebaseDatabase.getInstance().getReference();
-        mCategories = mDB.child("categories");
-
-
-        mCategories.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                fetchData(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        getCategoryList();
 
         return mView;
     }
 
-    private void addCategory() {
-        View promptView = mInflater.inflate(R.layout.category_add_dialog, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mView.getContext());
-        alertDialogBuilder.setView(promptView);
+    public void getCategoryList() {
+        mCategoriesFBHandle.getCategories(new CategoriesValueEventListener() {
+            @Override
+            public void onNewData(HashMap<String, Category> Categories) {
+                mCategoriesList.clear();
+                mCategoriesList.addAll(Categories.values());
 
-        final EditText editText = (EditText) promptView.findViewById(R.id.category_name);
-        alertDialogBuilder.setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        String newCategory = editText.getText().toString();
-                        addCategoryToDB(newCategory);
+                Collections.sort(mCategoriesList, new Comparator<Category>() {
+                    @Override
+                    public int compare(Category o1, Category o2) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
                     }
-                })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
+                });
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
-        // create an alert dialog
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
+    private void addCategory(LayoutInflater inflater, final View v) {
+
+        final View dialogView = inflater.inflate(R.layout.category_add_dialog, null);
+        final android.support.v7.app.AlertDialog dialog = new android.support.v7.app.AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.AlertDialogCustom))
+                .setView(dialogView)
+                .setTitle("New Category")
+                .setPositiveButton(R.string.submit, null) //Set to null. We override the onclick
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(final DialogInterface dialog) {
+
+                // POSITIVE
+                Button button = ((android.support.v7.app.AlertDialog) dialog).getButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        String newCategory = ((EditText) (dialogView.findViewById(R.id.category_name))).getText().toString();
+                        addCategoryToDB(newCategory);
+                        dialog.dismiss();
+                    }
+                });
+
+                // Negative
+                Button buttonNeg = ((android.support.v7.app.AlertDialog) dialog).getButton(android.support.v7.app.AlertDialog.BUTTON_NEGATIVE);
+                buttonNeg.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
     }
 
     private void addCategoryToDB(String newCategory) {
-        mCategories.push().setValue(new Category(newCategory));
-    }
-
-    private void fetchData(DataSnapshot dataSnapshot)
-    {
-        mCategoriesList.clear();
-
-        for (DataSnapshot ds : dataSnapshot.getChildren())
-        {
-            Category item = ds.getValue(Category.class);
-            mCategoriesList.add(item);
-        }
-
-        mAdapter.notifyDataSetChanged();
-
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        mCategoriesFBHandle.put(new Category(newCategory));
     }
 }
+

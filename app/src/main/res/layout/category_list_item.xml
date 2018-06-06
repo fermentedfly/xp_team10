@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<GridLayout
+<LinearLayout
     android:id="@+id/category_list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:columnCount="1"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="10dp"
+    android:background="@drawable/background_rounded_corners">
 
     <TextView
         android:id="@+id/category_list_item_name"
@@ -13,9 +15,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:layout_columnWeight="1"
-        android:textColor="#000000"
-        android:textSize="18dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp"
         android:textAlignment="center"
-        android:text="Name"/>
+        android:text="Name" />
 
-</GridLayout>
+</LinearLayout>

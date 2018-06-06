@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ManageFriendsFragment">
+    tools:context=".fragments.ManageFriendsFragment"
+    android:background="@color/colorAccent">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,78 +12,107 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/friends_ll_1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_rounded_corners"
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/friends"
-                android:visibility="visible"
-                android:textSize="20sp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
+                android:layout_marginRight="10dp"
+                android:text="@string/friends"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorHint"
+                android:textSize="20sp"
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/chipview_friends"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
-            </LinearLayout>
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="5dp"
-                android:background="?android:attr/listDivider"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
-
-            <EditText
-                android:id="@+id/textedit_friend_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/friend_email"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:singleLine="true"/>
-            <Button
-                android:id="@+id/button_add_friend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/addFriend"/>
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="5dp"
-                android:background="?android:attr/listDivider"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                android:orientation="vertical" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/friends_pending"
-                android:visibility="visible"
-                android:textSize="20sp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
+                android:layout_marginRight="10dp"
+                android:text="@string/friends_pending"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorHint"
+                android:textSize="20sp"
+                android:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/chipview_pending"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
-            </LinearLayout>
+                android:orientation="vertical" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/friends_ll_2"
+            android:layout_below="@+id/friends_ll_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/background_rounded_corners"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorHint">
+
+                <EditText
+                    android:id="@+id/textedit_friend_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/friend_email"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/colorWhite"
+                    android:textColorHint="@color/colorHint" />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+        </LinearLayout>
+
+        <Button
+            android:layout_below="@id/friends_ll_2"
+            android:id="@+id/button_add_friend"
+            android:layout_width="match_parent"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_height="wrap_content"
+            android:text="@string/addFriend"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/button_rounded_corners" />
     </RelativeLayout>
 </FrameLayout>
