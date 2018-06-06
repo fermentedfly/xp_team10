@@ -20,6 +20,7 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import at.tugraz.xp10.firebase.Database;
 import at.tugraz.xp10.firebase.DatabaseEventListener;
@@ -124,6 +125,14 @@ public class DatabaseUnitTest {
         db.setValue("bar", any(ModelBase.class));
         verify(mockedDatabaseReference).child("bar");
         verify(mockedDatabaseReference).setValue(any(ModelBase.class));
+    }
+
+    @Test
+    public void setUpdateChildren() {
+        Database db = Database.getInstance("foo");
+        db.updateChildren("bar", (Map<String, Object>) any(ModelBase.class));
+        verify(mockedDatabaseReference).child("bar");
+        verify(mockedDatabaseReference).updateChildren((Map<String, Object>) any(ModelBase.class));
     }
 
     @Test

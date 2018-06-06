@@ -145,7 +145,7 @@ public class DatabaseUserTest {
         HashMap<String, Object> newList = new HashMap<>();
         newList.put("test", true);
 
-        verify(mockedDatabase).setValue("testshoppinglists/", newList);
+        verify(mockedDatabase).updateChildren("test/shoppinglists/", newList);
     }
 
     @Test

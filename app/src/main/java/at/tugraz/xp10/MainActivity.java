@@ -2,7 +2,10 @@ package at.tugraz.xp10;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.NavigationView;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,7 +32,8 @@ import at.tugraz.xp10.model.User;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
-    public User currentUser = null;
+    public User currentUser = new User();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,8 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         finish();
         MainActivity.this.startActivity(myIntent);
     }
-    private void getUser() {
-        currentUser = new User();
+    protected void getUser() {
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         String uid = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
         Query userQuery = database.child("users").child(uid);
@@ -126,7 +129,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 }

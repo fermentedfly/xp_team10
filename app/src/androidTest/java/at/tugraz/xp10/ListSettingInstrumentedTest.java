@@ -1,10 +1,13 @@
 package at.tugraz.xp10;
 
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +43,7 @@ public class ListSettingInstrumentedTest {
         onView(withId(R.id.button_add_list)).perform(click());
     }
 
+
     @Test
     public void checkTextfieldsExist() {
         onView(withId(R.id.list_setting_title)).perform(typeText("Title"));
@@ -54,10 +58,10 @@ public class ListSettingInstrumentedTest {
     public void checkTitleNotEmpty() {
         onView(withId(R.id.list_setting_save)).perform(click());
     }
-    @Test
-    public void addUserFieldExists() {
-        //
-    }
+//    @Test
+//    public void addUserFieldExists() {
+//        //
+//    }
 
 
 

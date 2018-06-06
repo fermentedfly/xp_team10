@@ -34,10 +34,14 @@ public class AllListFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String TAG = "AllListFragment";
     private int mColumnCount = 2;
-    private ArrayList<ListEntry> mShoppingLists = new ArrayList<>();
+    public ArrayList<ListEntry> mShoppingLists = new ArrayList<>();
     private HashMap<String, ShoppingList> mShoppingMap = new HashMap<>();
     private AllListRecyclerViewAdapter mAdapter;
-    private ShoppingLists mShoppingListsDB;
+    public ShoppingLists mShoppingListsDB;
+
+    public AllListRecyclerViewAdapter getmAdapter() {
+        return mAdapter;
+    }
 
     private DetailListener mListener = new DetailListener() {
         @Override
@@ -102,7 +106,6 @@ public class AllListFragment extends Fragment {
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-                //TODO: has to be replaced by title from database
                 Fragment fragment = ListSettingFragment.newInstance(null);
                 fragmentTransaction.replace(R.id.content_frame, fragment, "ListSetting").addToBackStack(null);
                 fragmentTransaction.commit();
@@ -122,13 +125,14 @@ public class AllListFragment extends Fragment {
     }
 
     private void buildOverallView(View view) {
-        User user = ((MainActivity) view.getContext()).currentUser;
+        User user = ((MainActivity) view.getContext()).getCurrentUser();
         mShoppingLists.clear();
         mShoppingMap.clear();
         mAdapter.notifyDataSetChanged();
 
         if (!user.getShoppinglists().isEmpty()) {
             for (final String shoppingListId : user.getShoppinglists().keySet()) {
+                Log.d(TAG, "buildOverallView: "+shoppingListId);
                 mShoppingListsDB.getShoppingList(shoppingListId, new DatabaseValueEventListener() {
                     @Override
                     public <T extends ModelBase> void onNewData(T data) {

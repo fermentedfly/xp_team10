@@ -128,7 +128,6 @@ public class RegisterFragment extends Fragment {
         }
 
         if (!email.contains("@")) {
-            // TODO better validation
             mInputEmail.setError(getString(R.string.error_invalid_email));
             error = true;
         }

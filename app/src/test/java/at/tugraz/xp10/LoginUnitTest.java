@@ -58,25 +58,6 @@ public class LoginUnitTest {
     }
 
     @Test
-    public void signIn() throws Exception {
-
-    }
-
-    @Test
-    public void loginFail() throws Exception {
-
-    }
-
-    @Test
-    public void loginSuccess() throws Exception {
-    }
-
-    @Test
-    public void pushRegisterButton() throws Exception {
-
-    }
-
-    @Test
     public void attemptLogin() throws Exception {
         when(loginActivityMock.isPasswordValid(anyString())).thenCallRealMethod();
         when(loginActivityMock.isEmailValid(anyString())).thenCallRealMethod();
@@ -101,12 +82,6 @@ public class LoginUnitTest {
         doReturn("admin@xp10.com").when(loginActivityMock).getmEmail();
         doReturn("foo").when(loginActivityMock).getmPassword();
         assertEquals(loginActivityMock.attemptLogin(), false);
-    }
-
-    @Test
-    public void testSignInWithUserAndPassword() {
-
-
     }
 
     @Test

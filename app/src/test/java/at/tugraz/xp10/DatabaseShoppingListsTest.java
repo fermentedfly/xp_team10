@@ -23,6 +23,7 @@ import at.tugraz.xp10.firebase.ShoppingLists;
 import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.ShoppingList;
 
+import static junit.framework.Assert.assertNotSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
@@ -71,6 +72,14 @@ public class DatabaseShoppingListsTest {
                 Assert.assertTrue(TestData.containsValue(data));
             }
         });
+    }
+    @Test
+    public void uninstallAllListenersTest() {
+
+        ShoppingLists shoppingList = new ShoppingLists();
+        shoppingList.uninstallAllListeners();
+
+        assertNotSame(null, mockedDatabase);
     }
 
     @Test

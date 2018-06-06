@@ -5,7 +5,10 @@ import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,13 +31,15 @@ public class LoginInstrumentedTest {
     public ActivityTestRule<LoginActivity> menuActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
     @Before
-    public void init(){
+    public void init() throws InterruptedException {
+        closeSoftKeyboard();
         // sign out before tests
         if(menuActivityTestRule.getActivity().isUserLoggedIn())
         {
             // need to sign out
             onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
             onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));
+            Thread.sleep(4000);
         }
     }
 
@@ -80,7 +85,7 @@ public class LoginInstrumentedTest {
         onView(withId(R.id.password)).perform(typeText("test1234"));
         closeSoftKeyboard();
         onView(withId(R.id.login_button)).perform(scrollTo()).perform(click());
-        //TODO: Check if next view is main page
+
     }
 
     @Test

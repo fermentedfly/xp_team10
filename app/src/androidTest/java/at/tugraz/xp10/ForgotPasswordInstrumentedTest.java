@@ -51,5 +51,5 @@ public class ForgotPasswordInstrumentedTest {
         onView(withId(R.id.email_address)).check(matches(withErrorText(R.string.error_field_required)));
     }
 
-    // TODO other tests with inputs and async answer from firebase
+
 }

@@ -60,6 +60,4 @@ public class RegisterInstrumentedTest {
         onView(withId(R.id.register_email)).check(matches(withErrorText(R.string.error_invalid_email)));
     }
 
-    // TODO other tests with inputs and async answer from firebase
-    // question the tutors?
 }
