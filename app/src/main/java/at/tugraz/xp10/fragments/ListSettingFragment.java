@@ -152,7 +152,7 @@ public class ListSettingFragment extends Fragment {
             }
         }
 
-        if (mView != null) {
+        if (mView != null && this.isVisible()) {
             ChipView ownerChipView = mView.findViewById(R.id.owner_chip_view);
             ownerChipView.setLabel(owner.getName());
             ownerChipView.setHasAvatarIcon(true);
@@ -209,7 +209,7 @@ public class ListSettingFragment extends Fragment {
         }
 
         shoppingList.setMembers(users);
-        mShoppingListsFBHandle.updateShoppingList(mListID, shoppingList);
+        mListID = mShoppingListsFBHandle.updateShoppingList(mListID, shoppingList);
 
         for (String uid : shoppingList.getMembers().keySet()) {
             mUsersFBHandle.addShoppingListToUser(uid, mListID);
@@ -224,8 +224,16 @@ public class ListSettingFragment extends Fragment {
     }
 
     private void closeFragment() {
-        mUsersFBHandle.uninstallAllListeners();
+//        mUsersFBHandle.uninstallAllListeners();
+//        mShoppingListsFBHandle.uninstallAllListeners();
         getActivity().getSupportFragmentManager().popBackStackImmediate();
+    }
+
+    @Override
+    public void onDestroy() {
+        mUsersFBHandle.uninstallAllListeners();
+        mShoppingListsFBHandle.uninstallAllListeners();
+        super.onDestroy();
     }
 }
 

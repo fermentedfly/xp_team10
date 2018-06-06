@@ -222,4 +222,10 @@ public class ManageFriendsFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onDestroy() {
+        mUsersDB.uninstallAllListeners();
+        super.onDestroy();
+    }
 }

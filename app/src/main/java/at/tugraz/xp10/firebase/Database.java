@@ -67,9 +67,11 @@ public class Database {
         mDBRef.child(key).addValueEventListener(inner_listener);
     }
 
-    public <T> void pushValue(T value)
+    public <T> String pushValue(T value)
     {
-        mDBRef.push().setValue(value);
+        String key = mDBRef.push().getKey();
+        this.setValue(key, value);
+        return key;
     }
 
     public <T> void setValue(String key, T value)

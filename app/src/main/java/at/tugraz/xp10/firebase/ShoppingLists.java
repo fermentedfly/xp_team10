@@ -15,15 +15,21 @@ public class ShoppingLists {
         mDBRef.installValueListener(ShoppingList.class, key, listener);
     }
 
-    public void updateShoppingList(String key, ShoppingList list)
+    public String updateShoppingList(String key, ShoppingList list)
     {
         if(key == null)
         {
-            mDBRef.pushValue(list);
+            return mDBRef.pushValue(list);
         }
         else
         {
             mDBRef.setValue(key, list);
+            return key;
         }
+    }
+
+    public void uninstallAllListeners()
+    {
+        mDBRef.uninstallAllListeners();
     }
 }
