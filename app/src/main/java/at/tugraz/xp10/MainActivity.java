@@ -34,12 +34,18 @@ import at.tugraz.xp10.fragments.CategoriesFragment;
 import at.tugraz.xp10.fragments.ListSettingFragment;
 import at.tugraz.xp10.fragments.ListViewFragment;
 import at.tugraz.xp10.fragments.ManageFriendsFragment;
+import at.tugraz.xp10.fragments.TestFragment;
 import at.tugraz.xp10.fragments.UserSettingsFragment;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener,
+        ListSettingFragment.OnFragmentInteractionListener,
+        ManageFriendsFragment.OnFragmentInteractionListener, CategoriesFragment.OnFragmentInteractionListener {
 
+    private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
     public User currentUser = null;
 
@@ -101,6 +107,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = (Fragment) AllListFragment.newInstance(2);
                 title = "Overview";
                 break;
+            case R.id.nav_desiredlist:
+                fragment = (Fragment) ListViewFragment.newInstance("foo", "bar");
+                title = "List View";
+                break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 gotoLoginActivity();
@@ -144,11 +154,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        // you can leave this empty
+    }
+
     private void gotoLoginActivity() {
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
         finish();
         MainActivity.this.startActivity(myIntent);
     }
+
+
+    // TODO remove, just firebase test functions to see how it works...
+
+    private void testFirebase() {
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        String uid = mAuth.getCurrentUser().getUid();
+
+        ShoppingList shoppingList = new ShoppingList("titel", "beschreibung", uid);
+
+        String listKey = database.child("shoppinglists").push().getKey();
+
+        database.child("shoppinglists").child(listKey).setValue(shoppingList).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("SOMETHING", "onComplete: " + task.isSuccessful());
+
+                if (!task.isSuccessful()) {
+                    Log.d("ERROR", "onComplete: ", task.getException());
+                }
+            }
+        });
+
+        // add the key of the list to the users shoppinglist map ---- a MAP is used because you quickly can check if the KEY is in the MAP without iterating through it.
+        Map<String, Object> newList = new HashMap<>();
+        newList.put(listKey, true);
+        database.child("users").child(mAuth.getCurrentUser().getUid()).child("shoppinglists").updateChildren(newList);
+
+    }
+
 
     private void getUser() {
 
@@ -156,13 +203,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-        String uid = mAuth.getCurrentUser().getUid();
+        String uid = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
 
         Query userQuery = database.child("users").child(uid);
         userQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentUser.setData(dataSnapshot.getValue(User.class));
+                Log.d(TAG, "got User " + currentUser.toString());
             }
 
             @Override

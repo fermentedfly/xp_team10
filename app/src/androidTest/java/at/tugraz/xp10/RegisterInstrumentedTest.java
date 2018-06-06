@@ -4,21 +4,17 @@ import android.support.test.espresso.contrib.DrawerActions;
 import android.support.test.espresso.contrib.NavigationViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import at.tugraz.xp10.fragments.ForgotPasswordDialogFragment;
-import at.tugraz.xp10.fragments.RegisterFragment;
-
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -40,7 +36,8 @@ public class RegisterInstrumentedTest {
             onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
             onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_logout));
         }
-        onView(withId(R.id.register_button)).perform(click());
+        closeSoftKeyboard();
+        onView(withId(R.id.register_button)).perform(scrollTo()).perform(click());
     }
 
     @Test
@@ -54,6 +51,13 @@ public class RegisterInstrumentedTest {
         onView(withId(R.id.register_button)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void IsEmailValid() throws Exception {
+        closeSoftKeyboard();
+        onView(withId(R.id.register_email)).perform(typeText("invalidemail.com"));
+        onView(withId(R.id.register_register_button)).perform(click());
+        onView(withId(R.id.register_email)).check(matches(withErrorText(R.string.error_invalid_email)));
+    }
 
     // TODO other tests with inputs and async answer from firebase
     // question the tutors?

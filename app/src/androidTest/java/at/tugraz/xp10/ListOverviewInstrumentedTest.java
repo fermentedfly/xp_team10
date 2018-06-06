@@ -17,7 +17,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
@@ -43,7 +42,7 @@ public class ListOverviewInstrumentedTest {
 
     @Test
     public void test_if_grid_view_present() throws Exception {
-        assertNotNull(onView(withText(R.id.grid_overview)));
+        assertNotNull(onView(withText(R.id.all_list_recyclerview)));
     }
 
     @Test
