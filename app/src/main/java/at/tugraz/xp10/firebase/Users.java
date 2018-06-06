@@ -48,7 +48,7 @@ public class Users {
     {
         HashMap<String, Object> newList = new HashMap<>();
         newList.put(ShoppingListKey, true);
-        mDBRef.setValue(UserKey + "/shoppinglists/", newList);
+        mDBRef.updateChildren(UserKey + "/shoppinglists/", newList);
     }
 
     public void uninstallAllListeners()
