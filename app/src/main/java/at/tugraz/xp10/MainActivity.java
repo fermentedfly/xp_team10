@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void getUser() {
         currentUser = new User();
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        String uid = mAuth.getCurrentUser().getUid();
+        String uid = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
         Query userQuery = database.child("users").child(uid);
         userQuery.addValueEventListener(new ValueEventListener() {
             @Override

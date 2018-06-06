@@ -1,6 +1,5 @@
 package at.tugraz.xp10.Utils;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,12 +14,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import at.tugraz.xp10.R;
-import at.tugraz.xp10.fragments.ListViewFragment;
-import at.tugraz.xp10.fragments.TestFragment;
 
 @RestrictTo(RestrictTo.Scope.TESTS)
-public class TestFragmentActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener, TestFragment.OnFragmentInteractionListener {
+public class TestFragmentActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +51,5 @@ public class TestFragmentActivity extends AppCompatActivity implements Navigatio
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }
