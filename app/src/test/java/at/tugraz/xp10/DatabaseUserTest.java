@@ -28,6 +28,8 @@ import at.tugraz.xp10.model.ModelBase;
 import at.tugraz.xp10.model.ShoppingList;
 import at.tugraz.xp10.model.User;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
@@ -41,6 +43,7 @@ public class DatabaseUserTest {
 
     private Database mockedDatabase;
     private FirebaseAuth mockedAuth;
+    private FirebaseUser mockedUser;
 
     private static final HashMap<String, User> TestData;
 
@@ -61,6 +64,8 @@ public class DatabaseUserTest {
         mockedAuth = Mockito.mock(FirebaseAuth.class);
         PowerMockito.mockStatic(FirebaseAuth.class);
         when(FirebaseAuth.getInstance()).thenReturn(mockedAuth);
+
+        mockedUser = Mockito.mock(FirebaseUser.class);
     }
 
     @Test
@@ -146,15 +151,33 @@ public class DatabaseUserTest {
     @Test
     public void getCurrentUserIDTest() {
 
-        Users users = Mockito.mock(Users.class);
-        when(users.getCurrentUserID()).thenReturn("test");
-        //TODO: finish Testcase
+        when(mockedAuth.getCurrentUser()).thenReturn(mockedUser);
+        when(mockedAuth.getCurrentUser().getUid()).thenReturn("test");
+
+        Users user = new Users();
+        assertEquals("test", user.getCurrentUserID());
+    }
+
+    @Test
+    public void uninstallAllListenersTest() {
+
+        Users user = new Users();
+        user.uninstallAllListeners();
+
+        assertNotSame(null, mockedUser);
     }
 
     @Test
     public void setCurrentUser() {
-        //TODO: finish Testcase
-    }
 
+        when(mockedAuth.getCurrentUser()).thenReturn(mockedUser);
+        when(mockedAuth.getCurrentUser().getUid()).thenReturn("test");
+
+        Users users = new Users();
+        User test = new User("foo", "foo", "hallo");
+        users.setCurrentUser(test);
+
+        verify(mockedDatabase).setValue("test",test);
+    }
 
 }
